@@ -8,16 +8,17 @@ package com.slskin.ignitenetwork.components
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import fl.text.TLFTextField;
+	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flashx.textLayout.formats.TextDecoration;
 	import flash.text.TextFormat;
 	import flash.display.Sprite;
+	import flashx.textLayout.formats.TextLayoutFormat;
 
 	public class SLCheckBox extends MovieClip 
 	{
 		/* Member Fields */
-		private var tlf:TLFTextField;
+		private var lbl:TextField;
 		private var checkMark:MovieClip;
 		private var _labelText:String;
 		private var _labelColor:uint;
@@ -49,14 +50,14 @@ package com.slskin.ignitenetwork.components
 		
 		public function set labelText(str:String):void {
 			this._labelText = str;
-			if(this.tlf != null)
-				this.tlf.text = str;
+			if(this.lbl != null)
+				this.lbl.htmlText = str;
 		}
 		
 		public function set labelColor(color:uint):void {
 			this._labelColor = color;
-			if(this.tlf != null)
-				this.tlf.textColor = color;
+			if(this.lbl != null)
+				this.lbl.textColor = color;
 		}
 		
 		/*
@@ -66,17 +67,17 @@ package com.slskin.ignitenetwork.components
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 			
-			 //set reference from objects defined in the library
-			this.tlf = this.labelTLF;
-			this.tlf.autoSize = TextFieldAutoSize.LEFT;
+			//set reference from objects defined in the library
+			this.lbl = this.label;
+			this.lbl.autoSize = TextFieldAutoSize.LEFT;
+			this.lbl.htmlText = this._labelText;
+			var fmt:TextFormat = new TextFormat("Tahoma", this._fontSize, this._labelColor);
+			this.lbl.defaultTextFormat = fmt;
+			this.lbl.setTextFormat(fmt);
 			this.checkMark = this.check;
 			this.checkMark.visible = this._selected;
 			
-			this.tlf.htmlText = this._labelText;
-			var fmt:TextFormat = new TextFormat();
-			fmt.size = this._fontSize;
-			fmt.color = this._labelColor;
-			this.tlf.setTextFormat(fmt);
+			
 			
 			//draw hit box
 			var hitBox:Sprite = new Sprite();
@@ -105,11 +106,11 @@ package com.slskin.ignitenetwork.components
 		onMouseRollOver
 		*/
 		private function onMouseRollOver(evt:MouseEvent):void {
-			this.tlf.textColor = this._rollOverColor;
+			this.lbl.textColor = this._rollOverColor;
 		}
 		
 		private function onMouseRollOut(evt:MouseEvent):void {
-			this.tlf.textColor = this._labelColor;
+			this.lbl.textColor = this._labelColor;
 		}
 		
 		

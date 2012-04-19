@@ -32,11 +32,13 @@ package com.slskin.ignitenetwork.views.desktop
 		private const RIBBON_ARROW_WIDTH:Number = 10; //width of the arrow at the end of the ribbon
 		private const LOGOUT_TEXT_COLOR:uint = 0x333333;
 		private const USERNAME_COLOR:uint = 0x0080FF;
+		private const DEFAULT_COLOR:uint = 0xCCCCCC;
 		private const LOGOUT_ROLLOVER_COLOR:uint = 0x990000;
 		
 		/* Member fields */
 		private var socialIcons:MovieClip; //stores IconLinks for each social network link
 		private var usernameFormat:TextFormat = new TextFormat("Tahoma", 13, USERNAME_COLOR);
+		private var defaultFormat:TextFormat = new TextFormat("Tahoma", 12, DEFAULT_COLOR);
 		
 		public function FooterView() {
 			this.socialIcons = new MovieClip();
@@ -86,8 +88,8 @@ package com.slskin.ignitenetwork.views.desktop
 			//set current user
 			var username:String = main.model.getProperty("Username", main.model.DATA_PATH);
 			this.usernameTLF.text =  Language.translate("Current_User", "Current user") + " " + username;
-			this.usernameTLF.setTextFormat(this.usernameFormat, (this.usernameTLF.text.length - username.length),
-										   this.usernameTLF.length);
+			this.usernameTLF.setTextFormat(this.defaultFormat, 0, (this.usernameTLF.text.length - username.length));
+			this.usernameTLF.setTextFormat(this.usernameFormat, (this.usernameTLF.text.length - username.length), this.usernameTLF.length);
 			
 			//listen for logout button events
 			this.logoutButton.tabEnabled = false;

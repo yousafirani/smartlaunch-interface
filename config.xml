@@ -9,7 +9,7 @@ Designed for Smartlaunch.
 <InterfaceConfig debug="true">
 
 	<!-- Place a link here to your terms of service. -->
-	<TermsOfService enabled="true"><![CDATA[I agree to the <a href='http://ignitenetwork.com/'>Terms Of Service</a>.]]></TermsOfService>
+	<TermsOfService enabled="true"><![CDATA[I agree to the <a href='http://ignitenetwork.com/'><u>Terms Of Service</u></a>.]]></TermsOfService>
 
 	<!--
 	Mail Chimp auto-subscribe.

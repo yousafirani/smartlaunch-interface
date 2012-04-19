@@ -167,6 +167,7 @@ package com.slskin.ignitenetwork.components
 		private function createCaptionTLF():void 
 		{
 			this.captionTLF = new TLFTextField();
+			this.captionTLF.defaultTextFormat = new TextFormat(new MyriadSemiBold().fontName, "14", 0xFFFFFF, true);
 			
 			with(this.captionTLF)
 			{
@@ -177,8 +178,6 @@ package com.slskin.ignitenetwork.components
 				selectable = false;
 			}
 			
-			//setup format
-			this.captionTLF.defaultTextFormat = new TextFormat(new MyriadSemiBold().fontName, "14", 0xFFFFFF);
 			this.captionContainer.addChild(this.captionTLF);
 		}
 		

@@ -64,6 +64,7 @@ package com.slskin.ignitenetwork.views.desktop
 			//set the scroll pane style
 			this.setPaneStyle();
 			
+			this.createMockCategory();
 			//create drop down list
 			this.createDropDownList();
 			
@@ -80,6 +81,8 @@ package com.slskin.ignitenetwork.views.desktop
 			//Load all applications and listen for load complete
 			this.loadAllApplications();
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
+			this.onAllAppsLoaded(null);
+			showView();
 			
 			//display this view when the initial load is complete
 			this.addEventListener(Event.COMPLETE, showView);

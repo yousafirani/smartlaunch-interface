@@ -13,6 +13,8 @@ package com.slskin.ignitenetwork.components
 	import flash.net.navigateToURL;
 	import flash.net.URLRequest;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.Font;
+	import com.slskin.ignitenetwork.fonts.*;
 	
 	public class NewsItem extends MovieClip 
 	{ 
@@ -27,7 +29,7 @@ package com.slskin.ignitenetwork.components
 		//text formats
 		private var titleFormat:TextFormat = new TextFormat("Tahoma", 14, 0x0080FF);
 		private var rollOverFormat:TextFormat = new TextFormat("Tahoma", 12, 0xFFFFFF);
-		private var defaultFormat:TextFormat = new TextFormat("Tahoma", 12, 0xCCCCCC);
+		private var defaultFormat:TextFormat =  new TextFormat("Tahoma", 12, 0xCCCCCC);
 		
 		public function NewsItem() {
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
@@ -81,6 +83,7 @@ package com.slskin.ignitenetwork.components
 			
 			//highlight title
 			this.contentTLF.setTextFormat(titleFormat, 0, this._contentTitle.length);
+			this.contentTLF.setTextFormat(defaultFormat, this._contentTitle.length, this._contentText.length);
 			
 			//setup text link if a url is set
 			if(this._url.length > 0)

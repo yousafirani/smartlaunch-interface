@@ -57,6 +57,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private const CONTROLS_PADDING:Number = 15; //paddding between content and media controls.
 		private const THUMBNAIL_PADDING:Number = 10; //padding betweem thumbnails.
 		private const CAPTION_FONT_SIZE:Number = 15;
+		private const CAPTION_HEIGHT:Number = 30;
 		private const CAPTION_LINK_COLOR:String = "#0080FF";
 		private const CAPTION_PADDING:Number = 10;
 		private const TIMER_PROGRESS_TINT:uint = 0x9CCE31;
@@ -109,23 +110,21 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//create caption tlf
 			this.captionTLF = new TLFTextField();
+			this.captionTLF.height = this.CAPTION_HEIGHT;
+			this.captionTLF.width = this.CONTENT_WIDTH;
 			this.captionTLF.addEventListener(TextEvent.LINK, this.onCaptionLinkClick);
 			with(this.captionTLF)
 			{
 				embedFonts = true;
 				multiline = false;
-				autoSize = TextFieldAutoSize.LEFT;
-				antiAliasType = AntiAliasType.ADVANCED;
 				selectable = false;
-				verticalAlign = VerticalAlign.MIDDLE;
-				paddingTop = paddingBottom = paddingRight = paddingLeft = this.CAPTION_PADDING;
 			}
 			
 			this.captionTextFormat = new TextLayoutFormat();
 			with(this.captionTextFormat)
 			{
 				color = 0xFFFFFF;
-	 			fontFamily = "Tahoma, Helvetica, Arial";
+	 			fontFamily = new TahomaRegular().fontName;
 				fontSize = 12;
 			}
 			
@@ -348,6 +347,8 @@ package com.slskin.ignitenetwork.views.desktop
 				with(this.captionTLF)
 				{
 					htmlText = this.contentArray[index].caption;
+					paddingLeft = paddingRight = this.CAPTION_PADDING;
+					verticalAlign = VerticalAlign.MIDDLE;
 					textFlow.hostFormat = this.captionTextFormat;
 					textFlow.linkNormalFormat = {color:this.CAPTION_LINK_COLOR, textDecoration:"underline"};
 					textFlow.flowComposer.updateAllControllers();

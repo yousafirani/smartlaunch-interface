@@ -158,7 +158,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		public function appendToLabel(txt:String, fontSize:Object = "12", fontColor:uint = 0xCCCCCC) 
 		{
-			this.labelTLF.text += txt;
+			this.labelTLF.appendText(txt);
 			var format:TextFormat = new TextFormat(this.defaultFont.fontName, fontSize, fontColor);
 			this.labelTLF.setTextFormat(format, this.labelTLF.text.length - txt.length, this.labelTLF.text.length);
 		}
@@ -193,6 +193,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		public function clearFormat():void {
 			this.labelTLF.setTextFormat(this.defaultFormat);
+			this.labelTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*
