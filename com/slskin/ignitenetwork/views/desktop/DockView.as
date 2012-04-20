@@ -133,7 +133,7 @@ package com.slskin.ignitenetwork.views.desktop
 				combinedIconWidth += dockIcon.ICON_SIZE + this.ICON_PADDING;
 				
 				//add dock Icon to holder
-				iconHolder.addChild(dockIcon);
+				iconHolder.addChildAt(dockIcon, 0);
 				
 				//listen for mouse click event on each icon
 				dockIcon.addEventListener(MouseEvent.CLICK, onDockIconClick);

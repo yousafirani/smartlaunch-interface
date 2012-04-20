@@ -58,7 +58,6 @@ package com.slskin.ignitenetwork.components
 			this._category = category;
 			this.captionContainer = new MovieClip();
 			this.captionContainer.y = this.ICON_SIZE;
-			this.isSelected = false;
 			//create roller loader
 			this.loaderMC = new Roller();
 			
@@ -82,22 +81,22 @@ package com.slskin.ignitenetwork.components
 		/* Setters */
 		public function set isSelected(select:Boolean) 
 		{
-			if(this._isSelected == select) return;
-			
 			this._isSelected = select;
 			
 			if(select)
 			{
-				var glow:GlowFilter = new GlowFilter(0x666666, 1, 6, 6, 4, 1, false, false);
+				var glow:GlowFilter = new GlowFilter(0x666666, 1, 6, 6, 1, 1, false, false);
 				this.iconLoader.filters = new Array(glow);
 				this.iconButton.enabled = false;
 				this.iconButton.useHandCursor = false;
+				this.bubble.visible = true;
 			} 
 			else
 			{
 				this.iconLoader.filters = null;
 				this.iconButton.enabled = true;
 				this.iconButton.useHandCursor = true;
+				this.bubble.visible = false;
 			}
 			
 		}
@@ -112,6 +111,8 @@ package com.slskin.ignitenetwork.components
 			
 			//reference icon loader on stage
 			this.iconLoader = this._iconLoader;
+			
+			this.isSelected = false;
 			
 			//hide corner
 			this.corner.visible = false;
@@ -226,7 +227,7 @@ package com.slskin.ignitenetwork.components
 			var pill:Sprite = new Sprite();
 			pill.graphics.beginFill(0x000000, .75);
 			pill.graphics.lineStyle(1, 0x999999, 1, true, "normal"); 
-			pill.graphics.drawRoundRect(0, 0, pillWidth, pillHeight, 8);
+			pill.graphics.drawRoundRect(0, 0, pillWidth, pillHeight, 4);
 			pill.graphics.endFill();
 	
 			//add glow

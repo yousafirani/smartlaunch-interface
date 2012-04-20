@@ -33,7 +33,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.1.16-SNAPSHOT";
+		public const VERSION:String = "1.1.201";
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		

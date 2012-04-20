@@ -64,8 +64,7 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//set the scroll pane style
 			this.setPaneStyle();
-			
-			this.createMockCategory();
+				
 			//create drop down list
 			this.createDropDownList();
 			
@@ -82,8 +81,6 @@ package com.slskin.ignitenetwork.views.desktop
 			//Load all applications and listen for load complete
 			this.loadAllApplications();
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
-			this.onAllAppsLoaded(null);
-			showView();
 			
 			//display this view when the initial load is complete
 			this.addEventListener(Event.COMPLETE, showView);
@@ -176,9 +173,9 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onAllAppsLoaded(evt:Event):void 
 		{
 			this.enableSelector();
+			this.enableSearch();
 			this.createAllListViews();
 			this.displayAllApps();
-			this.enableSearch();
 			LoadingView.getInstance().hideLoader();
 		}
 		
@@ -236,6 +233,7 @@ package com.slskin.ignitenetwork.views.desktop
 				list.clearFilter();
 			
 			this.appPane.source = list;
+			this.loadAppDetails(list.getItemAt(0));
 			this.setSelectorTitle(subCategory.localeName);
 		}
 		
@@ -298,6 +296,7 @@ package com.slskin.ignitenetwork.views.desktop
 			}
 			
 			this.appPane.source = container;
+			this.loadAppDetails(list.getItemAt(0));
 			this.setSelectorTitle("...");
 		}
 		
@@ -306,17 +305,19 @@ package com.slskin.ignitenetwork.views.desktop
 		Event handler for the application list item click.
 		*/
 		private function onAppListItemClick(evt:Event):void {
-			this.loadApp(evt.target as ListItem);
+			this.loadAppDetails(evt.target as ListItem);
 		}
 		
 		/*
-		loadApp
+		loadAppDetails
 		Given a list item that represents an application, load
 		the application details in the appDetailsView and select the
 		list item object.
 		*/
-		private function loadApp(appListItem:ListItem):void
+		private function loadAppDetails(appListItem:ListItem):void
 		{
+			if(appListItem == null) return;
+			
 			//unselect the old selected app
 			if(this.selectedApp != null)
 				this.selectedApp.selected = false;
@@ -388,14 +389,10 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onSearchInput(evt:Event):void 
 		{
 			var searchInput:String = this.searchField.searchTLF.text;
-			trace("Search Input: " + searchInput);
 			this.displayFilter(searchInput);
 			
 			//show clear button in there is text in the field
 			this.searchField.clearButton.visible = (searchInput.length > 0);
-			
-			//move clear button just past text
-			//this.searchField.clearButton.x = this.searchField.searchTLF.x + this.searchField.searchTLF.textWidth + 5;
 		}
 		
 		/*
