@@ -28,6 +28,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.components.PanelBackground;
 	import com.slskin.ignitenetwork.components.DottedSeperatorShort;
 	import com.slskin.ignitenetwork.components.GreyArrow;
+	import fl.text.TLFTextField;
 	
 	public class CategoryView extends SLView 
 	{
@@ -175,9 +176,9 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onAllAppsLoaded(evt:Event):void 
 		{
 			this.enableSelector();
-			this.enableSearch();
 			this.createAllListViews();
 			this.displayAllApps();
+			this.enableSearch();
 			LoadingView.getInstance().hideLoader();
 		}
 		
@@ -255,7 +256,7 @@ package com.slskin.ignitenetwork.views.desktop
 			for(var i:uint = 0; i < category.subCategories.length; i++)
 			{
 				list = this.listViews[category.subCategories[i].name];
-				if(list != null) 
+				if(list != null)
 				{
 									
 					//reset filter if it exists
@@ -373,7 +374,10 @@ package com.slskin.ignitenetwork.views.desktop
 		{
 			this.searchField.searchTLF.addEventListener(Event.CHANGE, onSearchInput);
 			this.searchField.clearButton.visible = false;
-			this.searchField.clearButton.addEventListener(MouseEvent.CLICK, displayAllApps);
+			this.searchField.clearButton.addEventListener(MouseEvent.CLICK, function(event) { 
+														  displayAllApps(); 
+														  event.target.visible = false;
+														  });
 		}
 		
 		/*
@@ -384,12 +388,14 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onSearchInput(evt:Event):void 
 		{
 			var searchInput:String = this.searchField.searchTLF.text;
+			trace("Search Input: " + searchInput);
 			this.displayFilter(searchInput);
 			
 			//show clear button in there is text in the field
 			this.searchField.clearButton.visible = (searchInput.length > 0);
+			
 			//move clear button just past text
-			this.searchField.clearButton.x = this.searchField.searchTLF.x + this.searchField.searchTLF.textWidth + 5;
+			//this.searchField.clearButton.x = this.searchField.searchTLF.x + this.searchField.searchTLF.textWidth + 5;
 		}
 		
 		/*
@@ -425,7 +431,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		public function setSelectorTitle(str:String):void
 		{
-			this.selector.title.autoSize = TextFieldAutoSize.LEFT; 
+			//this.selector.title.autoSize = TextFieldAutoSize.LEFT; 
 			this.selector.title.text = str;
 		}
 		
@@ -469,7 +475,8 @@ package com.slskin.ignitenetwork.views.desktop
 		onSubCategoryClick
 		Event listener for sub category selector listItem click. 
 		*/
-		private function onSubCategoryClick(evt:SLEvent):void {
+		private function onSubCategoryClick(evt:SLEvent):void 
+		{
 			//clear searchfield as well
 			this.searchField.searchTLF.text = "";
 			
