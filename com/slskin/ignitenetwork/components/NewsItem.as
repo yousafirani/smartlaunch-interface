@@ -28,8 +28,8 @@ package com.slskin.ignitenetwork.components
 		
 		//text formats
 		private var titleFormat:TextFormat = new TextFormat("Tahoma", 14, 0x0080FF);
-		private var rollOverFormat:TextFormat = new TextFormat("Tahoma", 12, 0xFFFFFF);
-		private var defaultFormat:TextFormat =  new TextFormat("Tahoma", 12, 0xCCCCCC);
+		private var rollOverFormat:TextFormat = new TextFormat("Tahoma", 12, 0xFFFFFF, false, false, true);
+		private var defaultFormat:TextFormat =  new TextFormat("Tahoma", 12, 0xCCCCCC, false, false, false);
 		
 		public function NewsItem() {
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
@@ -84,6 +84,7 @@ package com.slskin.ignitenetwork.components
 			//highlight title
 			this.contentTLF.setTextFormat(titleFormat, 0, this._contentTitle.length);
 			this.contentTLF.setTextFormat(defaultFormat, this._contentTitle.length, this._contentText.length);
+			this.contentTLF.textFlow.flowComposer.updateAllControllers();
 			
 			//setup text link if a url is set
 			if(this._url.length > 0)
@@ -105,6 +106,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function onNewsRollOver(evt:MouseEvent):void {
 			this.contentTLF.setTextFormat(rollOverFormat, this._contentTitle.length, this._contentText.length);
+			this.contentTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*
@@ -114,6 +116,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function onNewsRollOut(evt:MouseEvent):void {
 			this.contentTLF.setTextFormat(defaultFormat, this._contentTitle.length, this._contentText.length);
+			this.contentTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*

@@ -347,10 +347,10 @@ package com.slskin.ignitenetwork.views.desktop
 				with(this.captionTLF)
 				{
 					htmlText = this.contentArray[index].caption;
-					paddingLeft = paddingRight = this.CAPTION_PADDING;
-					verticalAlign = VerticalAlign.MIDDLE;
+					paddingLeft = paddingRight = paddingTop = this.CAPTION_PADDING;
 					textFlow.hostFormat = this.captionTextFormat;
 					textFlow.linkNormalFormat = {color:this.CAPTION_LINK_COLOR, textDecoration:"underline"};
+					textFlow.linkHoverFormat = {color:0xFFFFFF, textDecoration:"underline"};
 					textFlow.flowComposer.updateAllControllers();
 				}
 				

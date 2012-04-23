@@ -72,7 +72,11 @@ package com.slskin.ignitenetwork.components
 		public function set field(f:TLFTextField):void { this._field = f; }
 		public function set fieldValidator(f:Function):void { this.validator = f; }
 		public function set displayAsPassword(bool:Boolean):void { this.field.displayAsPassword = bool; }
-		public function set text(s:String):void { this.field.text = s; }
+		public function set text(s:String):void 
+		{ 
+			this.field.text = s; 
+			this.field.textFlow.flowComposer.updateAllControllers(); 
+		}
 		
 		public function set upperCase(toUpper:Boolean):void 
 		{
@@ -353,6 +357,7 @@ package com.slskin.ignitenetwork.components
 		public function clearField():void
 		{
 			this.field.text = "";
+			this.field.textFlow.flowComposer.updateAllControllers();
 			this.hideError();
 			//show hint
 			this.fieldHint.alpha = 1;

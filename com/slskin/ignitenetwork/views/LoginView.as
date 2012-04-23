@@ -223,7 +223,6 @@ package com.slskin.ignitenetwork.views
 		private function sendLogin(evt:Event = null):void
 		{
 			wakeInactivityTimer();
-			
 			this.userTF.checkRequired();
 			this.passTF.checkRequired();
 			
