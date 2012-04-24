@@ -51,14 +51,14 @@ package com.slskin.ignitenetwork.components
 		
 		public function ListItem(obj:IListItemObject, itemWidth:Number, itemHeight:Number, rollOverColor:uint = 0x333333,
 								 labelSize:Object = "12", labelColor:uint = 0xCCCCCC, seperator:DisplayObject = null, 
-								 rollOverIcon:DisplayObject = null, labelFont:Font = null, iconSize:Number = 24) 
+								 rollOverIcon:DisplayObject = null, labelFont:Font = null, iconSize:Number = 16) 
 		{
 			this._itemObj = obj;
 			this.seperator = (seperator == null ? new DottedSeperator() : seperator);
 			this.rollOverIcon = (rollOverIcon == null ? new BlueArrow() : rollOverIcon);
-			this.defaultFont = (labelFont == null ? new TahomaRegular() : labelFont); 
+			this.defaultFont = (labelFont == null ? new TahomaBold() : labelFont); 
 			this.defaultFormat = new TextFormat(this.defaultFont.fontName, labelSize, labelColor, false, false, false);
-			this.defaultHighlight = new TextFormat(this.defaultFont.fontName, labelSize, 0x990000, false, false, true);
+			this.defaultHighlight = new TextFormat(this.defaultFont.fontName, labelSize, 0xFFFFFF, true, false, true);
 			this._itemWidth = itemWidth;
 			this._itemHeight = itemHeight;
 			this._iconSize = iconSize;
@@ -225,14 +225,14 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function layoutListItem():void
 		{
-			var xPos:Number = 0;
+			var xPos:Number = this.HPADDING;
 			
 			//add roll over icon
-			this.rollOverIcon.visible = false;
+			/*this.rollOverIcon.visible = false;
 			this.rollOverIcon.x = xPos;
 			this.rollOverIcon.y = (this._itemHeight - this.rollOverIcon.height) / 2;
 			this.addChildAt(this.rollOverIcon, 0);
-			xPos += this.rollOverIcon.width + this.HPADDING;
+			xPos += this.rollOverIcon.width + this.HPADDING;*/
 			
 			//Configure the icon if a path exists
 			if(this._itemObj.iconPath != null)

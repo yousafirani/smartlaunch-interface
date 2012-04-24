@@ -19,7 +19,7 @@ package com.slskin.ignitenetwork.views.desktop
 	{
 		/* Constants */
 		private const LIST_ITEM_WIDTH:Number = 250;
-		private const LIST_ITEM_HEIGHT:Number = 30;
+		private const LIST_ITEM_HEIGHT:Number = 25;
 		
 		/* Member fields */
 		private var main:Main; //reference to main doc class

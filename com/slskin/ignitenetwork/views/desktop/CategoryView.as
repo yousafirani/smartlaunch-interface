@@ -35,8 +35,8 @@ package com.slskin.ignitenetwork.views.desktop
 		/* Constants */
 		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
 		private const TOP_PADDING:Number = -45; //Window top padding, makes room for footer
-		private const LIST_ITEM_WIDTH:Number = 200; //app list item width
-		private const LIST_ITEM_HEIGHT:Number = 30; //app list item height
+		private const LIST_ITEM_WIDTH:Number = 250; //app list item width
+		private const LIST_ITEM_HEIGHT:Number = 25; //app list item height
 		
 		/* Member fields */
 		public var category:MainCategory; //main category that this view displays
@@ -64,7 +64,8 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//set the scroll pane style
 			this.setPaneStyle();
-				
+			
+			this.createMockCategory();
 			//create drop down list
 			this.createDropDownList();
 			
@@ -75,12 +76,13 @@ package com.slskin.ignitenetwork.views.desktop
 			super.setupView();
 			
 			//align title bar to center of window and set the title
-			this.titleBar.x = (this.window.width - this.titleBar.width) / 2;
-			this.titleBar.title.text = this.category.localeName;
+			this.title.text = this.category.localeName;
 				
 			//Load all applications and listen for load complete
 			this.loadAllApplications();
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
+			this.onAllAppsLoaded(null);
+			this.showView();
 			
 			//display this view when the initial load is complete
 			this.addEventListener(Event.COMPLETE, showView);
@@ -204,8 +206,7 @@ package com.slskin.ignitenetwork.views.desktop
 			var apps:Array = subCategory.applications;
 			for(var i:uint = 0; i < apps.length; i++)
 			{
-				var item:ListItem = new ListItem(apps[i], LIST_ITEM_WIDTH, LIST_ITEM_HEIGHT,
-													0xCCCCCC, "12", 0x000000);
+				var item:ListItem = new ListItem(apps[i], LIST_ITEM_WIDTH, LIST_ITEM_HEIGHT);
 				item.addEventListener(SLEvent.LIST_ITEM_CLICK, onAppListItemClick);
 				listItems.push(item);
 			}
