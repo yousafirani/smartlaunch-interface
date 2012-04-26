@@ -74,7 +74,7 @@ package com.slskin.ignitenetwork.components
 		}
 		
 		/* Getters */
-		public function get targetObj():IListItemObject {
+		public function get listItemObj():IListItemObject {
 			return this._itemObj;
 		}
 		
@@ -113,6 +113,9 @@ package com.slskin.ignitenetwork.components
 			}
 		}
 		
+		public function set seperatorVisible(visible:Boolean):void {
+			this.seperator.visible = visible;
+		}
 		
 		/*
 		setupTLF
@@ -136,6 +139,7 @@ package com.slskin.ignitenetwork.components
 			
 			//add the default format
 			this.labelTLF.setTextFormat(this.defaultFormat);
+			this.labelTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*
@@ -225,7 +229,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function layoutListItem():void
 		{
-			var xPos:Number = this.HPADDING;
+			var xPos:Number = this.HPADDING * 2;
 			
 			//add roll over icon
 			/*this.rollOverIcon.visible = false;

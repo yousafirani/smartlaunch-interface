@@ -14,7 +14,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 	import flash.events.FocusEvent;
 	import com.slskin.ignitenetwork.*;
 	import com.slskin.ignitenetwork.components.SLTextField;
-	import com.slskin.ignitenetwork.components.SLSexSelector;
+	import com.slskin.ignitenetwork.components.SexSelector;
 	import com.slskin.ignitenetwork.util.Strings;
 	import flash.events.MouseEvent;
 	import com.slskin.ignitenetwork.components.SLCheckBox;
@@ -97,13 +97,13 @@ package com.slskin.ignitenetwork.views.accountsetup
 					
 					if(fieldName == "Sex")
 					{
-						field = new SLSexSelector();
+						field = new SexSelector();
 						field.name = fieldName;
 						
 						if(fieldValue == "1")
-							field.selectedGender = SLSexSelector.MALE;
+							field.selectedGender = SexSelector.MALE;
 						else if(fieldValue == "2")
-							field.selectedGender = SLSexSelector.FEMALE;
+							field.selectedGender = SexSelector.FEMALE;
 							
 						field.addEventListener(MouseEvent.CLICK, dispatchProgress);
 					}
@@ -236,7 +236,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 					if(!obj.isEmpty() && !obj.hasError)
 						currentProgress++;
 				}
-				else if(obj is SLSexSelector)
+				else if(obj is SexSelector)
 				{
 					if(obj.isSelected)
 						currentProgress++;
@@ -272,8 +272,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 				var fieldVal:String;
 				if(obj is SLTextField)
 					fieldVal = obj.text;
-				else if(obj is SLSexSelector)
-					fieldVal = (obj.selectedGender == SLSexSelector.MALE ? "1" : "2");
+				else if(obj is SexSelector)
+					fieldVal = (obj.selectedGender == SexSelector.MALE ? "1" : "2");
 				
 				//trace(fieldName, fieldVal);
 				if(fieldName == "Birthday")

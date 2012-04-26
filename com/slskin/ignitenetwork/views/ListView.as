@@ -81,12 +81,15 @@ package com.slskin.ignitenetwork.views
 				if(item.itemWidth > this._listWidth)
 					this._listWidth = item.itemWidth;
 				
-				item.clearFormat();
 				item.x = this.leftPadding;
 				item.y = yPos;
 				yPos += item.itemHeight + this.itemVerticalPadding;
 				this.container.addChildAt(item, 0);
 			}
+			
+			//hide seperator on last item in list
+			if(item != null) 
+				item.seperatorVisible = false;
 						
 			this._listHeight = yPos;
 			this._listWidth += this.leftPadding;
@@ -94,7 +97,7 @@ package com.slskin.ignitenetwork.views
 			
 			if(backgroundSprite != null)
 			{
-				backgroundSprite.width = this._listWidth;
+				backgroundSprite.width = this._listWidth + this.leftPadding;
 				backgroundSprite.height = yPos;
 				this.container.addChildAt(backgroundSprite, 0);
 			}
@@ -141,7 +144,7 @@ package com.slskin.ignitenetwork.views
 				item.clearFormat();
 				
 				//make sure we match the filter
-				var sourceLabel:String = item.targetObj.itemLabel.toLocaleLowerCase();
+				var sourceLabel:String = item.listItemObj.itemLabel.toLocaleLowerCase();
 				var startIndex:int = sourceLabel.search(filter.toLocaleLowerCase());
 				if(startIndex == -1) 
 					continue;
@@ -152,6 +155,10 @@ package com.slskin.ignitenetwork.views
 				yPos += item.itemHeight + this.itemVerticalPadding;
 				this.container.addChildAt(item, 0);
 			}
+			
+			//hide seperator on last item in list
+			if(item != null)
+				item.seperatorVisible = false;
 			
 			this._listHeight = yPos;
 			this._listWidth += this.leftPadding;
@@ -170,10 +177,10 @@ package com.slskin.ignitenetwork.views
 		Clears the filter by laying out the list with no
 		filter.
 		*/
-		public function clearFilter():void
+		/*public function clearFilter():void
 		{
 			this.layoutList();
-		}
+		}*/
 		
 
 	} //class

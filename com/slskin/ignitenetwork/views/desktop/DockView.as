@@ -19,7 +19,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.filters.GlowFilter;
 	import flash.display.BlendMode;
 	import com.slskin.ignitenetwork.events.SLEvent;
-	import com.slskin.ignitenetwork.components.SLDockIcon;
+	import com.slskin.ignitenetwork.components.DockIcon;
 	import com.slskin.ignitenetwork.views.*;
 	import com.slskin.ignitenetwork.apps.MainCategory;
 	import com.slskin.ignitenetwork.apps.Category;
@@ -40,10 +40,10 @@ package com.slskin.ignitenetwork.views.desktop
 		
 		/* Member field */
 		private var iconHolder:MovieClip;
-		private var iconMap:Dictionary; //category name => SLDockIcon
+		private var iconMap:Dictionary; //category name => DockIcon
 		private var dockBackground:Sprite;
-		private var selectedIcon:SLDockIcon; //currently selected dock icon
-		private var clickedIcon:SLDockIcon; //recently clicked dock icon
+		private var selectedIcon:DockIcon; //currently selected dock icon
+		private var clickedIcon:DockIcon; //recently clicked dock icon
 		
 		public function DockView() 
 		{
@@ -119,12 +119,12 @@ package com.slskin.ignitenetwork.views.desktop
 				iconHolder.removeChildAt(0);
 				
 			//add new dock icons for each category
-			var dockIcon:SLDockIcon;
+			var dockIcon:DockIcon;
 			var combinedIconWidth:Number = 0;
 			
 			for(var i:uint = 0; i < categories.length; i++)
 			{
-				dockIcon = new SLDockIcon(categories[i] as MainCategory);
+				dockIcon = new DockIcon(categories[i] as MainCategory);
 				this.iconMap[ (categories[i] as MainCategory).name ] = dockIcon;
 				
 				dockIcon.x = (i * dockIcon.ICON_SIZE) + (i * this.ICON_PADDING);
@@ -187,17 +187,17 @@ package com.slskin.ignitenetwork.views.desktop
 		/*
 		clickIcon
 		Takes a category name and simulates a mouse click on the appropriate
-		SLDockIcon found in iconMap.
+		DockIcon found in iconMap.
 		*/
 		public function clickIcon(categoryName:String):void
 		{
 			if(categoryName == null) return;
 			if(this.iconMap == null) return;
 			
-			var dockIcon:SLDockIcon = this.iconMap[categoryName];
+			var dockIcon:DockIcon = this.iconMap[categoryName];
 			
 			if(dockIcon == null)
-				throw new Error(categoryName + " does not have a corresponding SLDockIcon.");
+				throw new Error(categoryName + " does not have a corresponding DockIcon.");
 				
 			dockIcon.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 		}
@@ -211,9 +211,9 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onDockIconClick(evt:MouseEvent):void 
 		{
 			//get a reference to the category that was clicked
-			var category:MainCategory = (evt.currentTarget as SLDockIcon).category;
+			var category:MainCategory = (evt.currentTarget as DockIcon).category;
 			
-			this.clickedIcon = evt.currentTarget as SLDockIcon;
+			this.clickedIcon = evt.currentTarget as DockIcon;
 							
 			//main category has sub categories, dispatch event.
 			//The home view listens for DOCK_ICON_CLICK and acts accordingly.
@@ -227,7 +227,7 @@ package com.slskin.ignitenetwork.views.desktop
 					this.selectedIcon.isSelected = false;
 					
 				//select the new icon
-				this.selectedIcon = evt.currentTarget as SLDockIcon;
+				this.selectedIcon = evt.currentTarget as DockIcon;
 				this.selectedIcon.isSelected = true;
 			}
 			else if(category.numOfApps == 1)//Launch the only available app
@@ -289,7 +289,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onAppItemClick(evt:MouseEvent):void
 		{
-			var app:Application = ((evt.currentTarget as ListItem).targetObj as Application);
+			var app:Application = ((evt.currentTarget as ListItem).listItemObj as Application);
 			this.main.appManager.launchApp(app, true);
 		}
 		

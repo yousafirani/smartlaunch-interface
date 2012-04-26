@@ -29,7 +29,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private const TOP_PADDING:Number = 268;
 		private const LOGO_SIZE:Number = 75; //75 x 75
 		private const ICON_PADDING:Number = 8; //padding between social icons
-		private const RIBBON_ARROW_WIDTH:Number = 10; //width of the arrow at the end of the ribbon
+		private const RIBBON_PADDING:Number = 10; //padding at the end of the ribbon
 		private const LOGOUT_TEXT_COLOR:uint = 0x333333;
 		private const USERNAME_COLOR:uint = 0x0080FF;
 		private const DEFAULT_COLOR:uint = 0xCCCCCC;
@@ -114,7 +114,8 @@ package com.slskin.ignitenetwork.views.desktop
 			this.headLineTLF.text = str;
 			var textWidth:Number = this.headLineTLF.textWidth + ICON_PADDING;
 			this.headLineTLF.width = textWidth;
-			this.ribbon.bar.width = textWidth + (RIBBON_ARROW_WIDTH * 2);
+			this.ribbon.bar.width = textWidth + RIBBON_PADDING;
+			this.ribbon.lines.width = this.ribbon.bar.width;
 		}
 		
 		/*

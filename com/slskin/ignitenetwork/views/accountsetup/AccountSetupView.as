@@ -27,7 +27,6 @@ package com.slskin.ignitenetwork.views.accountsetup
 		
 		/* Memeber Fields */
 		private var requiredInfo:uint; //stores the required info integer loaded from SL.
-		private var win:SLWindow; //stores a reference to this objects containing window.
 		private var passwordSetup:AccountSetupPassword; //responsible for password setup.
 		private var userInfoSetup:AccountSetupInfo; //responsible for user info setup.
 		private var setupProgress:AccountSetupProgress; //responsible for visually displaying the setup progress.
@@ -55,9 +54,6 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function onAdded(evt:Event):void
 		{
-			//set  references
-			this.win = (this.window as SLWindow);
-			
 			//depending on our requiredInfo, create objects accordingly
 			if(this.passwordRequired && this.userInfoRequired)
 			{
@@ -114,7 +110,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.addChild(this.setupProgress);
 			
 			//adjust the height of the window
-			this.win.height = nextItemY + this.PADDING;
+			this.window.height = nextItemY + this.PADDING;
 			
 			//show the view, after we update the y to
 			//reflect the changes in height to this window.

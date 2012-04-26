@@ -1,14 +1,15 @@
 ﻿/*
 CategoryView.as
 Responsible for displaying MainCategory that have
-SubCategories. The SubCategories and respective applications
-are displayed in a ScrollPane.
+SubCategories. The respective applications
+are displayed in a ScrollPane in a TileView.
 */
 package com.slskin.ignitenetwork.views.desktop 
 {
 	import flash.events.Event;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.events.FocusEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
@@ -19,6 +20,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.events.TextEvent;
 	import com.slskin.ignitenetwork.views.*;
 	import com.slskin.ignitenetwork.apps.MainCategory;
+	import com.slskin.ignitenetwork.components.IListItemObject;
 	import com.slskin.ignitenetwork.components.ListItem;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.apps.Category;
@@ -28,23 +30,24 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.components.PanelBackground;
 	import com.slskin.ignitenetwork.components.DottedSeperatorShort;
 	import com.slskin.ignitenetwork.components.GreyArrow;
+	import com.slskin.ignitenetwork.components.DropDownSelector;
+	import com.slskin.ignitenetwork.components.SearchField;
 	import fl.text.TLFTextField;
+	import flash.net.URLRequest;
 	
 	public class CategoryView extends SLView 
 	{
 		/* Constants */
 		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
-		private const TOP_PADDING:Number = -45; //Window top padding, makes room for footer
-		private const LIST_ITEM_WIDTH:Number = 250; //app list item width
-		private const LIST_ITEM_HEIGHT:Number = 25; //app list item height
+		private const TOP_PADDING:Number = -53; //Window top padding, makes room for footer
+		private const ICON_PATH:String = "./assets/dock/";
 		
 		/* Member fields */
 		public var category:MainCategory; //main category that this view displays
 		private var subCategoryIter:ArrayIterator; //keeps track of current sub category while loading all apps
-		private var listViews:Dictionary; //a cache that stores the ListView objects for each sub category
-		private var allListItems:Array; //stores references to all the list items, used for filtering
-		private var dropDownList:ListView; //list view used as the drop down menu for the sub categery selector.
-		private var selectedApp:ListItem; //the currently selected app in the list
+		private var listViews:Dictionary; //a cache that stores the TileView objects for each sub category
+		private var selector:DropDownSelector; //a reference to the drop down selector on stage.
+		private var searchField:SearchField; //a reference to the search field on stage.
 		
 		/* Member Fields */
 		public function CategoryView(category:MainCategory) 
@@ -65,9 +68,18 @@ package com.slskin.ignitenetwork.views.desktop
 			//set the scroll pane style
 			this.setPaneStyle();
 			
+			/** DEBUG **/
 			this.createMockCategory();
-			//create drop down list
-			this.createDropDownList();
+			
+						
+			//set the reference to the search field and drop down selector
+			this.selector = this._selector;
+			this.searchField = this._searchField;
+			this.searchField.hint = "Search " + this.category.localeName;
+			
+			//set drop down list and search data provider
+			this.selector.dropDownList = this.createDropDownList();
+			this.searchField.dataProvider = this.createSearchDP();
 			
 			//update window padding to make room for
 			//other desktop content.
@@ -75,12 +87,17 @@ package com.slskin.ignitenetwork.views.desktop
 			this.yPadding = this.TOP_PADDING;
 			super.setupView();
 			
-			//align title bar to center of window and set the title
+			//set title and load icon
+			this.title.autoSize = "left";
 			this.title.text = this.category.localeName;
+			var iconReq:URLRequest = new URLRequest(this.ICON_PATH + this.category.name.toLowerCase().replace(" ", "_") + ".png");
+			this.titleIcon.load(iconReq);
 				
 			//Load all applications and listen for load complete
 			this.loadAllApplications();
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
+			
+			/** DEBUG **/
 			this.onAllAppsLoaded(null);
 			this.showView();
 			
@@ -108,44 +125,19 @@ package com.slskin.ignitenetwork.views.desktop
 		private function loadAllApplications():void
 		{
 			//Display the loading view.
-			LoadingView.getInstance().loadingText = "Loading " + category.name + "...";
+			LoadingView.getInstance().loadingText = "Loading " + category.localeName + "...";
 			LoadingView.getInstance().showLoader();
+			
 			//instatitate collections used to store applications in this Category
 			this.subCategoryIter = new ArrayIterator(this.category.subCategories);
 			this.listViews = new Dictionary();
 			
 			//disable the selector while loading apps
-			this.disableSelector();
+			this.selector.enabled = false;
 			
 			//listen for SLEvent.UPDATE_APP_LIST event
 			main.model.addEventListener(SLEvent.UPDATE_APP_LIST, this.onAppListUpdate);
 			this.updateNextCategory();
-		}
-		
-		/*
-		updateNextCategory
-		Makes an ExternalInterface call to GetApplicationList for
-		the next category pointed to by the subCategoryIter.
-		*/
-		private function updateNextCategory():void
-		{
-			if(this.subCategoryIter.hasNext())
-			{
-				//get next category
-				var category:SubCategory = this.subCategoryIter.next();
-				
-				//tell SL client to send us an updated app list for the
-				//next category
-				if(ExternalInterface.available)
-					ExternalInterface.call("GetApplicationList", category.id);
-				
-				main.debugger.write("Getting Application List for " + category.name);
-			}
-			else //we are done loading all the apps for each sub category
-			{
-				main.model.removeEventListener(SLEvent.UPDATE_APP_LIST, this.onAppListUpdate);
-				this.dispatchEvent(new Event(Event.COMPLETE));
-			}
 		}
 		
 		/*
@@ -169,50 +161,72 @@ package com.slskin.ignitenetwork.views.desktop
 		}
 		
 		/*
-		onAllAppsLoaded
-		Event handler for all sub category applications load complete.
+		updateNextCategory
+		Makes an ExternalInterface call to GetApplicationList for
+		the next category pointed to by the subCategoryIter.
 		*/
-		private function onAllAppsLoaded(evt:Event):void 
+		private function updateNextCategory():void
 		{
-			this.enableSelector();
-			this.enableSearch();
-			this.createAllListViews();
-			this.displayAllApps();
-			LoadingView.getInstance().hideLoader();
-		}
-		
-		/*
-		createAllListViews
-		Creates all the list views for each sub category and stores them in
-		the listViews dictionary. This includes a ListView for the 'All' category.
-		*/
-		private function createAllListViews():void
-		{
-			for(var i:uint = 0; i < category.subCategories.length; i++)
+			if(this.subCategoryIter.hasNext())
 			{
-				var list:ListView = createListItems(category.subCategories[i]);
-				this.listViews[category.subCategories[i].name] = list;
+				//get next category
+				var category:SubCategory = this.subCategoryIter.next();
+				
+				//Trigger SL client to send us an updated app list for the next category
+				if(ExternalInterface.available)
+					ExternalInterface.call("GetApplicationList", category.id);
+				
+				main.debugger.write("Getting Application List for " + category.name);
+			}
+			else //we are done loading all the apps for each sub category
+			{
+				main.model.removeEventListener(SLEvent.UPDATE_APP_LIST, this.onAppListUpdate);
+				this.dispatchEvent(new Event(Event.COMPLETE));
 			}
 		}
 		
 		/*
-		createListItems
-		Creates a ListView of ListItems for the specific category passed in based
-		on the applications in that category. The new ListView is returned.
+		onAllAppsLoaded
+		Event handler for load complete on all applications in each sub category.
 		*/
-		private function createListItems(subCategory:SubCategory):ListView
+		private function onAllAppsLoaded(evt:Event):void 
+		{
+			this.selector.enabled = true;
+			LoadingView.getInstance().hideLoader();
+		}
+		
+		/*
+		createTileViews
+		Creates all the list views for each sub category and stores them in
+		the listViews dictionary. This includes a ListView for the 'All' category.
+		*/
+		/*private function createTileViews():void
+		{
+			for(var i:uint = 0; i < category.subCategories.length; i++)
+			{
+				var list:ListView = createTileItems(category.subCategories[i]);
+				this.listViews[category.subCategories[i].name] = list;
+			}
+		}*/
+		
+		/*
+		createTileItems
+		Creates a TileView of BoxShots for the specific category passed in based
+		on the applications in that category. The new TileView is returned.
+		*/
+		/*private function createTileItems(subCategory:SubCategory):ListView
 		{
 			var listItems:Array = new Array();
 			var apps:Array = subCategory.applications;
 			for(var i:uint = 0; i < apps.length; i++)
 			{
 				var item:ListItem = new ListItem(apps[i], LIST_ITEM_WIDTH, LIST_ITEM_HEIGHT);
-				item.addEventListener(SLEvent.LIST_ITEM_CLICK, onAppListItemClick);
+				//item.addEventListener(SLEvent.LIST_ITEM_CLICK, onAppListItemClick);
 				listItems.push(item);
 			}
 				
 			return new ListView(listItems, 0, 0);
-		}
+		}*/
 		
 		/*
 		displaySubCategory
@@ -222,7 +236,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private function displaySubCategory(subCategory:SubCategory):void 
 		{
 			//check if we need to create the list view for this sub category
-			if(this.listViews[subCategory.name] == null)
+			/*if(this.listViews[subCategory.name] == null)
 				this.listViews[subCategory.name] = this.createListItems(subCategory);
 			
 			var list:ListView = this.listViews[subCategory.name];
@@ -234,8 +248,8 @@ package com.slskin.ignitenetwork.views.desktop
 				list.clearFilter();
 			
 			this.appPane.source = list;
-			this.loadAppDetails(list.getItemAt(0));
-			this.setSelectorTitle(subCategory.localeName);
+			this.selector.label = subCategory.localeName;
+			*/
 		}
 		
 				
@@ -246,9 +260,6 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function displayAllApps(evt:Event = null):void
 		{
-			//clear searchfield
-			this.searchField.searchTLF.text = "";
-			
 			var container:Sprite = new Sprite();
 			var yPos:Number = 0;
 			var list:ListView;
@@ -259,8 +270,8 @@ package com.slskin.ignitenetwork.views.desktop
 				{
 									
 					//reset filter if it exists
-					if(list.filtered) 
-						list.clearFilter();
+					//if(list.filtered) 
+						//list.clearFilter();
 					
 					//reset list position
 					list.y = yPos;
@@ -270,71 +281,15 @@ package com.slskin.ignitenetwork.views.desktop
 			}
 			
 			this.appPane.source = container;
-			this.setSelectorTitle("All " + this.category.localeName);
-		}
-		
-		/*
-		displayFilter
-		Sets the source of the ScrollPane to ListItems that match the
-		passed in filter. ListItems are compared to the filter based on
-		the itemLabel.
-		*/
-		private function displayFilter(filterStr:String):void
-		{
-			var container:Sprite = new Sprite();
-			var yPos:Number = 0;
-			var list:ListView;
-			for(var i:uint = 0; i < category.subCategories.length; i++)
-			{
-				list = this.listViews[category.subCategories[i].name];
-				if(list != null) 
-				{
-					list.y = yPos;
-					list.filterList(filterStr);
-					yPos += list.listHeight;
-					container.addChild(list);
-				}
-			}
-			
-			this.appPane.source = container;
-			this.loadAppDetails(list.getItemAt(0));
-			this.setSelectorTitle("...");
-		}
-		
-		/*
-		onAppListItemClick
-		Event handler for the application list item click.
-		*/
-		private function onAppListItemClick(evt:Event):void {
-			this.loadAppDetails(evt.target as ListItem);
-		}
-		
-		/*
-		loadAppDetails
-		Given a list item that represents an application, load
-		the application details in the appDetailsView and select the
-		list item object.
-		*/
-		private function loadAppDetails(appListItem:ListItem):void
-		{
-			if(appListItem == null) return;
-			
-			//unselect the old selected app
-			if(this.selectedApp != null)
-				this.selectedApp.selected = false;
-			
-			//set the new selected app
-			this.selectedApp = appListItem;
-			this.selectedApp.selected = true;
-			this.appDetailsView.loadApp((this.selectedApp.targetObj as Application));
+			this.selector.label = "All " + this.category.localeName;
 		}
 		
 		/*
 		createDropDownList
-		creates the drop down view shown when the sub category selector is
+		Creates the SubCategory drop down list shown when the sub category selector is
 		clicked.
 		*/
-		private function createDropDownList():void
+		private function createDropDownList():ListView
 		{
 			//create the ListView based on the sub categories
 			var listItems:Array = new Array();
@@ -359,130 +314,39 @@ package com.slskin.ignitenetwork.views.desktop
 				listItems.push(listItem);
 			}
 			
-			this.dropDownList = new ListView(listItems, 0, 0, new PanelBackground());
+			return new ListView(listItems, 0, 0, new PanelBackground());
+		}
+		
+		/*
+		createSearchDP
+		Create the dataProvider used to populate the drop down in the search field.
+		The data provider takes a Vector.<IListItemObject>.
+		*/
+		private function createSearchDP():Vector.<IListItemObject> 
+		{
+			var dp:Vector.<IListItemObject> = new Vector.<IListItemObject>();
+			var apps:Array;
+			var subCategory:SubCategory;
 			
-			//add drop down to the selector
-			this.dropDownList.x = this.selector.title.x;
-			this.dropDownList.y = this.selector.height;
-			this.selector.addChild(this.dropDownList);
-		}
-		
-		
-		/*
-		enableSearch
-		Enables the search field and adds the proper event listeners
-		*/
-		private function enableSearch():void 
-		{
-			this.searchField.searchTLF.addEventListener(Event.CHANGE, onSearchInput);
-			this.searchField.clearButton.visible = false;
-			this.searchField.clearButton.addEventListener(MouseEvent.CLICK, function(event) { 
-														  displayAllApps(); 
-														  event.target.visible = false;
-														  });
-		}
-		
-		/*
-		onSearchInput
-		Event handler for search field change. Displays the filter with
-		the searchField input.
-		*/
-		private function onSearchInput(evt:Event):void 
-		{
-			var searchInput:String = this.searchField.searchTLF.text;
-			this.displayFilter(searchInput);
+			for(var i:uint = 0; i < category.subCategories.length; i++)
+			{
+				subCategory = category.subCategories[i];
+				apps = subCategory.applications;
+				for(var j:uint = 0; j < apps.length; j++)
+					dp.push(apps[j]);
+			}
 			
-			//show clear button in there is text in the field
-			this.searchField.clearButton.visible = (searchInput.length > 0);
+			return dp;
 		}
-		
-		/*
-		enableSelector
-		Enables the sub category selector and the mouse event listeners.
-		*/
-		private function enableSelector():void
-		{
-			this.selector.alpha = 1;
-			this.selector.buttonMode = true;
-			this.selector.useHandCursor = true;
-			this.selector.addEventListener(MouseEvent.CLICK, onSelectorClick);
-			stage.addEventListener(MouseEvent.CLICK, onMasterClick);
-		}
-		
-		/*
-		disableSelector
-		Disables the sub category selector and the mouse event listeners.
-		*/
-		private function disableSelector():void
-		{
-			this.selector.alpha = .5;
-			this.selector.buttonMode = false;
-			this.selector.useHandCursor = false;
-			this.dropDownList.visible = false;
-			this.selector.removeEventListener(MouseEvent.CLICK, onSelectorClick);
-			stage.removeEventListener(MouseEvent.CLICK, onMasterClick);
-		}
-		
-		/*
-		setSelectorTitle
-		Sets the title for the sub category selector.
-		*/
-		public function setSelectorTitle(str:String):void
-		{
-			//this.selector.title.autoSize = TextFieldAutoSize.LEFT; 
-			this.selector.title.text = str;
-		}
-		
-		/*
-		onSelectorClick
-		Show or hide the sub category list view depending on its current state.
-		*/
-		private function onSelectorClick(evt:MouseEvent):void {
-			toggleDropDown();
-			evt.stopPropagation(); //don't let the event propegate up to parent displayObjects.
-		}
-		
-		/*
-		onMasterClick
-		Hides the sub categeroy drop down list. This allows for users to click anywhere
-		and hide the drop down list if the dropdown is visible. (Expected behavior
-		from a drop down list.)
-		*/
-		private function onMasterClick(evt:MouseEvent):void 
-		{
-			if(this.dropDownList.visible)
-				toggleDropDown();
-		}
-		
-		/*
-		toggleDropDown
-		Toggles the sub category selector drop down menu.
-		*/
-		private function toggleDropDown():void
-		{
-			if(this.dropDownList.visible)
-				this.selector.background.gotoAndStop("Up");
-			else
-				this.selector.background.gotoAndStop("Down");
-			
-			this.dropDownList.visible = !(this.dropDownList.visible);
-		}
-		
 		
 		/*
 		onSubCategoryClick
 		Event listener for sub category selector listItem click. 
 		*/
-		private function onSubCategoryClick(evt:SLEvent):void 
-		{
-			//clear searchfield as well
-			this.searchField.searchTLF.text = "";
-			
-			//display the category.
+		private function onSubCategoryClick(evt:SLEvent):void {
 			this.displaySubCategory(evt.argument.targetObj as SubCategory);
 		}
 	
-		
 		/*
 		setPaneStyle
 		Configure the Application ScrollPane with a custom skin.
@@ -513,7 +377,6 @@ package com.slskin.ignitenetwork.views.desktop
 				setStyle("upArrowUpSkin", ArrowSkin_Invisible);
 			} 
 		}
-		
 		
 	} //class
 } //package

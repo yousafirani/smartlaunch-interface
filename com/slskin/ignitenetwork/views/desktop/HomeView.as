@@ -49,7 +49,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private const YOUTUBE_EMBEDDED_URL:String = "http://www.youtube.com/v/{0}?version=3&rel=0&fs=0&modestbranding=1";
 		private const YOUTUBE_IMAGE_URL:String = "http://img.youtube.com/vi/{0}/default.jpg";
 		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
-		private const TOP_PADDING:Number = -50; //Window top padding, makes room for footer
+		private const TOP_PADDING:Number = -53; //Window top padding, makes room for footer
 		private const CONTENT_WIDTH:Number = 700;
 		private const CONTENT_HEIGHT:Number = CONTENT_WIDTH / (16/9);
 		private const THUMBNAIL_WIDTH:Number = 120;

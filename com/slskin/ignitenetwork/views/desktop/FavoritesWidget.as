@@ -77,7 +77,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onFavoriteItemClick(evt:MouseEvent):void 
 		{
-			var app:Application = ((evt.currentTarget as ListItem).targetObj as Application);
+			var app:Application = ((evt.currentTarget as ListItem).listItemObj as Application);
 			this.main.appManager.verifyAppLaunch(app);
 		}
 		
