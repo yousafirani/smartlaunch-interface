@@ -11,6 +11,8 @@ package com.slskin.ignitenetwork.views
 	import com.slskin.ignitenetwork.components.ListItem;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
+	import com.slskin.ignitenetwork.events.SLEvent;
 
 	public class ListView extends MovieClip 
 	{
@@ -19,19 +21,26 @@ package com.slskin.ignitenetwork.views
 		private var itemVerticalPadding:Number; //padding between elements.
 		private var leftPadding:Number; //left padding for each item
 		private var backgroundSprite:DisplayObject; //display object to show as the background of the list
-		private var isFiltered:Boolean; //a boolean indicating if the list is filtered.
 		private var _listItems:Array;
 		private var _listWidth:Number = 0;
-		private var _listHeight:Number = 0; //keeps track of the current list height
+		private var _listHeight:Number = 0;
+		private var selectedIndex:Number = -1;
+		private var selectedItem:ListItem;
 		
-		public function ListView(listItems:Array, verticalPadding:Number = 5, leftPadding:Number = 0, 
-								 bgSprite:DisplayObject = null) 
+		public function ListView(listItems:Array, 
+								 verticalPadding:Number = 5, 
+								 leftPadding:Number = 0,
+								 bgSprite:DisplayObject = null,
+								 navigateWithKeyboard:Boolean = false) 
 		{
 			this.itemVerticalPadding = verticalPadding;
 			this.leftPadding = leftPadding;
 			this.backgroundSprite = bgSprite;
 			this._listItems = listItems;
 			
+			if(navigateWithKeyboard)
+				this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
+				
 			this.layoutList();
 		}
 		
@@ -44,12 +53,17 @@ package com.slskin.ignitenetwork.views
 			return this._listWidth;
 		}
 		
-		public function get filtered():Boolean {
-			return this.isFiltered;
-		}
-		
 		public function getItemAt(index:uint):ListItem {
 			return this._listItems[index];
+		}
+		
+		private function onAdded(evt:Event):void {
+			stage.addEventListener(KeyboardEvent.KEY_UP, this.onKeyUpHandler);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+		}
+		
+		private function onRemoved(evt:Event):void {
+			stage.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyUpHandler);
 		}
 		
 		/*
@@ -84,7 +98,7 @@ package com.slskin.ignitenetwork.views
 				item.x = this.leftPadding;
 				item.y = yPos;
 				yPos += item.itemHeight + this.itemVerticalPadding;
-				this.container.addChildAt(item, 0);
+				this.container.addChildAt(item, 0); 
 			}
 			
 			//hide seperator on last item in list
@@ -93,7 +107,8 @@ package com.slskin.ignitenetwork.views
 						
 			this._listHeight = yPos;
 			this._listWidth += this.leftPadding;
-			this.isFiltered = false
+			this.selectedIndex = -1;
+			this.selectedItem = null;
 			
 			if(backgroundSprite != null)
 			{
@@ -104,83 +119,33 @@ package com.slskin.ignitenetwork.views
 		}
 		
 		/*
-		filterList
-		Filters the list based on the passed in string. Each ListItem
-		is compared based on the itemLabel property.
-		
-		This operation is done in O(n * m) - n is the number of items
-		and m is the average length of the itemLabel strings. The time complexity
-		could be improved with a slightly more complex algorithm for finding
-		substrings in a set of strings (divide and conquer algorithm or an
-		algorithm using a hashmap and sorting). However, I do not expect n to
-		grow large enough for it to be effective.
+		onKeyUpHandler
+		Sequentially select elements in the list.
 		*/
-		public function filterList(filter:String):void
-		{
-			//remove container if it exists
-			if(this.container != null)
-				this.removeChild(this.container);
-				
-			//create container and add it as child
-			this.container = new Sprite();
-			this.addChild(this.container);
+		private function onKeyUpHandler(evt:KeyboardEvent):void {
+			if(this._listItems == null) return;
 			
-			var numItems:uint = this._listItems.length;
-			var item:ListItem;
-			var yPos:Number = 0;
-			for(var i:uint = 0; i < numItems; i++)
+			if(evt.keyCode == 40) //arrow down
+				this.selectedIndex = (this.selectedIndex+1) % this._listItems.length;
+			else if(evt.keyCode == 38)
 			{
-				item = this._listItems[i];
-				
-				//make sure we have ListItem types in the array
-				if(!(item is ListItem)) 
-					continue;
-				
-				//keep track of list width
-				if(item.itemWidth > this._listWidth)
-					this._listWidth = item.itemWidth;
-				
-				//go back to default format
-				item.clearFormat();
-				
-				//make sure we match the filter
-				var sourceLabel:String = item.listItemObj.itemLabel.toLocaleLowerCase();
-				var startIndex:int = sourceLabel.search(filter.toLocaleLowerCase());
-				if(startIndex == -1) 
-					continue;
-				
-				item.highlight(startIndex, startIndex + filter.length);
-				item.x = this.leftPadding;
-				item.y = yPos;
-				yPos += item.itemHeight + this.itemVerticalPadding;
-				this.container.addChildAt(item, 0);
+				this.selectedIndex = (this.selectedIndex-1) % this._listItems.length;
+				if(this.selectedIndex < 0)
+					this.selectedIndex = this._listItems.length + this.selectedIndex;
 			}
+			else if(evt.keyCode == 13 && this.selectedItem != null) //enter
+				this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, this.selectedItem));
 			
-			//hide seperator on last item in list
-			if(item != null)
-				item.seperatorVisible = false;
 			
-			this._listHeight = yPos;
-			this._listWidth += this.leftPadding;
-			this.isFiltered = true;
-			
-			if(backgroundSprite != null)
+			if(evt.keyCode == 38 || evt.keyCode == 40)
 			{
-				backgroundSprite.width = this._listWidth;
-				backgroundSprite.height = yPos;
-				this.container.addChildAt(backgroundSprite, 0);
+				if(this.selectedItem != null)
+					this.selectedItem.selected = false;
+					
+				this.selectedItem = this._listItems[this.selectedIndex];
+				selectedItem.selected = true;
 			}
 		}
-		
-		/*
-		clearFilter
-		Clears the filter by laying out the list with no
-		filter.
-		*/
-		/*public function clearFilter():void
-		{
-			this.layoutList();
-		}*/
 		
 
 	} //class

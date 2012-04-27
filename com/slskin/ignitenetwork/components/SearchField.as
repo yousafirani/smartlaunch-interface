@@ -5,10 +5,14 @@
 	import flash.events.MouseEvent;
 	import flash.events.FocusEvent;
 	import flash.text.TextField;
+	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.components.PanelBackground;
 	import com.slskin.ignitenetwork.components.DottedSeperatorSearch;
 	import com.slskin.ignitenetwork.views.ListView;
 	import com.slskin.ignitenetwork.components.ListItem;
+	import com.slskin.ignitenetwork.Main;
+	import com.slskin.ignitenetwork.apps.Application;
+	import flash.events.KeyboardEvent;
 	
 	public class SearchField extends MovieClip 
 	{
@@ -61,8 +65,15 @@
 		private function createListItems(dp:Vector.<IListItemObject>):void
 		{
 			this.listItems = new Array();
+			var item:ListItem;
 			for(var i:uint = 0; i < dp.length; i++)
-				listItems.push(new ListItem(dp[i], this.width, LIST_ITEM_HEIGHT, 0x333333, "12", 0xFFFFFFF, new DottedSeperatorSearch()));
+			{
+				item = new ListItem(dp[i], this.width, LIST_ITEM_HEIGHT, 0x333333, 
+									"12", 0xCCCCCC, new DottedSeperatorSearch());
+				item.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onAppClick);
+				listItems.push(item);
+			}
+				
 				
 		}
 		
@@ -74,7 +85,9 @@
 		private function displayQuickResults(listItems:Array):void
 		{
 			this.removeQuickResults();
-			this.quickResults = new ListView(listItems, 0, 0, new PanelBackground());
+			this.quickResults = new ListView(listItems, 0, 0, new PanelBackground(), true);
+			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onAppClick);
+			stage.addEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp);   
 			this.quickResults.y = this.height;
 			this.addChild(this.quickResults);
 		}
@@ -83,6 +96,8 @@
 		private function removeQuickResults():void {
 			if(this.quickResults != null && this.contains(quickResults))
 				this.removeChild(this.quickResults);
+				
+			stage.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp); 
 		}
 		
 				
@@ -95,10 +110,24 @@
 				this.removeQuickResults();
 		}
 		
+		/*
+		Filters the list based on the passed in string. Each ListItem
+		is compared based on the itemLabel property.
+		
+		This operation is done in O(n * m) - n is the number of items
+		and m is the average length of the itemLabel strings. The time complexity
+		could be improved with a slightly more complex algorithm for finding
+		substrings in a set of strings (divide and conquer algorithm or an
+		algorithm using a log-collection). However, I do not expect n to
+		grow large enough for it to be effective.
+		*/
 		private function filterFunc(item:ListItem, index:int, array:Array):Boolean
 		{
+			//reset item format and selection
 			item.clearFormat();
 			item.seperatorVisible = true;
+			item.selected = false;
+			
 			var sourceLabel:String = item.listItemObj.itemLabel.toLocaleLowerCase();
 			var input:String = field.text.toLocaleLowerCase();
 			
@@ -131,6 +160,20 @@
 			 field.text = '';
 			 evt.target.visible = false;
 			 this.removeQuickResults();
+		}
+		
+		private function onAppClick(evt:SLEvent):void {
+			(root as Main).appManager.verifyAppLaunch(evt.argument.listItemObj as Application);
+		}
+		
+		private function onKeyboardUp(evt:KeyboardEvent):void 
+		{
+			if(evt.keyCode == 27) //escape
+			{
+				field.text = '';
+				this.clearButton.visible = false;
+				this.removeQuickResults();
+			}
 		}
 		
 	}//class

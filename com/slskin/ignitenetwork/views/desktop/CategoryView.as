@@ -67,19 +67,11 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//set the scroll pane style
 			this.setPaneStyle();
-			
-			/** DEBUG **/
-			this.createMockCategory();
-			
-						
+
 			//set the reference to the search field and drop down selector
 			this.selector = this._selector;
 			this.searchField = this._searchField;
 			this.searchField.hint = "Search " + this.category.localeName;
-			
-			//set drop down list and search data provider
-			this.selector.dropDownList = this.createDropDownList();
-			this.searchField.dataProvider = this.createSearchDP();
 			
 			//update window padding to make room for
 			//other desktop content.
@@ -98,19 +90,12 @@ package com.slskin.ignitenetwork.views.desktop
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
 			
 			/** DEBUG **/
+			this.createMockCategory();
 			this.onAllAppsLoaded(null);
 			this.showView();
 			
 			//display this view when the initial load is complete
 			this.addEventListener(Event.COMPLETE, showView);
-		}
-		
-		private function createMockCategory():void
-		{
-			var apps:Array = main.appManager.parseAppString("Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Starcraft II|4");
-			var subCat:SubCategory = new SubCategory("-1", "Test", "Test Category", "4");
-			subCat.applications = apps;
-			this.category.addSubCategory(subCat);
 		}
 		
 		/*
@@ -193,6 +178,50 @@ package com.slskin.ignitenetwork.views.desktop
 		{
 			this.selector.enabled = true;
 			LoadingView.getInstance().hideLoader();
+			
+			//set drop down list and search data provider
+			this.selector.dataProvider = this.createDropDownDP();
+			this.searchField.dataProvider = this.createSearchDP();
+			
+			//listen for drop down item click
+			this.selector.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSubCategoryClick);
+		}
+		
+				/*
+		createDropDownDP
+		Creates the SubCategory drop down list shown when the sub category selector is
+		clicked.
+		*/
+		private function createDropDownDP():Vector.<IListItemObject>
+		{
+			var dp:Vector.<IListItemObject> = new Vector.<IListItemObject>();
+			dp.push(new SubCategory("-1", "allCategory", "All " + category.localeName, "-1"));
+			for(var i:uint = 0; i < category.subCategories.length; i++)
+				dp.push(category.subCategories[i]);
+			
+			return dp;
+		}
+		
+		/*
+		createSearchDP
+		Create the dataProvider used to populate the drop down in the search field.
+		The data provider takes a Vector.<IListItemObject>.
+		*/
+		private function createSearchDP():Vector.<IListItemObject> 
+		{
+			var dp:Vector.<IListItemObject> = new Vector.<IListItemObject>();
+			var apps:Array;
+			var subCategory:SubCategory;
+			
+			for(var i:uint = 0; i < category.subCategories.length; i++)
+			{
+				subCategory = category.subCategories[i];
+				apps = subCategory.applications;
+				for(var j:uint = 0; j < apps.length; j++)
+					dp.push(apps[j]);
+			}
+			
+			return dp;
 		}
 		
 		/*
@@ -268,10 +297,6 @@ package com.slskin.ignitenetwork.views.desktop
 				list = this.listViews[category.subCategories[i].name];
 				if(list != null)
 				{
-									
-					//reset filter if it exists
-					//if(list.filtered) 
-						//list.clearFilter();
 					
 					//reset list position
 					list.y = yPos;
@@ -284,67 +309,14 @@ package com.slskin.ignitenetwork.views.desktop
 			this.selector.label = "All " + this.category.localeName;
 		}
 		
-		/*
-		createDropDownList
-		Creates the SubCategory drop down list shown when the sub category selector is
-		clicked.
-		*/
-		private function createDropDownList():ListView
-		{
-			//create the ListView based on the sub categories
-			var listItems:Array = new Array();
-			var listItem:ListItem;
-			
-			//create the all category and add it to the list
-			var allCategory:SubCategory = new SubCategory("-1", "allCategory", "All " + category.localeName, "-1");
-			var allListItem:ListItem = new ListItem(allCategory, 150, 25, 0x333333, "11", 
-										0xe1e1e1, new DottedSeperatorShort(), new GreyArrow());
-			//listen for click
-			allListItem.addEventListener(SLEvent.LIST_ITEM_CLICK, displayAllApps);
-			listItems.push(allListItem);
-			
-			//add the rest of the sub categories
-			for(var i:uint = 0; i < category.subCategories.length; i++)
-			{
-				listItem = new ListItem(category.subCategories[i], 150, 25, 0x333333, "11", 
-										0xe1e1e1, new DottedSeperatorShort(), new GreyArrow());
-				
-				//listen for listItem click
-				listItem.addEventListener(SLEvent.LIST_ITEM_CLICK, onSubCategoryClick);
-				listItems.push(listItem);
-			}
-			
-			return new ListView(listItems, 0, 0, new PanelBackground());
-		}
-		
-		/*
-		createSearchDP
-		Create the dataProvider used to populate the drop down in the search field.
-		The data provider takes a Vector.<IListItemObject>.
-		*/
-		private function createSearchDP():Vector.<IListItemObject> 
-		{
-			var dp:Vector.<IListItemObject> = new Vector.<IListItemObject>();
-			var apps:Array;
-			var subCategory:SubCategory;
-			
-			for(var i:uint = 0; i < category.subCategories.length; i++)
-			{
-				subCategory = category.subCategories[i];
-				apps = subCategory.applications;
-				for(var j:uint = 0; j < apps.length; j++)
-					dp.push(apps[j]);
-			}
-			
-			return dp;
-		}
 		
 		/*
 		onSubCategoryClick
-		Event listener for sub category selector listItem click. 
+		Event listener for sub category drop down ListItem click. 
 		*/
 		private function onSubCategoryClick(evt:SLEvent):void {
-			this.displaySubCategory(evt.argument.targetObj as SubCategory);
+			trace(evt.argument.listItemObj.itemLabel);
+			//this.displaySubCategory(evt.argument.targetObj as SubCategory);
 		}
 	
 		/*
@@ -376,6 +348,15 @@ package com.slskin.ignitenetwork.views.desktop
 				setStyle("downArrowUpSkin", ArrowSkin_Invisible); 
 				setStyle("upArrowUpSkin", ArrowSkin_Invisible);
 			} 
+		}
+		
+				
+		private function createMockCategory():void
+		{
+			var apps:Array = main.appManager.parseAppString("Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Starcraft II|4");
+			var subCat:SubCategory = new SubCategory("-1", "Test", "Test Category", "4");
+			subCat.applications = apps;
+			this.category.addSubCategory(subCat);
 		}
 		
 	} //class

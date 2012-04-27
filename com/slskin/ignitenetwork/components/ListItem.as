@@ -99,7 +99,6 @@ package com.slskin.ignitenetwork.components
 			{
 				this.removeEventListener(MouseEvent.ROLL_OVER, onMouseRollOver);
 				this.removeEventListener(MouseEvent.ROLL_OUT, onMouseRollOut);
-				this.removeEventListener(MouseEvent.CLICK, onMouseClick);
 				this.rollOverSprite.alpha = .75;
 				this.rollOverIcon.visible = true;
 			}
@@ -299,7 +298,6 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function onMouseClick(evt:MouseEvent):void {
 			this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, this));
-			//trace("ListItem Clicked " + this._itemObj.itemLabel);
 		}
 		
 	} //class

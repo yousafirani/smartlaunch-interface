@@ -13,6 +13,7 @@ package com.slskin.ignitenetwork.views
 	import flash.display.MovieClip;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.display.Sprite;
 	import fl.text.TLFTextField;

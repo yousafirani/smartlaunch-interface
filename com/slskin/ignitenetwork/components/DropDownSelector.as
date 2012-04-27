@@ -5,11 +5,20 @@
 	import flash.events.MouseEvent;
 	import flash.display.InteractiveObject;
 	import com.slskin.ignitenetwork.views.ListView;
+	import com.slskin.ignitenetwork.events.SLEvent;
 	
 	public class DropDownSelector extends MovieClip 
 	{
+		/* Constants */
+		private const DROP_DOWN_WIDTH:Number = 150;
+		private const LIST_ITEM_HEIGHT:Number = 25;
+		private const ITEM_ROLLOVER_COLOR:uint = 0x333333;
+		private const ITEM_LABEL_SIZE:String = "11";
+		private const ITEM_LABEL_COLOR:uint = 0xe1e1e1;
+		
 		/* Member Fields */
 		private var _dropDownList:ListView;
+		private var dp:Vector.<IListItemObject>; //a vector of IListItemObject used to populate the drop down list
 		
 		public function DropDownSelector() {
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
@@ -18,46 +27,53 @@
 		private function onAdded(evt:Event):void 
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-			//disable tabbing on tlf
-			InteractiveObject(this.title.getChildAt(1)).tabEnabled = false;
+			InteractiveObject(this.title.getChildAt(1)).tabEnabled = false; //disable tabbing on tlf
+			
+			//add listeners and activate buttonMode
+			this.buttonMode = this.useHandCursor = true;
+			this.addEventListener(MouseEvent.CLICK, onSelectorClick);
+			stage.addEventListener(MouseEvent.CLICK, onMasterClick);
 		}
 		
-		public function set dropDownList(listView:ListView):void 
+		public function set dataProvider(dp:Vector.<IListItemObject>):void 
 		{
-			if(_dropDownList != null && this.contains(_dropDownList))
-				this.removeChild(_dropDownList);
-				
-			_dropDownList = listView;
-			_dropDownList.x = this.title.x;
-			_dropDownList.y = this.height;
-			this.addChild(_dropDownList);
+			this.dp = dp;
+			createDropDown(dp);
 		}
-
+		
 		public function set label(str:String):void {
 			this.title.text = str;
 		}
 		
-		public override function set enabled(enable:Boolean):void
+		/*
+		createDropDown
+		Creates the drop down ListView based on the dataprovider.
+		*/
+		private function createDropDown(dp:Vector.<IListItemObject>):void
 		{
-			if(this.stage == null) return;
+			var listItems:Array = new Array();
+			var listItem:ListItem;
 			
-			super.enabled = enable;
-			this.alpha = (enable ? 1 : .5);
-			this.buttonMode = enable;
-			this.useHandCursor = enable;
-			if(!enable) 
-				this._dropDownList.visible = false;
+			//add the rest of the sub categories
+			for(var i:uint = 0; i < dp.length; i++)
+			{
+				listItem = new ListItem(dp[i], 
+										DROP_DOWN_WIDTH, 
+										LIST_ITEM_HEIGHT, 
+										ITEM_ROLLOVER_COLOR, 
+										ITEM_LABEL_SIZE,
+										ITEM_LABEL_COLOR, new DottedSeperatorShort());
 				
-			if(enable)
-			{
-				this.addEventListener(MouseEvent.CLICK, onSelectorClick);
-				stage.addEventListener(MouseEvent.CLICK, onMasterClick);
+				//listen for listItem click
+				listItem.addEventListener(SLEvent.LIST_ITEM_CLICK, onListItemClick);
+				listItems.push(listItem);
 			}
-			else
-			{
-				this.removeEventListener(MouseEvent.CLICK, onSelectorClick);
-				stage.removeEventListener(MouseEvent.CLICK, onMasterClick);
-			}
+			
+			this._dropDownList = new ListView(listItems, 0, 0, new PanelBackground());
+			this._dropDownList.visible = false;
+			_dropDownList.x = this.title.x;
+			_dropDownList.y = this.height;
+			this.addChild(_dropDownList);
 		}
 		
 		/*
@@ -92,6 +108,14 @@
 		private function onMasterClick(evt:MouseEvent):void {
 			if(this._dropDownList.visible)
 				toggleDropDown();
+		}
+		
+		/*
+		onListItemClick
+		Propegate the event.
+		*/
+		private function onListItemClick(evt:SLEvent):void {
+			this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, evt.argument));
 		}
 		
 	} //class
