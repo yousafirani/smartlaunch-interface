@@ -22,7 +22,7 @@ package com.slskin.ignitenetwork.components
 	import flash.filters.GlowFilter;
 	import flash.display.BlendMode;
  	import com.slskin.ignitenetwork.apps.MainCategory;
- 	import com.slskin.ignitenetwork.views.ListView;
+ 	import com.slskin.ignitenetwork.components.List;
 	import flash.text.Font;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.AntiAliasType;
@@ -274,7 +274,7 @@ package com.slskin.ignitenetwork.components
 		displayDropDown
 		Displays an application list as a drop down menu to the dock icon.
 		*/
-		public function displayDropDown(list:ListView):void
+		public function displayDropDown(list:List):void
 		{
 			if(this.dropDownContainer != null && this.dropDownContainer.stage != null)
 				this.removeChild(this.dropDownContainer);

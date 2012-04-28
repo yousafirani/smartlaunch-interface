@@ -20,6 +20,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.display.BlendMode;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.components.DockIcon;
+	import com.slskin.ignitenetwork.components.List;
 	import com.slskin.ignitenetwork.views.*;
 	import com.slskin.ignitenetwork.apps.MainCategory;
 	import com.slskin.ignitenetwork.apps.Category;
@@ -272,15 +273,12 @@ package com.slskin.ignitenetwork.views.desktop
 			var item:ListItem;
 			for(var i:uint = 0; i < apps.length; i++)
 			{
-				//blue - 0x0080FF
-				item = new ListItem(apps[i], 150, 30, 0x666666, "11", 0xe1e1e1, 
-									new DottedSeperatorShort(), new GreyArrow(), null, 16);
-				
+				item = new ListItem(apps[i], 150, 30, 0x666666, "11", 0xe1e1e1, new DottedSeperatorShort());
 				item.addEventListener(MouseEvent.CLICK, onAppItemClick);
 				listItems.push(item);
 			}
 			
-			this.clickedIcon.displayDropDown(new ListView(listItems, 0, 0));
+			this.clickedIcon.displayDropDown(new List(listItems, 0, 0));
 		}
 		
 		/*
@@ -289,7 +287,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onAppItemClick(evt:MouseEvent):void
 		{
-			var app:Application = ((evt.currentTarget as ListItem).listItemObj as Application);
+			var app:Application = ((evt.currentTarget as ListItem).dataProvider as Application);
 			this.main.appManager.launchApp(app, true);
 		}
 		

@@ -8,22 +8,22 @@
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.components.PanelBackground;
 	import com.slskin.ignitenetwork.components.DottedSeperatorSearch;
-	import com.slskin.ignitenetwork.views.ListView;
+	import com.slskin.ignitenetwork.components.List;
 	import com.slskin.ignitenetwork.components.ListItem;
-	import com.slskin.ignitenetwork.Main;
 	import com.slskin.ignitenetwork.apps.Application;
 	import flash.events.KeyboardEvent;
 	
 	public class SearchField extends MovieClip 
 	{
 		/* Constants */
-		private const LIST_ITEM_HEIGHT:Number = 25; //search list item height
+		private const LIST_ITEM_HEIGHT:Number = 32; //search list item height
+		private const QUICK_RESULT_PADDING:Number = 3; //padding between field and quick results.
 		
 		/* Member Fields */
 		private var _hint:String; //default label to display in field
-		private var dp:Vector.<IListItemObject>; //a vector of IListItemObject used to populate listItems
+		private var dp:Vector.<IListItem>; //a vector of IListItemObject used to populate listItems
 		private var listItems:Array; //array of list items used to populate the quick results
-		private var quickResults:ListView; //the quickResults ListView
+		private var quickResults:List; //the quickResults List
 		private var field:TextField; //reference to the text field in the component.
 		
 		public function SearchField() {
@@ -51,7 +51,7 @@
 			this._hint = txt;
 		}
 		
-		public function set dataProvider(dp:Vector.<IListItemObject>): void 
+		public function set dataProvider(dp:Vector.<IListItem>): void 
 		{
 			this.dp = dp;
 			createListItems(dp);
@@ -59,18 +59,18 @@
 		
 		/*
 		createListItems
-		Creates ListItem objects for every IListItemObject in the dataprovider. The
-		ListItem is a generic display object that can display an IListItemObject.
+		Creates ListItem objects for every IListItem in the dataprovider. The
+		ListItem is a generic display object that can display an IListItem.
 		*/
-		private function createListItems(dp:Vector.<IListItemObject>):void
+		private function createListItems(dp:Vector.<IListItem>):void
 		{
 			this.listItems = new Array();
 			var item:ListItem;
 			for(var i:uint = 0; i < dp.length; i++)
 			{
 				item = new ListItem(dp[i], this.width, LIST_ITEM_HEIGHT, 0x333333, 
-									"12", 0xCCCCCC, new DottedSeperatorSearch());
-				item.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onAppClick);
+									"11", 0xCCCCCC, new DottedSeperatorSearch());
+				item.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);
 				listItems.push(item);
 			}
 				
@@ -85,10 +85,10 @@
 		private function displayQuickResults(listItems:Array):void
 		{
 			this.removeQuickResults();
-			this.quickResults = new ListView(listItems, 0, 0, new PanelBackground(), true);
-			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onAppClick);
+			this.quickResults = new List(listItems, 0, 0, new PanelBackground(), true);
+			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);
 			stage.addEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp);   
-			this.quickResults.y = this.height;
+			this.quickResults.y = this.height + QUICK_RESULT_PADDING;
 			this.addChild(this.quickResults);
 		}
 		
@@ -128,7 +128,7 @@
 			item.seperatorVisible = true;
 			item.selected = false;
 			
-			var sourceLabel:String = item.listItemObj.itemLabel.toLocaleLowerCase();
+			var sourceLabel:String = item.dataProvider.itemLabel.toLocaleLowerCase();
 			var input:String = field.text.toLocaleLowerCase();
 			
 			var startIndex:int = sourceLabel.search(input);
@@ -158,22 +158,22 @@
 		private function onClearClick(evt:MouseEvent):void
 		{
 			 field.text = '';
-			 evt.target.visible = false;
+			 this.clearButton.visible = false;
 			 this.removeQuickResults();
-		}
-		
-		private function onAppClick(evt:SLEvent):void {
-			(root as Main).appManager.verifyAppLaunch(evt.argument.listItemObj as Application);
 		}
 		
 		private function onKeyboardUp(evt:KeyboardEvent):void 
 		{
 			if(evt.keyCode == 27) //escape
-			{
-				field.text = '';
-				this.clearButton.visible = false;
-				this.removeQuickResults();
-			}
+				this.onClearClick(null);
+		}
+		
+		/*
+		onListItemClick
+		Propegate event.
+		*/
+		private function onListItemClick(evt:SLEvent):void {
+			this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, evt.argument));
 		}
 		
 	}//class

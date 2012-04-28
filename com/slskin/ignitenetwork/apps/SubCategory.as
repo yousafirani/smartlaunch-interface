@@ -3,16 +3,18 @@ SubCategory.as
 */
 package com.slskin.ignitenetwork.apps  
 {
-	import com.slskin.ignitenetwork.components.IListItemObject;
-	import fl.containers.UILoader;
+	import com.slskin.ignitenetwork.components.IListItem;
 	
-	public class SubCategory extends Category implements IListItemObject
+	public class SubCategory extends Category implements IListItem
 	{
 		public function SubCategory(id:String, name:String, localeName:String, numApps:String) {
 			super(id, name, localeName, numApps);
 		}
 		
-		/* Getters */
+		public function get itemID():String {
+			return this.id;
+		}
+		
 		public function get itemLabel():String {
 			return this._localeName;
 		}
@@ -21,9 +23,10 @@ package com.slskin.ignitenetwork.apps
 			return null;
 		}
 		
-		/*
-		toString
-		*/
+		public function get imagePath():String {
+			return null;
+		}
+		
 		public override function toString():String {
 			return super.toString() + " => " + "Sub Category []";
 		}

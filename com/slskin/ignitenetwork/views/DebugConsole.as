@@ -54,7 +54,7 @@ package com.slskin.ignitenetwork.views
 			main.model.addProperty(main.model.TEXT_PATH + "Headline2", "2/09/2012 - PC 48");
 			main.model.addProperty(main.model.TEXT_PATH + "Logout_UpperCase", "LOGOUT");
 			main.model.dispatcher(SLEvent.UPDATE_CATEGORY_LIST, "Games;1;0;Games|Most Played FPS;23;15;Most Played FPS|Strategy;32;14;Strategy|mmorpgs;22;3;mmorpgs|FPS;35;8;FPS|Classics;16;17;Classics|^Programs;17;0;Programs|Chat;33;6;Chat|Office;20;1;Office|Pictures;36;3;Pictures|Media;34;1;Media|Other;21;4;Other|^Internet;3;1;Internet|^Options;-2;4;Options|");
-			main.model.dispatcher(SLEvent.UPDATE_FAVORITES, "Counter-Strike|101^World Of Warcraft|300^League of Legends|202^Warcraft III|98");
+			main.model.dispatcher(SLEvent.UPDATE_FAVORITES, "Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Warcraft III: Frozen Throne|6^Modern Warfare 3|7");
 			main.model.addProperty(main.model.DATA_PATH + "Sex", "1");
 			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Status", '<FONT COLOR="#FFFFFF"><B>Players:</B></FONT><BR><FONT COLOR="#B5B5A4">7 users are currently playing this game.</FONT><BR><BR><FONT COLOR="#FFFFFF"><B>Game type:</B></FONT><BR><FONT COLOR="#B5B5A4">Singleplayer, Multiplayer</FONT>');
 			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Headline", "Starcraft II");

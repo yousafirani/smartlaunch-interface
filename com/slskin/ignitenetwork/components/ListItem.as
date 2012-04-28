@@ -19,12 +19,10 @@ package com.slskin.ignitenetwork.components
 	import flash.net.URLRequest;
 	import flash.events.IOErrorEvent;
 	import com.slskin.ignitenetwork.events.SLEvent;
-	import com.slskin.ignitenetwork.components.IListItemObject;
-	import com.slskin.ignitenetwork.components.BlueArrow;
+	import com.slskin.ignitenetwork.components.IListItem;
 	import com.slskin.ignitenetwork.components.DottedSeperator;
 	import com.slskin.ignitenetwork.fonts.*;
 	import flash.text.Font;
-	import flash.text.TextFieldAutoSize;
 	import flash.text.AntiAliasType;
 	import flashx.textLayout.formats.VerticalAlign;
 	import fl.transitions.Tween;
@@ -34,28 +32,29 @@ package com.slskin.ignitenetwork.components
 	{
 		/* Constants */
 		private var HPADDING:Number = 3; //horizontal padding betweem elements in ListItem
+		private var ROLLOVER_ALPHA:Number = .5; //alpha to apply to roll over sprite onRollOver
+		private var SELECTED_ALPHA:Number = .75; //alpha to apply to roll over sprite when selected
 		
 		/* Member fields */
 		private var labelTLF:TLFTextField; //the label text field
 		private var rollOverSprite:Sprite; //sprite that displays on roll over
-		private var rollOverIcon:DisplayObject; //icon to display when rolling over list item.
 		private var seperator:DisplayObject; //seperator that displays at the bottom of the list item
 		private var defaultFormat:TextFormat; //default format for TLF
 		private var defaultHighlight:TextFormat; //default format used to highlight the label
 		private var defaultFont:Font; //default font for label
 		private var _itemWidth:Number; //desired width of the list item
 		private var _itemHeight:Number; //desired height of the list item
-		private var _itemObj:IListItemObject; //The ListItemObject that this ListItem represents
+		private var _dp:IListItem; //the dataprovider that this ListItem represents
 		private var _icon:UILoader; //stores the icon for 
 		private var _iconSize:Number; //height and width of list item icon
+		private var _selected:Boolean; //indicates if the item is selected.
 		
-		public function ListItem(obj:IListItemObject, itemWidth:Number, itemHeight:Number, rollOverColor:uint = 0x333333,
+		public function ListItem(dp:IListItem, itemWidth:Number, itemHeight:Number, rollOverColor:uint = 0x333333,
 								 labelSize:Object = "12", labelColor:uint = 0xCCCCCC, seperator:DisplayObject = null, 
-								 rollOverIcon:DisplayObject = null, labelFont:Font = null, iconSize:Number = 16) 
+								 labelFont:Font = null, iconSize:Number = 16) 
 		{
-			this._itemObj = obj;
+			this._dp = dp;
 			this.seperator = (seperator == null ? new DottedSeperator() : seperator);
-			this.rollOverIcon = (rollOverIcon == null ? new BlueArrow() : rollOverIcon);
 			this.defaultFont = (labelFont == null ? new TahomaBold() : labelFont); 
 			this.defaultFormat = new TextFormat(this.defaultFont.fontName, labelSize, labelColor, false, false, false);
 			this.defaultHighlight = new TextFormat(this.defaultFont.fontName, labelSize, 0xFFFFFF, true, false, true);
@@ -74,8 +73,8 @@ package com.slskin.ignitenetwork.components
 		}
 		
 		/* Getters */
-		public function get listItemObj():IListItemObject {
-			return this._itemObj;
+		public function get dataProvider():IListItem {
+			return this._dp;
 		}
 		
 		public function get itemHeight():Number {
@@ -91,25 +90,9 @@ package com.slskin.ignitenetwork.components
 		}
 		
 		/* Setters */
-		public function set selected(select:Boolean):void 
-		{
-			this.buttonMode = !select;
-			this.useHandCursor = !select;
-			if(select)
-			{
-				this.removeEventListener(MouseEvent.ROLL_OVER, onMouseRollOver);
-				this.removeEventListener(MouseEvent.ROLL_OUT, onMouseRollOut);
-				this.rollOverSprite.alpha = .75;
-				this.rollOverIcon.visible = true;
-			}
-			else
-			{
-				this.addEventListener(MouseEvent.ROLL_OVER, onMouseRollOver);
-				this.addEventListener(MouseEvent.ROLL_OUT, onMouseRollOut);
-				this.addEventListener(MouseEvent.CLICK, onMouseClick);
-				this.rollOverSprite.alpha = 0;
-				this.rollOverIcon.visible = false;
-			}
+		public function set selected(select:Boolean):void {
+			this._selected = select;
+			this.rollOverSprite.alpha = (select ? this.SELECTED_ALPHA : 0);
 		}
 		
 		public function set seperatorVisible(visible:Boolean):void {
@@ -128,12 +111,13 @@ package com.slskin.ignitenetwork.components
 			{
 				embedFonts = true;
 				multiline = false;
-				autoSize = TextFieldAutoSize.LEFT;
 				antiAliasType = AntiAliasType.ADVANCED;
 				selectable = false;
-				text = this._itemObj.itemLabel;
+				text = this._dp.itemLabel;
 				verticalAlign = VerticalAlign.MIDDLE;
-				y = (this.itemHeight - this.labelTLF.height)/2; 
+				width = this._itemWidth;
+				height = this._itemHeight;
+				y = (this.itemHeight - this.labelTLF.height)/2;
 			}
 			
 			//add the default format
@@ -230,15 +214,8 @@ package com.slskin.ignitenetwork.components
 		{
 			var xPos:Number = this.HPADDING * 2;
 			
-			//add roll over icon
-			/*this.rollOverIcon.visible = false;
-			this.rollOverIcon.x = xPos;
-			this.rollOverIcon.y = (this._itemHeight - this.rollOverIcon.height) / 2;
-			this.addChildAt(this.rollOverIcon, 0);
-			xPos += this.rollOverIcon.width + this.HPADDING;*/
-			
 			//Configure the icon if a path exists
-			if(this._itemObj.iconPath != null)
+			if(this._dp.iconPath != null)
 			{
 				this._icon = new UILoader();
 				with(this._icon)
@@ -255,14 +232,14 @@ package com.slskin.ignitenetwork.components
 				
 				//load the icon and add error event handling
 				this._icon.addEventListener(IOErrorEvent.IO_ERROR, onIconLoadError);
-				this._icon.load(new URLRequest(this._itemObj.iconPath));
+				this._icon.load(new URLRequest(this._dp.iconPath));
 			}
 			
 			//add the TLF
 			this.labelTLF.x = xPos;
+			this.labelTLF.width -= xPos;
 			this.addChild(this.labelTLF);
 
-			
 			//add seperator under the itemTLF
 			this.seperator.y = this._itemHeight;
 			this.addChild(this.seperator);
@@ -283,13 +260,11 @@ package com.slskin.ignitenetwork.components
 		
 		/* Mouse Event Handlers */
 		private function onMouseRollOver(evt:MouseEvent):void {
-			this.rollOverSprite.alpha = .5;
-			this.rollOverIcon.visible = true;
+			this.rollOverSprite.alpha = this.ROLLOVER_ALPHA;
 		}
 		
 		private function onMouseRollOut(evt:MouseEvent):void {
-			this.rollOverSprite.alpha = 0;
-			this.rollOverIcon.visible = false;
+			this.rollOverSprite.alpha = (this._selected ? this.SELECTED_ALPHA : 0);
 		}
 		
 		/*

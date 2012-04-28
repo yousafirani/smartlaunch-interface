@@ -10,7 +10,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.*;
 	import com.slskin.ignitenetwork.apps.Application;
 	import com.slskin.ignitenetwork.components.ListItem;
-	import com.slskin.ignitenetwork.views.ListView;
+	import com.slskin.ignitenetwork.components.List;
 	import flash.text.TextFormat;
 	import flash.events.MouseEvent;
 	import flash.display.Sprite;
@@ -53,7 +53,7 @@ package com.slskin.ignitenetwork.views.desktop
 		
 		/*
 		createFavList
-		Creates a ListView based on the applications passed as parameter and
+		Creates a List based on the applications passed as parameter and
 		sets the list view as the favePane source.
 		*/
 		private function createFavList(apps:Array):void
@@ -67,7 +67,7 @@ package com.slskin.ignitenetwork.views.desktop
 				listItems.push(item);
 			}
 			
-			this.favePane.source = new ListView(listItems, 0, 2);
+			this.favePane.source = new List(listItems, 0, 2);
 		}
 		
 		/*
@@ -77,7 +77,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onFavoriteItemClick(evt:MouseEvent):void 
 		{
-			var app:Application = ((evt.currentTarget as ListItem).listItemObj as Application);
+			var app:Application = ((evt.currentTarget as ListItem).dataProvider as Application);
 			this.main.appManager.verifyAppLaunch(app);
 		}
 		

@@ -4,7 +4,7 @@
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.display.InteractiveObject;
-	import com.slskin.ignitenetwork.views.ListView;
+	import com.slskin.ignitenetwork.components.List;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	
 	public class DropDownSelector extends MovieClip 
@@ -17,8 +17,8 @@
 		private const ITEM_LABEL_COLOR:uint = 0xe1e1e1;
 		
 		/* Member Fields */
-		private var _dropDownList:ListView;
-		private var dp:Vector.<IListItemObject>; //a vector of IListItemObject used to populate the drop down list
+		private var _dropDownList:List;
+		private var dp:Vector.<IListItem>; //a vector of IListItem used to populate the drop down list
 		
 		public function DropDownSelector() {
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
@@ -35,7 +35,7 @@
 			stage.addEventListener(MouseEvent.CLICK, onMasterClick);
 		}
 		
-		public function set dataProvider(dp:Vector.<IListItemObject>):void 
+		public function set dataProvider(dp:Vector.<IListItem>):void 
 		{
 			this.dp = dp;
 			createDropDown(dp);
@@ -47,9 +47,9 @@
 		
 		/*
 		createDropDown
-		Creates the drop down ListView based on the dataprovider.
+		Creates the drop down List based on the dataprovider.
 		*/
-		private function createDropDown(dp:Vector.<IListItemObject>):void
+		private function createDropDown(dp:Vector.<IListItem>):void
 		{
 			var listItems:Array = new Array();
 			var listItem:ListItem;
@@ -69,7 +69,7 @@
 				listItems.push(listItem);
 			}
 			
-			this._dropDownList = new ListView(listItems, 0, 0, new PanelBackground());
+			this._dropDownList = new List(listItems, 0, 0, new PanelBackground());
 			this._dropDownList.visible = false;
 			_dropDownList.x = this.title.x;
 			_dropDownList.y = this.height;

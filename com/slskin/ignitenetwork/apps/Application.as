@@ -13,12 +13,13 @@ be displayed in a list.
 */
 package com.slskin.ignitenetwork.apps  
 {
-	import com.slskin.ignitenetwork.components.IListItemObject;
+	import com.slskin.ignitenetwork.components.IListItem;
 	
-	public class Application implements IListItemObject
+	public class Application implements IListItem
 	{
 		/* Constants */
 		private const ASSETS_BASE_DIR:String = "./assets/apps/";
+		private const BOX_SHOT_DIR:String = "./images/";
 		private const ICON_FILENAME:String = "icon.png";
 		
 		/* Member Fields */
@@ -40,6 +41,10 @@ package com.slskin.ignitenetwork.apps
 			return this._appName;
 		}
 		
+		public function get itemID():String {
+			return this.appID;
+		}
+		
 		public function get itemLabel():String {
 			return this._appName;
 		}
@@ -48,17 +53,16 @@ package com.slskin.ignitenetwork.apps
 			return this.assetPath + this.ICON_FILENAME;
 		}
 		
-		/* 
-		assetPath
-		Return the relative path to the assets directory for this appliction.
-		Als remove any illegalCharacters and replace them with '_'.
-		*/
-		public function get assetPath():String {
-			var illegalCharacters:RegExp = /[\?\/\:\*\<\>\|\\ ]/gi;
-			return this.ASSETS_BASE_DIR + this._appName.toLocaleLowerCase().replace(illegalCharacters, "_") + "/";
+		public function get imagePath():String {
+			return this.BOX_SHOT_DIR + this.appID + ".jpg";
 		}
 		
-		
+		public function get assetPath():String
+		{
+			return this.ASSETS_BASE_DIR + this._appID + "/";
+			//var illegalCharacters:RegExp = /[\?\/\:\*\<\>\|\\ ]/gi;
+			//return this.ASSETS_BASE_DIR + this._appName.toLocaleLowerCase().replace(illegalCharacters, "_") + "/";
+		}
 
 	} //class
 } //package
