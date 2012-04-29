@@ -20,7 +20,6 @@ package com.slskin.ignitenetwork.components
 	import flash.events.IOErrorEvent;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.components.IListItem;
-	import com.slskin.ignitenetwork.components.DottedSeperator;
 	import com.slskin.ignitenetwork.fonts.*;
 	import flash.text.Font;
 	import flash.text.AntiAliasType;
@@ -54,7 +53,7 @@ package com.slskin.ignitenetwork.components
 								 labelFont:Font = null, iconSize:Number = 16) 
 		{
 			this._dp = dp;
-			this.seperator = (seperator == null ? new DottedSeperator() : seperator);
+			this.seperator = seperator;
 			this.defaultFont = (labelFont == null ? new TahomaBold() : labelFont); 
 			this.defaultFormat = new TextFormat(this.defaultFont.fontName, labelSize, labelColor, false, false, false);
 			this.defaultHighlight = new TextFormat(this.defaultFont.fontName, labelSize, 0xFFFFFF, true, false, true);
@@ -96,7 +95,8 @@ package com.slskin.ignitenetwork.components
 		}
 		
 		public function set seperatorVisible(visible:Boolean):void {
-			this.seperator.visible = visible;
+			if(this.seperator != null)
+				this.seperator.visible = visible;
 		}
 		
 		/*
@@ -160,6 +160,7 @@ package com.slskin.ignitenetwork.components
 			try 
 			{
 				this.labelTLF.setTextFormat(this.defaultHighlight, beginIndex, endIndex);
+				this.labelTLF.textFlow.flowComposer.updateAllControllers();
 			}
 			catch(error:RangeError) {}
 		}
@@ -241,8 +242,11 @@ package com.slskin.ignitenetwork.components
 			this.addChild(this.labelTLF);
 
 			//add seperator under the itemTLF
-			this.seperator.y = this._itemHeight;
-			this.addChild(this.seperator);
+			if(this.seperator != null)
+			{
+				this.seperator.y = this._itemHeight;
+				this.addChild(this.seperator);
+			}
 			
 			//add screen (hide it initially) and listen for mouse events to activate it
 			this.addChildAt(this.rollOverSprite, 0);
@@ -261,10 +265,12 @@ package com.slskin.ignitenetwork.components
 		/* Mouse Event Handlers */
 		private function onMouseRollOver(evt:MouseEvent):void {
 			this.rollOverSprite.alpha = this.ROLLOVER_ALPHA;
+			evt.stopPropagation();
 		}
 		
 		private function onMouseRollOut(evt:MouseEvent):void {
 			this.rollOverSprite.alpha = (this._selected ? this.SELECTED_ALPHA : 0);
+			evt.stopPropagation();
 		}
 		
 		/*

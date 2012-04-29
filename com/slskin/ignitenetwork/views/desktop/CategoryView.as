@@ -25,9 +25,13 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.apps.Application;
 	import com.slskin.ignitenetwork.components.DropDownSelector;
 	import com.slskin.ignitenetwork.components.SearchField;
+	import com.slskin.ignitenetwork.util.Strings;
+	import com.slskin.ignitenetwork.components.BoxShot;
 	import fl.text.TLFTextField;
 	import flash.net.URLRequest;
-	import com.slskin.ignitenetwork.components.BoxShot;
+	import fl.transitions.easing.*;
+	import fl.transitions.*;
+	import flash.display.MovieClip;
 	
 	public class CategoryView extends SLView 
 	{
@@ -35,18 +39,24 @@ package com.slskin.ignitenetwork.views.desktop
 		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
 		private const TOP_PADDING:Number = -53; //Window top padding, makes room for footer
 		private const ICON_PATH:String = "./assets/dock/";
+		private const TOTAL_STRING:String = "{0} of {1}";
+		private const BOX_VPADDING:Number = 10; //vertical padding between BoxShot tiles.
+		private const BOX_HPADDING:Number = 30; //horizontal padding between BoxShot tiles.
 		
 		/* Member fields */
 		public var category:MainCategory; //main category that this view displays
 		private var subCategoryIter:ArrayIterator; //keeps track of current sub category while loading all apps
-		private var tileViews:Dictionary; //a cache that stores the TileView objects for each sub category
+		private var boxShots:Dictionary; //a cache that stores the BoxShot objects for each category.
 		private var selector:DropDownSelector; //a reference to the drop down selector on stage.
 		private var searchField:SearchField; //a reference to the search field on stage.
+		private var totalApps:int = 0; //count of total apps in this category.
+		private var allCategory:SubCategory; //a sub category that includes all the subcategory apps.
 		
 		/* Member Fields */
 		public function CategoryView(category:MainCategory) 
 		{
 			this.category = category;
+			this.allCategory = new SubCategory("-1", "allCategory", "All " + category.localeName, "-1");
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		
@@ -66,6 +76,7 @@ package com.slskin.ignitenetwork.views.desktop
 			this.selector = this._selector;
 			this.searchField = this._searchField;
 			this.searchField.hint = "Search " + this.category.localeName;
+			this.statusTLF.autoSize = "left";
 			
 			//update window padding to make room for
 			//other desktop content.
@@ -83,10 +94,13 @@ package com.slskin.ignitenetwork.views.desktop
 			this.loadAllApplications();
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
 			
-			/** DEBUG **/
-			this.createMockCategory();
-			this.onAllAppsLoaded(null);
-			this.showView();
+			/* DEBUG */
+			if(main.debugger.debug)
+			{
+				this.createMockCategory();
+				this.onAllAppsLoaded(null);
+				this.showView();
+			}
 			
 			//display this view when the initial load is complete
 			this.addEventListener(Event.COMPLETE, showView);
@@ -109,7 +123,7 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//instatitate collections used to store applications in this Category
 			this.subCategoryIter = new ArrayIterator(this.category.subCategories);
-			this.tileViews = new Dictionary();
+			this.boxShots = new Dictionary();
 			
 			//disable the selector while loading apps
 			this.selector.enabled = false;
@@ -176,15 +190,18 @@ package com.slskin.ignitenetwork.views.desktop
 			this.selector.dataProvider = this.createDropDownDP();
 			this.searchField.dataProvider = this.createSearchDP();
 			
+			this.totalTLF.text = Strings.substitute(TOTAL_STRING, 0, this.totalApps);
+			
 			//listen for list item clicks on selector and search field
 			this.selector.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSubCategoryClick);
 			this.searchField.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSearchItemClick);
+			this.searchField.addEventListener(SearchField.SEARCH_RESULTS, this.onSearchResults);
 			
-			
-			createTileViews();
+			createBoxShots();
+			this.displaySubCategory(allCategory);
 		}
 		
-				/*
+		/*
 		createDropDownDP
 		Creates the SubCategory drop down list shown when the sub category selector is
 		clicked.
@@ -192,7 +209,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private function createDropDownDP():Vector.<IListItem>
 		{
 			var dp:Vector.<IListItem> = new Vector.<IListItem>();
-			dp.push(new SubCategory("-1", "allCategory", "All " + category.localeName, "-1"));
+			dp.push(this.allCategory);
 			for(var i:uint = 0; i < category.subCategories.length; i++)
 				dp.push(category.subCategories[i]);
 			
@@ -214,6 +231,7 @@ package com.slskin.ignitenetwork.views.desktop
 			{
 				subCategory = category.subCategories[i];
 				apps = subCategory.applications;
+				totalApps += apps.length;
 				for(var j:uint = 0; j < apps.length; j++)
 					dp.push(apps[j]);
 			}
@@ -222,27 +240,30 @@ package com.slskin.ignitenetwork.views.desktop
 		}
 		
 		/*
-		createTileViews
-		Creates all the TileLists for each sub category and stores them in
-		the the TileList dictionary. This includes a TileList for the 'All' category.
+		createBoxShots
+		Creates all the BoxShot objects for each sub category and stores them in
+		the the boxShots dictionary.
 		*/
-		private function createTileViews():void
+		private function createBoxShots():void
 		{
+			var allBoxShots:Array = new Array(); //used for a the allCategory.
 			for(var i:uint = 0; i < category.subCategories.length; i++)
 			{
-				var boxItems:Array = new Array();
+				var boxShotArr:Array = new Array();
 				var apps:Array = category.subCategories[i].applications;
+				
 				for(var j:uint = 0; j < apps.length; j++)
 				{
-					var boxShot:BoxShot = new BoxShot(apps[j]);
-					//item.addEventListener(SLEvent.LIST_ITEM_CLICK, onAppListItemClick);
-					boxItems.push(boxShot);
+					var box:BoxShot = new BoxShot(apps[j]);
+					box.addEventListener(SLEvent.LIST_ITEM_CLICK, onBoxShotClick);
+					boxShotArr.push(box);
+					allBoxShots.push(box);
 				}
-				var tl:TileList = new TileList(boxItems, this.appPane.width, 10, 30);
-				this.tileViews[category.subCategories[i].name] = tl;
+				
+				this.boxShots[category.subCategories[i].name] = boxShotArr;
 			}
 			
-			
+			this.boxShots[this.allCategory.name] = allBoxShots;
 		}
 		
 		
@@ -251,37 +272,55 @@ package com.slskin.ignitenetwork.views.desktop
 		Change the loaded apps in the ScrollPane with 
 		the apps for the passed in sub category.
 		*/
-		private function displaySubCategory(subCategory:SubCategory):void {
-			this.appPane.source = this.tileViews[subCategory.name];
-			this.selector.label = subCategory.localeName;
+		private function displaySubCategory(sc:SubCategory):void 
+		{
+			var boxShotArr:Array = this.boxShots[sc.name];
+			var tl:TileList = new TileList(boxShotArr, this.scrollPane.width, BOX_VPADDING, BOX_HPADDING);
+			this.scrollPane.source = tl;
+			TransitionManager.start(tl, {type:Fade, direction:Transition.IN, duration:1, easing:Strong.easeOut});
+			
+			//update UI
+			var subCatTotal:Number = (sc == this.allCategory ? this.totalApps : sc.applications.length);
+			this.totalTLF.text = Strings.substitute(TOTAL_STRING, subCatTotal, this.totalApps);
+			this.statusTLF.text = "Displaying " + sc.localeName;
+			this.selector.label = sc.localeName;
+			this.searchField.clearField();
 		}
 		
-				
 		/*
-		displayAllApps
-		Concats the ListViews for each sub category and sets
-		that as the ScrollPane source.
+		onSearchResults
+		Display search results in scroll pane. The search result event
+		returns an array of ListItems, convert them to boxshots and display
+		the boxshots in the scrollpane.
 		*/
-		private function displayAllApps(evt:Event = null):void
+		private function onSearchResults(evt:SLEvent):void 
 		{
-			/*var container:Sprite = new Sprite();
-			var yPos:Number = 0;
-			var list:ListView;
-			for(var i:uint = 0; i < category.subCategories.length; i++)
+			var searchResults:Array = (evt.argument as Array);
+			var boxshotsArr:Array = new Array();
+			var searchText:String = this.searchField.text.toLocaleLowerCase();
+			
+			for(var i:uint = 0; i < searchResults.length; i++)
 			{
-				list = this.listViews[category.subCategories[i].name];
-				if(list != null)
-				{
-					
-					//reset list position
-					list.y = yPos;
-					yPos += list.listHeight;
-					container.addChild(list);
-				}
+				var box:BoxShot = new BoxShot(searchResults[i].dataProvider);
+				box.addEventListener(SLEvent.LIST_ITEM_CLICK, onBoxShotClick);
+				boxshotsArr.push(box);
+				
+				//highlight search result
+				var dpLabel:String = box.dataProvider.itemLabel.toLocaleLowerCase();
+				var startIndex:int = dpLabel.search(searchText);
+				box.label.highlight(startIndex, startIndex+searchText.length);
 			}
 			
-			this.appPane.source = container;
-			this.selector.label = "All " + this.category.localeName;*/
+			//set scrollpane
+			var tl:TileList = new TileList(boxshotsArr, this.scrollPane.width, BOX_VPADDING, BOX_HPADDING);
+			this.scrollPane.source = tl;
+			TransitionManager.start(tl, {type:Fade, direction:Transition.IN, duration:1, easing:Strong.easeOut});
+			
+			//update UI
+			this.totalTLF.text = Strings.substitute(TOTAL_STRING, searchResults.length, this.totalApps);
+			this.statusTLF.text = "Search results for '" + searchText + "'";
+			this.selector.label = "...";
+			
 		}
 		
 		
@@ -291,6 +330,15 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onSubCategoryClick(evt:SLEvent):void {
 			this.displaySubCategory(evt.argument.dataProvider as SubCategory);
+		}
+		
+		/*
+		onBoxShotClick
+		Event handler for box shot click.
+		Launches the application.
+		*/
+		private function onBoxShotClick(evt:SLEvent):void {
+			main.appManager.verifyAppLaunch(evt.argument.dataProvider as Application);
 		}
 		
 		/*
@@ -308,7 +356,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function setPaneStyle():void
 		{
-			with(this.appPane)
+			with(this.scrollPane)
 			{
 				//set scrollPane scrollbar width
 				setStyle("scrollBarWidth", 8);
@@ -336,7 +384,11 @@ package com.slskin.ignitenetwork.views.desktop
 				
 		private function createMockCategory():void
 		{
-			var apps:Array = main.appManager.parseAppString("Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Starcraft II|4^Warcraft III: Frozen Throne|6^Modern Warfare 3|7");
+			var appStr:String = "Counter-Strike|1^World of Warcraft|2^"+
+			"League of Legends|3^Starcraft II|4^Warcraft III: Frozen Throne|6^"+
+			"Call of Duty: Modern Warfare III|7^Counter-Strike: Source|9^Battlefield 3|10^"+
+			"Left 4 Dead 2|320^Portal 2|342^Diablo 3|13";
+			var apps:Array = main.appManager.parseAppString(appStr);
 			var subCat:SubCategory = new SubCategory("-1", "Test", "Test Category", "4");
 			subCat.applications = apps;
 			this.category.addSubCategory(subCat);

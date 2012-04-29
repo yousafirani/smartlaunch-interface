@@ -226,8 +226,8 @@ package com.slskin.ignitenetwork.components
 			
 			var pill:Sprite = new Sprite();
 			pill.graphics.beginFill(0x000000, .75);
-			pill.graphics.lineStyle(1, 0x999999, 1, true, "normal"); 
-			pill.graphics.drawRoundRect(0, 0, pillWidth, pillHeight, 4);
+			pill.graphics.lineStyle(1, 0x999999, 1); 
+			pill.graphics.drawRect(0, 0, pillWidth, pillHeight);
 			pill.graphics.endFill();
 	
 			//add glow
@@ -288,8 +288,8 @@ package com.slskin.ignitenetwork.components
 			var listPadding:Number = 2;
 			var dropDownBack:Sprite = new Sprite();
 			dropDownBack.graphics.beginFill(0x000000, .75);
-			dropDownBack.graphics.lineStyle(1, 0x999999, 1, true, "normal"); 
-			dropDownBack.graphics.drawRoundRect(0, 0, list.listWidth + listPadding, list.listHeight + listPadding, 8);
+			dropDownBack.graphics.lineStyle(1, 0x999999, 1); 
+			dropDownBack.graphics.drawRect(0, 0, list.listWidth + listPadding, list.listHeight + listPadding);
 			dropDownBack.graphics.endFill();
 			list.x = list.y = (listPadding / 2);
 			dropDownBack.addChild(list);

@@ -8,8 +8,9 @@ package com.slskin.ignitenetwork.components
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import com.slskin.ignitenetwork.components.BoxShot;
+	import flash.events.Event;
 		
-	public class TileList extends MovieClip
+	public dynamic class TileList extends MovieClip
 	{
 		/* Member fields */
 		private var container:Sprite;
@@ -24,6 +25,13 @@ package com.slskin.ignitenetwork.components
 			this._listWidth = listWidth;
 			this._vPadding = vPadding;
 			this._hPadding = hPadding;
+			
+			//draw a pixel on stage to offset a weird issue where
+			//the height of the container is returned incorrectly
+			this.graphics.beginFill(0x000000, 0);
+			this.graphics.drawRect(0, 0, 1, 1);
+			this.graphics.endFill();
+			
 			this.layoutTileList();
 		}
 		
@@ -42,13 +50,12 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function layoutTileList():void
 		{
-			//remove container if it exists
-			if(this.container != null)
+			if(this.container != null && this.contains(this.container))
 				this.removeChild(this.container);
-				
+			
 			//create container and add it as child
-			this.container = new Sprite();
-			this.addChild(this.container);
+			container = new Sprite();
+			addChild(container);
 			
 			var numItems:uint = this._listItems.length;
 			
@@ -60,7 +67,7 @@ package com.slskin.ignitenetwork.components
 			var columnOffset:Number = 0;
 			
 			var boxWidth:Number = BoxShot.BOX_WIDTH;
-			var boxHeight:Number = BoxShot.BOX_HEIGHT + BoxShot.LABEL_HEIGHT;
+			var boxHeight:Number = BoxShot.BOX_HEIGHT + BoxShot.LABEL_HEIGHT + BoxShot.LABEL_PADDING;
 			
 			var index:uint = 0; //current index into listItems
 			
@@ -78,9 +85,16 @@ package com.slskin.ignitenetwork.components
 					var item:BoxShot = this._listItems[index++];
 					item.x = columnOffset;
 					item.y = rowOffset;
-					this.container.addChild(item);
+					container.addChild(item);
 				}
 			}
+			
+			//add vPadding to bottom row
+			var spacer:Sprite = new Sprite();
+			spacer.graphics.beginFill(0x000000, 0);
+			spacer.graphics.drawRect(0, rowOffset+boxHeight, 1, 2 * this._vPadding);
+			spacer.graphics.endFill();
+			container.addChild(spacer);
 		}
 
 	} //class

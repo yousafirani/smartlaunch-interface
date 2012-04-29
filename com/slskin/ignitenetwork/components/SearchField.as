@@ -16,6 +16,7 @@
 	public class SearchField extends MovieClip 
 	{
 		/* Constants */
+		public static const SEARCH_RESULTS:String = "onSearchResults";
 		private const LIST_ITEM_HEIGHT:Number = 32; //search list item height
 		private const QUICK_RESULT_PADDING:Number = 3; //padding between field and quick results.
 		
@@ -23,7 +24,8 @@
 		private var _hint:String; //default label to display in field
 		private var dp:Vector.<IListItem>; //a vector of IListItemObject used to populate listItems
 		private var listItems:Array; //array of list items used to populate the quick results
-		private var quickResults:List; //the quickResults List
+		private var quickResults:List; //the drop down list of the most recent search results.
+		private var searchResults:Array; //an array of the most recent search results.
 		private var field:TextField; //reference to the text field in the component.
 		
 		public function SearchField() {
@@ -51,10 +53,24 @@
 			this._hint = txt;
 		}
 		
-		public function set dataProvider(dp:Vector.<IListItem>): void 
-		{
+		public function set dataProvider(dp:Vector.<IListItem>):void {
 			this.dp = dp;
 			createListItems(dp);
+		}
+		
+		public function get text():String {
+			return this._field.text;
+		}
+		
+		public function clearField():void
+		{
+			 this.clearButton.visible = false;
+			 this.removeQuickResults();
+			 if(_field.text != _hint)
+			 {
+				 this._field.text = '';
+				 stage.focus = null;
+			 }
 		}
 		
 		/*
@@ -85,9 +101,9 @@
 		private function displayQuickResults(listItems:Array):void
 		{
 			this.removeQuickResults();
+			this.searchResults = listItems;
 			this.quickResults = new List(listItems, 0, 0, new PanelBackground(), true);
-			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);
-			stage.addEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp);   
+			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);  
 			this.quickResults.y = this.height + QUICK_RESULT_PADDING;
 			this.addChild(this.quickResults);
 		}
@@ -96,8 +112,6 @@
 		private function removeQuickResults():void {
 			if(this.quickResults != null && this.contains(quickResults))
 				this.removeChild(this.quickResults);
-				
-			stage.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp); 
 		}
 		
 				
@@ -144,6 +158,8 @@
 			evt.target.alpha = 1;
 			if(evt.target.text == _hint)
 				evt.target.text = '';
+			
+			evt.target.addEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp); 
 		}
 		
 		private function onFocusOut(evt:FocusEvent):void 
@@ -153,26 +169,32 @@
 				evt.target.text = _hint;
 				evt.target.alpha = .5;
 			}
+			
+			evt.target.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp); 
 		}
 		
-		private function onClearClick(evt:MouseEvent):void
-		{
-			 field.text = '';
-			 this.clearButton.visible = false;
-			 this.removeQuickResults();
+		private function onClearClick(evt:MouseEvent):void {
+			this.clearField();
 		}
 		
 		private function onKeyboardUp(evt:KeyboardEvent):void 
 		{
 			if(evt.keyCode == 27) //escape
-				this.onClearClick(null);
+				this.clearField();
+			else if(evt.keyCode == 13 && this.quickResults.selectedListItem == null) //enter
+			{
+				this.removeQuickResults();
+				this.dispatchEvent(new SLEvent(SearchField.SEARCH_RESULTS, this.searchResults));
+			}
 		}
 		
 		/*
 		onListItemClick
 		Propegate event.
 		*/
-		private function onListItemClick(evt:SLEvent):void {
+		private function onListItemClick(evt:SLEvent):void 
+		{
+			//this.removeQuickResults();
 			this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, evt.argument));
 		}
 		

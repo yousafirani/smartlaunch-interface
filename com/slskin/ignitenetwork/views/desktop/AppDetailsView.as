@@ -59,9 +59,6 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onAdded(evt:Event):void
 		{
-			//autoSize launch button label field
-			this.launchButton.labelTLF.autoSize = TextFieldAutoSize.CENTER;
-			
 			//set reference to main
 			this.main = (root as Main);
 			
@@ -75,11 +72,6 @@ package com.slskin.ignitenetwork.views.desktop
 			this.detailsTLF.autoSize = TextFieldAutoSize.LEFT;
 			this.detailsPane.source = this.detailsTLF;
 			this.setPaneStyle();
-			this.disableLaunchButton();
-			
-			//listen for image load errors
-			this.image.loader.addEventListener(IOErrorEvent.IO_ERROR, onImageLoadError);
-			this.image.loader.addEventListener(Event.COMPLETE, onImageLoadComplete);
 			
 			//setup app info button
 			this.appStatus.appInfoButton.addEventListener(MouseEvent.CLICK, onMoreInfoClick);
@@ -97,7 +89,6 @@ package com.slskin.ignitenetwork.views.desktop
 		{
 			//show loader 
 			this.loader.visible = true;
-			this.clearFields();
 			
 			if(ExternalInterface.available)
 				ExternalInterface.call("GetApplicationDetails", app.appID);
@@ -130,8 +121,7 @@ package com.slskin.ignitenetwork.views.desktop
 			this.loader.visible = false;
 			
 			//set button label
-			var buttonLabel:String = Language.translate("Start", "Start") + " " + this.currentApp.appName
-			this.setLaunchLabel(buttonLabel);
+			var buttonLabel:String = Language.translate("Start", "Start") + " " + this.currentApp.appName;
 			
 			//set the details tlf and appropriate formats
 			this.setGameDetails(headline, details);
@@ -141,9 +131,6 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//setup the app status
 			this.setAppStatus();
-			
-			//enabled the launch button.
-			this.enableLaunchButton();
 		}
 		
 		/*
@@ -155,8 +142,8 @@ package com.slskin.ignitenetwork.views.desktop
 		{
 			if(this.currentApp != null)
 			{
-				this.image.visible = false;
-				this.image.loader.load(new URLRequest(this.currentApp.assetPath + this.APP_IMAGE));
+				//this.image.visible = false;
+				//this.image.loader.load(new URLRequest(this.currentApp.assetPath + this.APP_IMAGE));
 				
 				//load app sepecifc wallpaper
 				this.main.wallpaperManager.loadImage(this.currentApp.assetPath + this.APP_WALLPAPER);
@@ -169,7 +156,7 @@ package com.slskin.ignitenetwork.views.desktop
 		Event handler for UILoader load complete. Transition in UILoader.
 		*/
 		private function onImageLoadComplete(evt:Event):void {
-			TransitionManager.start(this.image, {type:Iris, direction:Transition.IN, duration:1, easing:Strong.easeOut});
+			//TransitionManager.start(this.image, {type:Iris, direction:Transition.IN, duration:1, easing:Strong.easeOut});
 		}
 		
 		
@@ -193,17 +180,6 @@ package com.slskin.ignitenetwork.views.desktop
 			this.detailsPane.update();
 		}
 		
-		/*
-		setLaunchLabel
-		Set the launch button label and center it.
-		*/
-		private function setLaunchLabel(str:String):void
-		{
-			this.launchButton.labelTLF.text = str.toLocaleUpperCase();
-			
-			//move the field to the center
-			this.launchButton.labelTLF.x = (this.launchButton.bg.width - this.launchButton.labelTLF.width) / 2;
-		}
 		
 		/*
 		setAppStatus
@@ -237,90 +213,7 @@ package com.slskin.ignitenetwork.views.desktop
 				this.appStatus.onlineStatus.gotoAndStop("false");
 			}
 		}
-		
-				
-		/*
-		clearFields
-		Clears all the game specific fields: the image, the detailsTLF,
-		and the launch button text.
-		*/
-		private function clearFields():void
-		{
-			this.setLaunchLabel("...");
-			this.disableLaunchButton();
-			this.setGameDetails("", "");
-		}
-		
-		/*
-		onLaunchRollOver
-		RollOver event handler for the launch button.
-		*/
-		private function onLaunchRollOver(evt:MouseEvent):void {
-			this.launchButton.bg.gotoAndStop("Over");
-		}
-		
-		/*
-		onLaunchRollOut
-		RollOut event handler for the launch button.
-		*/
-		private function onLaunchRollOut(evt:MouseEvent):void {
-			this.launchButton.bg.gotoAndStop("Up");
-		}
-		
-		/*
-		onLaunchDown
-		Mouse down event handler for launch button
-		*/
-		private function onLaunchDown(evt:MouseEvent):void {
-			this.launchButton.bg.gotoAndStop("Down");
-		}
-		
-		/*
-		onLaunchClick
-		Click event handler for launch button.
-		*/
-		private function onLaunchClick(evt:MouseEvent):void 
-		{
-			this.launchButton.bg.gotoAndStop("Over");
-			//start the app launch proccess.
-			this.main.appManager.launchApp(this.currentApp);
-		}
-		
-		/*
-		enableLaunchButton
-		Enables the button functionality for the launch button.
-		*/
-		private function enableLaunchButton():void
-		{
-			with(this.launchHitBox)
-			{
-				enabled = true;
-				addEventListener(MouseEvent.ROLL_OVER, onLaunchRollOver);
-				addEventListener(MouseEvent.ROLL_OUT, onLaunchRollOut);
-				addEventListener(MouseEvent.CLICK, onLaunchClick);
-				addEventListener(MouseEvent.MOUSE_DOWN, onLaunchDown);
-			}
-			
-			this.launchButton.bg.alpha = 1;
-		}
-		
-		/*
-		disableLaunchbutton
-		Disables the button functionality for the launch button.
-		*/
-		private function disableLaunchButton():void
-		{
-			with(this.launchHitBox)
-			{
-				enabled = false;
-				removeEventListener(MouseEvent.ROLL_OVER, onLaunchRollOver);
-				removeEventListener(MouseEvent.ROLL_OUT, onLaunchRollOut);
-				removeEventListener(MouseEvent.CLICK, onLaunchClick);
-				removeEventListener(MouseEvent.MOUSE_DOWN, onLaunchDown);
-			}
-			
-			this.launchButton.bg.alpha = .5;
-		}
+
 		
 		/*
 		onMoreInfoClick
@@ -378,14 +271,6 @@ package com.slskin.ignitenetwork.views.desktop
 				setStyle("downArrowUpSkin", ArrowSkin_Invisible); 
 				setStyle("upArrowUpSkin", ArrowSkin_Invisible);
 			} 
-		}
-		
-		/*
-		onImageLoadError
-		Error handler for app image load error. Write error to debug console.
-		*/
-		private function onImageLoadError(evt:IOErrorEvent):void {
-			this.main.debugger.write(evt.toString());
 		}
 		
 	} //class

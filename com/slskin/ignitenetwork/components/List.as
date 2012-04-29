@@ -45,6 +45,10 @@ package com.slskin.ignitenetwork.components
 			return this._listHeight;
 		}
 		
+		public function get selectedListItem():ListItem {
+			return this.selectedItem;
+		}
+		
 		public function get listWidth():Number {
 			return this._listWidth;
 		}
@@ -70,7 +74,7 @@ package com.slskin.ignitenetwork.components
 		private function layoutList():void
 		{
 			//remove container if it exists
-			if(this.container != null)
+			if(this.container != null && this.contains(this.container))
 				this.removeChild(this.container);
 				
 			//create container and add it as child
@@ -118,7 +122,8 @@ package com.slskin.ignitenetwork.components
 		onKeyUpHandler
 		Select elements in the list based on key down and key up input.
 		*/
-		private function onKeyUpHandler(evt:KeyboardEvent):void {
+		private function onKeyUpHandler(evt:KeyboardEvent):void 
+		{
 			if(this._listItems == null) return;
 			
 			if(evt.keyCode == 40) //arrow down

@@ -11,6 +11,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.apps.Application;
 	import com.slskin.ignitenetwork.components.ListItem;
 	import com.slskin.ignitenetwork.components.List;
+	import com.slskin.ignitenetwork.components.DottedSeperator;
 	import flash.text.TextFormat;
 	import flash.events.MouseEvent;
 	import flash.display.Sprite;
@@ -62,7 +63,7 @@ package com.slskin.ignitenetwork.views.desktop
 			var item:ListItem;
 			for(var i:uint = 0; i < apps.length; i++)
 			{
-				item = new ListItem(apps[i], LIST_ITEM_WIDTH, LIST_ITEM_HEIGHT);
+				item = new ListItem(apps[i], LIST_ITEM_WIDTH, LIST_ITEM_HEIGHT, 0x333333, "12", 0xCCCCCC, new DottedSeperator());
 				item.addEventListener(MouseEvent.CLICK, onFavoriteItemClick);
 				listItems.push(item);
 			}

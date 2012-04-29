@@ -12,6 +12,7 @@
 		/* Constants */
 		private const DROP_DOWN_WIDTH:Number = 150;
 		private const LIST_ITEM_HEIGHT:Number = 25;
+		private const DROP_DOWN_PADDING:Number = 3;
 		private const ITEM_ROLLOVER_COLOR:uint = 0x333333;
 		private const ITEM_LABEL_SIZE:String = "11";
 		private const ITEM_LABEL_COLOR:uint = 0xe1e1e1;
@@ -71,8 +72,7 @@
 			
 			this._dropDownList = new List(listItems, 0, 0, new PanelBackground());
 			this._dropDownList.visible = false;
-			_dropDownList.x = this.title.x;
-			_dropDownList.y = this.height;
+			_dropDownList.y = this.height + this.DROP_DOWN_PADDING;
 			this.addChild(_dropDownList);
 		}
 		
