@@ -337,7 +337,7 @@ package com.slskin.ignitenetwork.views.desktop
 		Launches the application.
 		*/
 		private function onBoxShotClick(evt:SLEvent):void {
-			main.appManager.verifyAppLaunch(evt.argument.dataProvider as Application);
+			main.appManager.launchApp(evt.argument.dataProvider as Application);
 		}
 		
 		/*

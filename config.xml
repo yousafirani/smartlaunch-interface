@@ -28,21 +28,22 @@ Designed for Smartlaunch.
 	<MailChimp enabled="true" apiKey="API_KEY" listID="LIST_ID" doubleOptin="false" selected="true"><![CDATA[Subscribe to our mailing list for news, events, and promotions.]]></MailChimp>
 
 	<Images>
+
 		<!-- 
-			Background images can be in png, jpg, bmp, or gif. 
+			Background images can be in png, jpg, bmp, or gif.
 			autoScrollSeconds - Defines the interval in seconds to wait before switching background images.
 			randomOrder {true | false } - Indiciates if the images should be shuffled in a random order. 
 		-->
 		<backgrounds autoScrollSeconds="120" randomOrder="false">
-			<bg>assets/graybg.jpg</bg>
-			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>
+			<loginBackground>assets/auro-1280x1024.jpg</loginBackground> <!-- background used at the login screen. -->
 			<bg>assets/wow.jpg</bg>
+			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>
 		</backgrounds>
 
-		<!-- logo used on the login screen -->
+		<!-- logo used on the login screen - 150px x 150px -->
 		<loginLogo>assets/logo.png</loginLogo>
 
-		<!-- logo used on the home screen footer -->
+		<!-- logo used on the home screen footer - 75px x 75px -->
 		<footerLogo>assets/logo.png</footerLogo>
 	</Images>
 

@@ -230,7 +230,7 @@ package com.slskin.ignitenetwork.views.desktop
 			if(windowHeight > WIN_MAX_HEIGHT)
 				windowHeight = WIN_MAX_HEIGHT;
 
-			this.bg.height = windowHeight;
+			this.bg.height = Math.ceil(windowHeight);
 			this.scrollPane.height = windowHeight - this.WIN_MIN_HEIGHT + 10;
 			
 		}

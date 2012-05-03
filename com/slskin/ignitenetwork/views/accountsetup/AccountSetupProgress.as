@@ -66,7 +66,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			}
 			
 			//disable the button until the progress is complete
-			(this.button as SLButton).label = Language.translate("Continue", "Continue");
+			(this.button as SLButton).label = Language.translate("Done", "Done");
 			(this.button as SLButton).disable();
 			(this.button as SLButton).addEventListener(SLButton.BUTTON_CLICK_EVENT, onDoneClick);
 			

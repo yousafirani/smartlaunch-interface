@@ -46,7 +46,7 @@ package com.slskin.ignitenetwork.views.desktop
 	{
 		/* Constants */
 		private const YOUTUBE_CHROMELESS_URL:String = "http://www.youtube.com/apiplayer?version=3";
-		private const YOUTUBE_EMBEDDED_URL:String = "http://www.youtube.com/v/{0}?version=3&rel=0&fs=0&modestbranding=1";
+		private const YOUTUBE_EMBEDDED_URL:String = "http://www.youtube.com/v/{0}?version=3&modestbranding=1&rel=0&fs=0";
 		private const YOUTUBE_IMAGE_URL:String = "http://img.youtube.com/vi/{0}/default.jpg";
 		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
 		private const TOP_PADDING:Number = -53; //Window top padding, makes room for footer

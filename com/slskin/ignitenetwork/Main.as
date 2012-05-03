@@ -33,7 +33,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.1.350";
+		public const VERSION:String = "1.1.362";
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		
@@ -281,7 +281,8 @@ package com.slskin.ignitenetwork
 				this.viewManager.addViewAsNext(new AccountSetupView(requiredInfo));
 			}
 			
-			viewManager.displayNextView();
+			this.viewManager.displayNextView();
+			this.wallpaperManager.startTimer();
 		}
 		
 		/*
@@ -290,7 +291,7 @@ package com.slskin.ignitenetwork
 		*/
 		private function onAccountSetupComplete(evt:Event):void
 		{
-			this.removeEventListener(SLEvent.REQUIRED_INFO_ENTERED, onAccountSetupComplete);
+			this.model.removeEventListener(SLEvent.REQUIRED_INFO_ENTERED, onAccountSetupComplete);
 			this.viewManager.displayNextView();
 		}
 		

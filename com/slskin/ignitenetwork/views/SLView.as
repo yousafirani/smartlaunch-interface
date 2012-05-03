@@ -150,8 +150,8 @@ package com.slskin.ignitenetwork.views
 		onHideTweenFinish
 		Dispatch hide complete event.
 		*/
-		private function onHideTweenFinish(evt:TweenEvent):void {
-			this.xTween.removeEventListener(TweenEvent.MOTION_FINISH, onHideTweenFinish);
+		protected function onHideTweenFinish(evt:TweenEvent):void {
+			evt.target.removeEventListener(TweenEvent.MOTION_FINISH, onHideTweenFinish);
 			this.dispatchEvent(new Event(SLView.HIDE_COMPLETE));
 		}
 		

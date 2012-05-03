@@ -110,7 +110,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.addChild(this.setupProgress);
 			
 			//adjust the height of the window
-			this.window.height = nextItemY + this.PADDING;
+			this.window.height = Math.ceil(nextItemY + this.PADDING);
 			
 			//show the view, after we update the y to
 			//reflect the changes in height to this window.

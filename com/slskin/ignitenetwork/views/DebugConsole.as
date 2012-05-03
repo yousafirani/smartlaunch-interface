@@ -46,12 +46,14 @@ package com.slskin.ignitenetwork.views
 			this.write("Injecting the following Data: ");
 			main.model.addProperty(main.model.DATA_PATH + "RequiredInformationAtLogin", "0");
 			main.model.addProperty(main.model.DATA_PATH + "Firstname", "Ruben");
+			main.model.addProperty(main.model.DATA_PATH + "Email", "ruben@ignitenetwork.com");
 			main.model.addProperty(main.model.DATA_PATH + "Username", "rubeydoo");
 			main.model.addProperty(main.model.DATA_PATH + "Balance", "-30.50");
 			main.model.addProperty(main.model.DATA_PATH + "Time", "-375");
 			main.model.addProperty(main.model.TEXT_PATH + "Welcome_Message", "Welcome back Ruben<br><font color='#0080FF' size='+1'>Time used:</font> 6 hour and 30 minutes<br><font color='#0080FF' size='+1'>Last Visit:</font> 2/8/2012 2:24:27 pm");
 			main.model.addProperty(main.model.TEXT_PATH + "Headline1", "ignite network gaming lounge");
 			main.model.addProperty(main.model.TEXT_PATH + "Headline2", "2/09/2012 - PC 48");
+			main.model.addProperty(main.model.ROOT_PATH + "OptionsList", "Your Profile|-2");
 			main.model.addProperty(main.model.TEXT_PATH + "Logout_UpperCase", "LOGOUT");
 			main.model.dispatcher(SLEvent.UPDATE_CATEGORY_LIST, "Games;1;0;Games|Most Played FPS;23;15;Most Played FPS|Strategy;32;14;Strategy|mmorpgs;22;3;mmorpgs|FPS;35;8;FPS|Classics;16;17;Classics|^Programs;17;0;Programs|Chat;33;6;Chat|Office;20;1;Office|Pictures;36;3;Pictures|Media;34;1;Media|Other;21;4;Other|^Internet;3;1;Internet|^Options;-2;4;Options|");
 			main.model.dispatcher(SLEvent.UPDATE_FAVORITES, "Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Warcraft III: Frozen Throne|6^Modern Warfare 3|7");
@@ -112,8 +114,7 @@ package com.slskin.ignitenetwork.views
 		hide
 		Removes it's self from stage.
 		*/
-		public function hideView():void
-		{
+		public function hideView():void {
 			(parent as MovieClip).removeChild(this);
 		}
 		

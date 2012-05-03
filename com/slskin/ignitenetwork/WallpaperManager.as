@@ -93,15 +93,15 @@ package com.slskin.ignitenetwork
 				
 				//listen for tick event
 				this.timer.addEventListener(TimerEvent.TIMER, onIntervalTick);
-				this.timer.start();
-				
 			}
 			
 			//load the first image
 			this.currentImage = new UILoader();
 			configureLoader(this.currentImage);
+			
+			//load the login background
 			this.currentImage.removeEventListener(Event.COMPLETE, this.onImageLoadComplete);
-			this.currentImage.load(new URLRequest(this.imageIterator.next()));
+			this.currentImage.load(new URLRequest(main.config.Images.backgrounds.loginBackground));
 			
 			//add the current image to stage
 			this.addChild(this.currentImage);
@@ -110,7 +110,6 @@ package com.slskin.ignitenetwork
 			this.fadeIn = new Tween(this.currentImage, "alpha", Strong.easeInOut, this.currentImage.alpha, 1, 2, true);
 			this.fadeIn.addEventListener(TweenEvent.MOTION_FINISH, onTweenComplete);
 		}
-		
 		
 		/*
 		stopScrolling
