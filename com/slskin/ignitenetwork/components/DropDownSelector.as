@@ -106,7 +106,7 @@
 		from a drop down list.)
 		*/
 		private function onMasterClick(evt:MouseEvent):void {
-			if(this._dropDownList.visible)
+			if(this._dropDownList != null && this._dropDownList.visible)
 				toggleDropDown();
 		}
 		

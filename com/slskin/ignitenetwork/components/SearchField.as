@@ -19,6 +19,7 @@
 		public static const SEARCH_RESULTS:String = "onSearchResults";
 		private const LIST_ITEM_HEIGHT:Number = 32; //search list item height
 		private const QUICK_RESULT_PADDING:Number = 3; //padding between field and quick results.
+		private const MAX_QUICK_RESULTS:int = 7; //maximum number of results to show in quick results drop down.
 		
 		/* Member Fields */
 		private var _hint:String; //default label to display in field
@@ -98,10 +99,29 @@
 		Displays the quick results under the search field. The listItems array
 		is an array of ListItem objects.
 		*/
-		private function displayQuickResults(listItems:Array):void
+		private function displayQuickResults(filterResults:Array):void
 		{
 			this.removeQuickResults();
-			this.searchResults = listItems;
+			this.searchResults = filterResults;
+			
+			var listItems:Array = new Array();
+			if(filterResults.length > this.MAX_QUICK_RESULTS)
+			{
+				//take the first MAX_QUICK_RESULTS and create a List from them
+				for(var i:uint = 0; i < MAX_QUICK_RESULTS; i++)
+					listItems.push(filterResults[i]);
+				
+				//create a more results list item.
+				var numMissing:int = filterResults.length - this.MAX_QUICK_RESULTS;
+				var moreResults:ListItem = new ListItem(new Application("-7", numMissing + " More Results..."), 
+														this.width, LIST_ITEM_HEIGHT, 0x333333, 
+														"11", 0xCCCCCC, new DottedSeperatorSearch());
+				moreResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);
+				listItems.push(moreResults);
+			} 
+			else
+				listItems = filterResults;
+				
 			this.quickResults = new List(listItems, 0, 0, new PanelBackground(), true);
 			this.quickResults.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onListItemClick);  
 			this.quickResults.y = this.height + QUICK_RESULT_PADDING;
@@ -153,6 +173,12 @@
 			return true;
 		}
 		
+		private function dispatchSearchEvent(evt:Event = null):void 
+		{
+			this.removeQuickResults();
+			this.dispatchEvent(new SLEvent(SearchField.SEARCH_RESULTS, this.searchResults));
+		}
+		
 		private function onFocusIn(evt:FocusEvent):void 
 		{
 			evt.target.alpha = 1;
@@ -182,20 +208,20 @@
 			if(evt.keyCode == 27) //escape
 				this.clearField();
 			else if(evt.keyCode == 13 && this.quickResults.selectedListItem == null) //enter
-			{
-				this.removeQuickResults();
-				this.dispatchEvent(new SLEvent(SearchField.SEARCH_RESULTS, this.searchResults));
-			}
+				this.dispatchSearchEvent();
 		}
 		
 		/*
 		onListItemClick
-		Propegate event.
+		If the user clicks on the more results list item, dispatch the search event otherwise
+		propegate the LIST_ITEM_CLICK event.
 		*/
 		private function onListItemClick(evt:SLEvent):void 
 		{
-			//this.removeQuickResults();
-			this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, evt.argument));
+			if( ((evt.argument as ListItem).dataProvider as Application).appID == "-7")
+				this.dispatchSearchEvent();
+			else
+				this.dispatchEvent(new SLEvent(SLEvent.LIST_ITEM_CLICK, evt.argument));
 		}
 		
 	}//class

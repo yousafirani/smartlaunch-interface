@@ -33,7 +33,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.1.275";
+		public const VERSION:String = "1.1.350";
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		
@@ -340,7 +340,7 @@ package com.slskin.ignitenetwork
 		Helper function to get the stage height 
 		from stageWidth or stageFullScreen.
 		*/
-		public function getStageHeight():int
+		public function getStageHeight():Number
 		{
 			if(stage.displayState == StageDisplayState.FULL_SCREEN)
 				return stage.fullScreenHeight;
@@ -353,7 +353,7 @@ package com.slskin.ignitenetwork
 		 Helper functions to get the stage width from 
 		 stageWidth or stageFullScreen.
 		*/
-		public function getStageWidth():int
+		public function getStageWidth():Number
 		{
 			if(stage.displayState == StageDisplayState.FULL_SCREEN)
 				return stage.fullScreenWidth;

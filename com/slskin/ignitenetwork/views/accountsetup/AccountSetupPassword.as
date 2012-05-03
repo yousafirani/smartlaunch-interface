@@ -10,18 +10,18 @@ package com.slskin.ignitenetwork.views.accountsetup
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.text.TextFieldAutoSize;
-	import com.slskin.ignitenetwork.components.SLTextField;
+	import com.slskin.ignitenetwork.components.TextInput;
 	import com.slskin.ignitenetwork.*;
 	
 	public class AccountSetupPassword extends MovieClip
 	{
 		private const NUM_FIELDS:int = 2;
-		private const MAX_WIDTH:Number = 650;
-		private const MIN_PASSSWORD_LENGTH:int = 4; //If we change this, we need a better way to translate the error message in the validator.
+		private const MAX_WIDTH:Number = 500;
+		private const MIN_PASSSWORD_LENGTH:int = 4;
 		
 		/* Member Fields */
-		private var passwordField:SLTextField;
-		private var repeatField:SLTextField;
+		private var passwordField:TextInput;
+		private var repeatField:TextInput;
 		private var main:Main;
 		
 		public function AccountSetupPassword(main:Main) 
@@ -48,7 +48,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.header.title.y = (this.header.height - this.header.title.height) / 2;
 			
 			//draw line to end
-			this.header.graphics.lineStyle(1, 0x999999);
+			this.header.graphics.lineStyle(1, 0x666666);
 			this.header.graphics.moveTo(this.header.width + 5, this.header.height / 2);
 			this.header.graphics.lineTo(this.MAX_WIDTH, this.header.height / 2);
 			
@@ -70,8 +70,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 			
 			
 			//listen for field error events
-			this.passwordField.addEventListener(SLTextField.VALIDATION_CHANGE, dispatchProgress);
-			this.repeatField.addEventListener(SLTextField.VALIDATION_CHANGE, dispatchProgress);
+			this.passwordField.addEventListener(TextInput.VALIDATION_CHANGE, dispatchProgress);
+			this.repeatField.addEventListener(TextInput.VALIDATION_CHANGE, dispatchProgress);
 		}
 		
 		/*

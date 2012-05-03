@@ -22,10 +22,10 @@ package com.slskin.ignitenetwork.views.accountsetup
 		public static const PROGRESS_COMPLETED:String = "ProgressComplete";
 		
 		/* Consts */
-		private const FULL_LENGTH:Number = 487; //total possible length for the progress bar
+		private const FULL_LENGTH:Number = 348; //total possible length for the progress bar
 		private const STEP_ONE_LENGTH:Number = 127; //length to get to finish step one
-		private const PROGRESS_COLOR:int = 0x9CCE31; //color of progress tint
-		private const DEFAULT_COLOR:int = 0xCECECE;
+		private const PROGRESS_COLOR:int = 0x71BF00; //color of progress tint
+		private const DEFAULT_COLOR:int = 0x999999;
 		
 		/* Member fields */
 		private var barLength:uint;

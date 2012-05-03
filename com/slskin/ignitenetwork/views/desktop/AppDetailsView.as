@@ -13,6 +13,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.text.TextFieldAutoSize;
 	import com.slskin.ignitenetwork.apps.Application;
 	import com.slskin.ignitenetwork.fonts.MyriadRegular;
+	import com.slskin.ignitenetwork.fonts.TahomaRegular;
 	import fl.text.TLFTextField;
 	import flash.text.TextFormat;
 	import fl.controls.UIScrollBar;
@@ -23,81 +24,115 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.net.URLRequest;
 	import flash.events.IOErrorEvent;
 	import fl.containers.UILoader;
-	import fl.transitions.Tween;
-	import fl.transitions.TweenEvent;
 	import fl.transitions.easing.*;
 	import fl.transitions.*;
+	import flash.display.Sprite;
 	
 	public class AppDetailsView extends MovieClip 
 	{
-		/* Constants */
-		private var APP_IMAGE:String = "image.jpg";
-		private var APP_WALLPAPER:String = "wallpaper.jpg";
-		private var IMAGE_WIDTH:Number = 320;
-		private var IMAGE_HEIGHT:Number = 240;
+		private const WIN_MIN_HEIGHT:Number = 120; //min height of window.
+		private const WIN_MAX_HEIGHT:Number = 300; //max height of window.
+		private const DESC_START_X:Number = 32; //start x for content to fit into window
+		private const DESC_START_Y:Number = 70; //start y for content to fit into window
 		
 		/* Member Fields */
-		private var currentApp:Application; //current displayed app
+		private var currentApp:Application; //reference to current application
 		private var main:Main; //reference to main doc class
-		private var detailsTLF:TLFTextField; //a reference to the details tlf in the AppDetailsView clip
-		private var titleFormat:TextFormat; //text format used for the app title
-		private var detailsFormat:TextFormat; //text format used for the app details
-		private var fadeTween:Tween; //used to fade the app image in and out.
+		private var defaultFormat:TextFormat; //default text format used for title
+		private var rollOverFormat:TextFormat; //rollover text format used for title
+		private var descTLF:TLFTextField; //hold the description of the application
+		private var scrollPane:ScrollPane;
 		
 		public function AppDetailsView() 
 		{
-			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
+			//create text formats for title
+			this.defaultFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, false);
+			this.rollOverFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, true);
 			
-			//create text formats.
-			this.titleFormat = new TextFormat(new MyriadRegular().fontName, "30", 0x000000);
-			this.detailsFormat = new TextFormat(new MyriadRegular().fontName, "13", 0x666666);
+			//create app description field
+			this.descTLF = new TLFTextField();
+			with(this.descTLF)
+			{
+				defaultTextFormat = new TextFormat(new TahomaRegular().fontName, "11", 0xcccccc);
+				selectable = false;
+				embedFonts = true;
+				antiAliasType = "advanced";
+				mutiline = wordWrap = true;
+				autoSize = "left";
+				x = DESC_START_X;
+				y = DESC_START_Y;
+				paddingLeft = 3;
+				paddingRight = 10;
+			}
+			
+			this.addEventListener(Event.ADDED_TO_STAGE, onInitAdded);
+			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
 		}
 		
-		/*
-		onAdded
-		Event handler for added to stage event.
+		public function set app(app:Application):void {
+			this.currentApp = app;
+		}
+		
+		/* 
+		onInitAdded
+		Called the first time the appDetailsView is added to stage. 
 		*/
-		private function onAdded(evt:Event):void
+		private function onInitAdded(evt:Event):void
 		{
+			this.removeEventListener(Event.ADDED_TO_STAGE, onInitAdded);
+			
 			//set reference to main
 			this.main = (root as Main);
 			
 			//hide loader
 			this.loader.visible = false;
 			
-			//store a reference to the details field
-			this.detailsTLF = this.detailsField;
-			
-			//setup autoSize for the details field
-			this.detailsTLF.autoSize = TextFieldAutoSize.LEFT;
-			this.detailsPane.source = this.detailsTLF;
+			this.scrollPane = new ScrollPane();
 			this.setPaneStyle();
+			this.scrollPane.x = this.DESC_START_X;
+			this.scrollPane.y = this.DESC_START_Y;
+			this.scrollPane.width = this.bg.width - 2;
+			this.scrollPane.horizontalScrollPolicy = "off";
+			addChild(this.scrollPane);
 			
-			//setup app info button
-			this.appStatus.appInfoButton.addEventListener(MouseEvent.CLICK, onMoreInfoClick);
-			this.appStatus.appInfoButton.addEventListener(MouseEvent.ROLL_OVER, onMoreInfoRollOver);
-			this.appStatus.appInfoButton.addEventListener(MouseEvent.ROLL_OUT, onMoreInfoRollOut);
+			//add description tlf and scroll pane
+			this.descTLF.width = this.bg.width;
+			this.addChild(this.descTLF);
+			
+			this.scrollPane.source = this.descTLF;
+			
+			//setup title button
+			this.content.titleTLF.buttonMode = this.content.titleTLF.useHandCursor = true;
+			this.content.titleTLF.addEventListener(MouseEvent.CLICK, this.onTitleClick);
+			this.content.titleTLF.addEventListener(MouseEvent.ROLL_OVER, onTitleRollOver);
+			this.content.titleTLF.addEventListener(MouseEvent.ROLL_OUT, onTitleRollOut);
+			this.content.moreInfoButton.addEventListener(MouseEvent.CLICK, onMoreInfoClick);
 		}
 		
-		
-		/*
-		loadApp
-		Requests details from the SL client about the passed in application
-		and waits for a reponse event.
-		*/
-		public function loadApp(app:Application):void
+		private function onAdded(evt:Event):void 
 		{
 			//show loader 
 			this.loader.visible = true;
+			this.content.visible = false;
+			this.descTLF.visible = false;
+			this.scrollPane.visible = false;
+			this.bg.height = WIN_MIN_HEIGHT;
 			
-			if(ExternalInterface.available)
-				ExternalInterface.call("GetApplicationDetails", app.appID);
-				
-			//set reference to current app
-			this.currentApp = app;
 			
-			//listen for ApplicationDetailsReceived Event
+			if(this.currentApp == null) {
+				this.content.titleTLF.text = "No App Defined";
+				return;
+			}
+			
+			//Requests details from the SL client about current app
 			main.model.addEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
+			if(ExternalInterface.available)
+				ExternalInterface.call("GetApplicationDetails", this.currentApp.appID);
+		}
+		
+		private function onRemoved(evt:Event):void {
+			main.model.removeEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
 		}
 		
 		/*
@@ -109,75 +144,29 @@ package com.slskin.ignitenetwork.views.desktop
 			//remove the listener after we have received the details.
 			main.model.removeEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
 			
+			//hide loader
+			this.loader.visible = false;
+			
 			//get app details that were received.
 			var headline:String = main.model.getProperty("Application_Headline", main.model.APP_DATA_PATH);
 			var details:String = main.model.getProperty("Application_Description", main.model.APP_DATA_PATH);
 			
+			this.content.titleTLF.text = headline;
+			this.descTLF.text = details;
+			this.descTLF.textFlow.flowComposer.updateAllControllers();
+			this.scrollPane.update();
+			
 			//write the app id to the debug console
-			if(this.main.debugger.debug)
-				this.main.debugger.write("==> Loaded Application ID: " + this.currentApp.appID);
-						
-			//hide loader
-			this.loader.visible = false;
-			
-			//set button label
-			var buttonLabel:String = Language.translate("Start", "Start") + " " + this.currentApp.appName;
-			
-			//set the details tlf and appropriate formats
-			this.setGameDetails(headline, details);
-			
-			//load images
-			this.loadAppImages();
+			this.main.debugger.write("Loaded Application ID: " + this.currentApp.appID);
 			
 			//setup the app status
 			this.setAppStatus();
-		}
-		
-		/*
-		loadAppImages
-		Loads the APP_IMAGE and changes the wallpaper to
-		the game specific wallpaper.
-		*/
-		private function loadAppImages():void
-		{
-			if(this.currentApp != null)
-			{
-				//this.image.visible = false;
-				//this.image.loader.load(new URLRequest(this.currentApp.assetPath + this.APP_IMAGE));
-				
-				//load app sepecifc wallpaper
-				this.main.wallpaperManager.loadImage(this.currentApp.assetPath + this.APP_WALLPAPER);
-				this.main.wallpaperManager.stopTimer();
-			}
-		}
-		
-		/*
-		onImageLoadComplete
-		Event handler for UILoader load complete. Transition in UILoader.
-		*/
-		private function onImageLoadComplete(evt:Event):void {
-			//TransitionManager.start(this.image, {type:Iris, direction:Transition.IN, duration:1, easing:Strong.easeOut});
-		}
-		
-		
-		/*
-		setGameDetails
-		Sets the game headline and game details in the deatils TLF
-		with the correct TextFormat.
-		*/
-		private function setGameDetails(headline:String, details:String):void
-		{
-			if(headline == null || details == null)
-				this.detailsTLF.text = "...";
-			else
-			{
-				this.detailsTLF.htmlText = headline + "  " + details;
-				this.detailsTLF.setTextFormat(this.titleFormat, 0, headline.length);
-				this.detailsTLF.setTextFormat(this.detailsFormat, headline.length, this.detailsTLF.length);
-			}
+			this.adjustHeight();
 			
-			//make sure the scroll pane updates!
-			this.detailsPane.update();
+			//show content
+			this.content.visible = true;
+			this.descTLF.visible = true;
+			this.scrollPane.visible = true;
 		}
 		
 		
@@ -200,46 +189,75 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			if(appType == "Game")
 			{
-				this.appStatus.sessionsTLF.text = Number(statusStr.match(/\d+/));
-				this.appStatus.singleplayerStatus.gotoAndStop((statusStr.search("Singleplayer") != -1).toString());
-				this.appStatus.multiplayerStatus.gotoAndStop((statusStr.search("Multiplayer") != -1).toString());
-				this.appStatus.onlineStatus.gotoAndStop((statusStr.search("Online") != -1).toString());
+				this.toggleGameStats(true);
+				this.content.sessionsTLF.text = Number(statusStr.match(/\d+/)).toString();
+				this.content.singleplayerStatus.gotoAndStop((statusStr.search("Singleplayer") != -1).toString());
+				this.content.multiplayerStatus.gotoAndStop((statusStr.search("Multiplayer") != -1).toString());
 			}
 			else if(appType == "Program")
+				this.toggleGameStats(false);
+		}
+		
+		/*
+		toggleGameStats
+		Toggle the information about the application that pertains to games - mutliplayer, singleplayer, etc.
+		*/
+		private function toggleGameStats(enable:Boolean) 
+		{
+			var opacity:Number = (enable ? 1 : .3);
+			this.content.sessionsTLF.alpha = opacity;
+			this.content.singleplayerTLF.alpha = opacity;
+			this.content.multiplayerTLF.alpha = opacity;
+			this.content.sessionsSubTLF.alpha = opacity;
+			this.content.singleplayerStatus.alpha = opacity;
+			this.content.multiplayerStatus.alpha = opacity;
+			if(!enable)
 			{
-				this.appStatus.sessionsTLF.text = "0";
-				this.appStatus.singleplayerStatus.gotoAndStop("false");
-				this.appStatus.multiplayerStatus.gotoAndStop("false");
-				this.appStatus.onlineStatus.gotoAndStop("false");
+				this.content.sessionsTLF.text = "-";
+				this.content.singleplayerStatus.gotoAndStop("false");
+				this.content.multiplayerStatus.gotoAndStop("false");
 			}
 		}
+		/*
+		adjustHeight
+		Adjust the height of the window so it fits the content but does not 
+		exceed MAX_HEIGHT.
+		*/
+		private function adjustHeight():void 
+		{
+			var windowHeight:Number = WIN_MIN_HEIGHT + this.descTLF.height;
+			
+			if(windowHeight > WIN_MAX_HEIGHT)
+				windowHeight = WIN_MAX_HEIGHT;
 
+			this.bg.height = windowHeight;
+			this.scrollPane.height = windowHeight - this.WIN_MIN_HEIGHT + 10;
+			
+		}
 		
 		/*
 		onMoreInfoClick
-		Make external call to sl client to load app website.
+		Make external call to SL client to load app website.
 		*/
 		private function onMoreInfoClick(evt:MouseEvent):void
 		{
 			if(this.currentApp == null) return;
 			
-			trace("Launching application website...");
+			//trace("Launching application website...");
 			if(ExternalInterface.available)
 				ExternalInterface.call("LaunchApplicationWebsite", this.currentApp.appID);
 		}
 		
-		/*
-		onMoreInfoRollOver
-		*/
-		private function onMoreInfoRollOver(evt:MouseEvent):void {
-			this.appStatus.moredetailsTLF.textColor = 0x000000;
+		private function onTitleClick(evt:MouseEvent):void {
+			this.main.appManager.verifyAppLaunch(this.currentApp);
 		}
 		
-		/*
-		onMoreInfoRollOut
-		*/
-		private function onMoreInfoRollOut(evt:MouseEvent):void {
-			this.appStatus.moredetailsTLF.textColor = 0x666666;
+		private function onTitleRollOver(evt:MouseEvent):void {
+			this.content.titleTLF.setTextFormat(this.rollOverFormat);
+		}
+		
+		private function onTitleRollOut(evt:MouseEvent):void {
+			this.content.titleTLF.setTextFormat(this.defaultFormat);
 		}
 		
 		/*
@@ -248,7 +266,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function setPaneStyle():void
 		{
-			with(this.detailsPane)
+			with(this.scrollPane)
 			{
 				//set scrollPane scrollbar width
 				setStyle("scrollBarWidth", 8);
@@ -262,10 +280,9 @@ package com.slskin.ignitenetwork.views.desktop
 				setStyle("trackDownSkin", ScrollTrack_Invisible);
 			
 				//setup thumb
-				setStyle("thumbUpSkin", ScrollThumb_Up_Light);
-				setStyle("thumbOverSkin", ScrollThumb_Up_Light);
-				setStyle("thumbDownSkin", ScrollThumb_Up_Light);
-				setStyle("thumbIcon", thumbIcon_Light);
+				setStyle("thumbUpSkin", ScrollThumb_Up_Dark);
+				setStyle("thumbOverSkin", ScrollThumb_Up_Dark);
+				setStyle("thumbDownSkin", ScrollThumb_Up_Dark);
 			
 				//down arrow
 				setStyle("downArrowUpSkin", ArrowSkin_Invisible); 

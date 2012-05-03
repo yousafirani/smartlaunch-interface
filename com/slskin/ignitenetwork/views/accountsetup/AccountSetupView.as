@@ -21,8 +21,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 	public class AccountSetupView extends SLView
 	{
 		/* Consts */
-		private const START_X:Number = 15; //the x value to give the children elements
-		private const START_Y:Number = 55; //the y value to give the children elements
+		private const START_X:Number = 25; //the x value to give the children elements
+		private const START_Y:Number = 25; //the y value to give the children elements
 		private const PADDING:Number = 20; //padding between children elements
 		
 		/* Memeber Fields */
@@ -42,8 +42,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.userInfoRequired = (requiredInfo == 0 || requiredInfo == 2 || requiredInfo == 3);
 			
 			//setup title
-			this.titleTab.title.text = Language.translate("Account_Setup", "Account Setup");
-			this.titleTab.x = (this.width - this.titleTab.width)/2;
+			//this.titleTab.title.text = Language.translate("Account_Setup", "Account Setup");
+			//this.titleTab.x = (this.width - this.titleTab.width)/2;
 			
 			//listen for added to stage event
 			this.addEventListener(Event.ADDED_TO_STAGE, this.onAdded);
@@ -106,7 +106,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			//add progress to stage
 			this.setupProgress.x = this.START_X;
 			this.setupProgress.y = nextItemY;
-			nextItemY += this.setupProgress.height + this.PADDING;
+			nextItemY += this.setupProgress.height;
 			this.addChild(this.setupProgress);
 			
 			//adjust the height of the window

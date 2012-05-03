@@ -128,7 +128,7 @@ package com.slskin.ignitenetwork.components
 			
 			if(evt.keyCode == 40) //arrow down
 				this.selectedIndex = (this.selectedIndex+1) % this._listItems.length;
-			else if(evt.keyCode == 38)
+			else if(evt.keyCode == 38) //arrow up
 			{
 				this.selectedIndex = (this.selectedIndex-1) % this._listItems.length;
 				if(this.selectedIndex < 0)
@@ -144,7 +144,9 @@ package com.slskin.ignitenetwork.components
 					this.selectedItem.selected = false;
 					
 				this.selectedItem = this._listItems[this.selectedIndex];
-				selectedItem.selected = true;
+				
+				if(this.selectedItem != null)
+					this.selectedItem.selected = true;
 			}
 		}
 		

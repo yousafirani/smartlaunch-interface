@@ -13,11 +13,11 @@ package com.slskin.ignitenetwork.views.accountsetup
 	import flash.events.ProgressEvent;
 	import flash.events.FocusEvent;
 	import com.slskin.ignitenetwork.*;
-	import com.slskin.ignitenetwork.components.SLTextField;
+	import com.slskin.ignitenetwork.components.TextInput;
 	import com.slskin.ignitenetwork.components.SexSelector;
 	import com.slskin.ignitenetwork.util.Strings;
 	import flash.events.MouseEvent;
-	import com.slskin.ignitenetwork.components.SLCheckBox;
+	import com.slskin.ignitenetwork.components.CheckBox;
 	import flash.text.TextFieldAutoSize;
 	
 	public class AccountSetupInfo extends MovieClip 
@@ -28,13 +28,13 @@ package com.slskin.ignitenetwork.views.accountsetup
 		private const COLUMN_PADDING:Number = 22; //padding between fields in column
 		private const ROW_PADDING:Number = 18; //padding between fields in row
 		private const MAX_COLUMNS:int = 3; //number of columns in form.
-		private const MAX_WIDTH:Number = 650; //in pixels
+		private const MAX_WIDTH:Number = 500; //in pixels
 		
 		/* Member fields */
 		private var stepNumber:int; //stores the step we are in the setup process.
 		private var main:Main; //reference to main document class
 		private var fields:Array; //stores the fields used to gather user info
-		private var mailingListField:SLCheckBox; //Used to ask to opt into mailing list
+		private var mailingListField:CheckBox; //Used to ask to opt into mailing list
 		
 		public function AccountSetupInfo(main:Main, step:int = 2) 
 		{
@@ -59,7 +59,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.header.title.y = (this.header.height - this.header.title.height) / 2;
 			
 			//resize header line
-			this.header.graphics.lineStyle(1, 0x999999);
+			this.header.graphics.lineStyle(1, 0x666666);
 			this.header.graphics.moveTo(this.width + 5, this.height / 2 );
 			this.header.graphics.lineTo(this.MAX_WIDTH, this.height / 2);
 			
@@ -111,7 +111,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 					{
 						//create new field and pass in fieldName as hint.
 						var fieldHint:String = Language.translate(fieldName, fieldName);
-						field = new SLTextField(fieldHint);
+						field = new TextInput(fieldHint);
 						
 						//setup tabbing on field
 						InteractiveObject(field.field.getChildAt(1)).tabIndex = i + 2;
@@ -166,7 +166,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 						
 						//listen for field validation change and focus events
 						//to update the form progress.
-						field.addEventListener(SLTextField.VALIDATION_CHANGE, dispatchProgress);
+						field.addEventListener(TextInput.VALIDATION_CHANGE, dispatchProgress);
 						field.field.addEventListener(FocusEvent.FOCUS_OUT, dispatchProgress);
 					}
 					
@@ -196,7 +196,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			//add terms of service check box
 			if(main.config.TermsOfService.@enabled == "true")
 			{
-				var tos:SLCheckBox = new SLCheckBox(main.config.TermsOfService, 0x333333, 0x000000, "11");
+				var tos:CheckBox = new CheckBox(main.config.TermsOfService);
 				tos.x = this.OFFSET_X;
 				tos.y = this.height + tos.height;
 				tos.addEventListener(MouseEvent.CLICK, dispatchProgress);
@@ -207,7 +207,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			//add mailchimp checkbox
 			if(main.config.MailChimp.@enabled == "true")
 			{
-				this.mailingListField = new SLCheckBox(main.config.MailChimp, 0x333333, 0x000000, "11");
+				this.mailingListField = new CheckBox(main.config.MailChimp);
 				this.mailingListField.selected = (main.config.MailChimp.@selected == "true");
 				this.mailingListField.x = this.OFFSET_X;
 				this.mailingListField.y = this.height + this.mailingListField.height;
@@ -231,7 +231,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 			for(var i:int = 0; i < this.fields.length; i++)
 			{
 				var obj:MovieClip = this.fields[i];
-				if(obj is SLTextField)
+				if(obj is TextInput)
 				{
 					if(!obj.isEmpty() && !obj.hasError)
 						currentProgress++;
@@ -241,7 +241,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 					if(obj.isSelected)
 						currentProgress++;
 				}
-				else if(obj is SLCheckBox)
+				else if(obj is CheckBox)
 				{
 					if(obj.selected)
 						currentProgress++;
@@ -270,7 +270,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 				var obj:MovieClip = this.fields[i];
 				var fieldName:String = obj.name;
 				var fieldVal:String;
-				if(obj is SLTextField)
+				if(obj is TextInput)
 					fieldVal = obj.text;
 				else if(obj is SexSelector)
 					fieldVal = (obj.selectedGender == SexSelector.MALE ? "1" : "2");

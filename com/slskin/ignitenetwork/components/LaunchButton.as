@@ -39,6 +39,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function onLaunchRollOver(evt:MouseEvent):void {
 			this.bg.gotoAndStop("Over");
+			evt.stopPropagation();
 		}
 		
 		/*
@@ -47,6 +48,7 @@ package com.slskin.ignitenetwork.components
 		*/
 		private function onLaunchRollOut(evt:MouseEvent):void {
 			this.bg.gotoAndStop("Up");
+			evt.stopPropagation();
 		}
 		
 		/*
@@ -64,8 +66,6 @@ package com.slskin.ignitenetwork.components
 		private function onLaunchClick(evt:MouseEvent):void 
 		{
 			this.bg.gotoAndStop("Over");
-			//start the app launch proccess.
-			//this.main.appManager.launchApp(this.currentApp);
 		}
 		
 	} //class

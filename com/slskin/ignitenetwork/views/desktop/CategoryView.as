@@ -27,6 +27,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import com.slskin.ignitenetwork.components.SearchField;
 	import com.slskin.ignitenetwork.util.Strings;
 	import com.slskin.ignitenetwork.components.BoxShot;
+	import fl.events.ScrollEvent;
 	import fl.text.TLFTextField;
 	import flash.net.URLRequest;
 	import fl.transitions.easing.*;
@@ -95,9 +96,9 @@ package com.slskin.ignitenetwork.views.desktop
 			this.addEventListener(Event.COMPLETE, this.onAllAppsLoaded);
 			
 			/* DEBUG */
-			if(main.debugger.debug)
+			if(main.model.getProperty("InjectApps") == "1")
 			{
-				this.createMockCategory();
+				this.createMockApps();
 				this.onAllAppsLoaded(null);
 				this.showView();
 			}
@@ -196,6 +197,7 @@ package com.slskin.ignitenetwork.views.desktop
 			this.selector.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSubCategoryClick);
 			this.searchField.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSearchItemClick);
 			this.searchField.addEventListener(SearchField.SEARCH_RESULTS, this.onSearchResults);
+			this.scrollPane.addEventListener(ScrollEvent.SCROLL, onScrollPaneScroll);
 			
 			createBoxShots();
 			this.displaySubCategory(allCategory);
@@ -297,7 +299,6 @@ package com.slskin.ignitenetwork.views.desktop
 		{
 			var searchResults:Array = (evt.argument as Array);
 			var boxshotsArr:Array = new Array();
-			var searchText:String = this.searchField.text.toLocaleLowerCase();
 			
 			for(var i:uint = 0; i < searchResults.length; i++)
 			{
@@ -305,10 +306,8 @@ package com.slskin.ignitenetwork.views.desktop
 				box.addEventListener(SLEvent.LIST_ITEM_CLICK, onBoxShotClick);
 				boxshotsArr.push(box);
 				
-				//highlight search result
-				var dpLabel:String = box.dataProvider.itemLabel.toLocaleLowerCase();
-				var startIndex:int = dpLabel.search(searchText);
-				box.label.highlight(startIndex, startIndex+searchText.length);
+				//highlight search result in the BoxShot
+				box.label.highlight(searchResults[i].highlightStart, searchResults[i].highlightEnd);
 			}
 			
 			//set scrollpane
@@ -318,7 +317,7 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//update UI
 			this.totalTLF.text = Strings.substitute(TOTAL_STRING, searchResults.length, this.totalApps);
-			this.statusTLF.text = "Search results for '" + searchText + "'";
+			this.statusTLF.text = "Search results for '" + this.searchField.text + "'";
 			this.selector.label = "...";
 			
 		}
@@ -349,6 +348,26 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onSearchItemClick(evt:SLEvent):void {
 			main.appManager.verifyAppLaunch(evt.argument.dataProvider as Application);
 		}
+		
+		/*
+		onScrollPaneScroll
+		Hide the AppDetailsView if it is visible.
+		*/
+		private function onScrollPaneScroll(evt:ScrollEvent):void {
+			if(BoxShot.appDetails != null && BoxShot.appDetails.stage != null)
+				this.main.removeChild(BoxShot.appDetails);
+		}
+		
+		/*
+		hideView
+		Hide AppDetails View if it is visible.
+		*/
+		public override function hideView(evt:Event = null):void 
+		{
+			super.hideView();
+			if(BoxShot.appDetails != null && BoxShot.appDetails.stage != null)
+				this.main.removeChild(BoxShot.appDetails);
+		}
 	
 		/*
 		setPaneStyle
@@ -370,10 +389,9 @@ package com.slskin.ignitenetwork.views.desktop
 				setStyle("trackDownSkin", ScrollTrack_Invisible);
 			
 				//setup thumb
-				setStyle("thumbUpSkin", ScrollThumb_Up_Light);
-				setStyle("thumbOverSkin", ScrollThumb_Up_Light);
-				setStyle("thumbDownSkin", ScrollThumb_Up_Light);
-				setStyle("thumbIcon", thumbIcon_Light);
+				setStyle("thumbUpSkin", ScrollThumb_Up_Dark);
+				setStyle("thumbOverSkin", ScrollThumb_Up_Dark);
+				setStyle("thumbDownSkin", ScrollThumb_Up_Dark);
 			
 				//down arrow
 				setStyle("downArrowUpSkin", ArrowSkin_Invisible); 
@@ -382,7 +400,7 @@ package com.slskin.ignitenetwork.views.desktop
 		}
 		
 				
-		private function createMockCategory():void
+		private function createMockApps():void
 		{
 			var appStr:String = "Counter-Strike|1^World of Warcraft|2^"+
 			"League of Legends|3^Starcraft II|4^Warcraft III: Frozen Throne|6^"+

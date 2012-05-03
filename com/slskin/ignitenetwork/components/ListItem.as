@@ -47,6 +47,8 @@ package com.slskin.ignitenetwork.components
 		private var _icon:UILoader; //stores the icon for 
 		private var _iconSize:Number; //height and width of list item icon
 		private var _selected:Boolean; //indicates if the item is selected.
+		private var _highlightStart:int; //stores the start index of the highlight
+		private var _highlightEnd:int; //stores the end index of the highlight.
 		
 		public function ListItem(dp:IListItem, itemWidth:Number, itemHeight:Number, rollOverColor:uint = 0x333333,
 								 labelSize:Object = "12", labelColor:uint = 0xCCCCCC, seperator:DisplayObject = null, 
@@ -86,6 +88,14 @@ package com.slskin.ignitenetwork.components
 		
 		public function get iconSize():Number {
 			return this._iconSize;
+		}
+		
+		public function get highlightStart():int {
+			return this._highlightStart;
+		}
+		
+		public function get highlightEnd():int {
+			return this._highlightEnd;
 		}
 		
 		/* Setters */
@@ -155,11 +165,13 @@ package com.slskin.ignitenetwork.components
 		Highlights the label within the given range with the defaultHighlight TextFormat object. 
 		If no range is passed in the default behavior is to highlight the entire label.
 		*/
-		public function highlight(beginIndex:uint = -1, endIndex:uint = -1):void 
+		public function highlight(beginIndex:int = -1, endIndex:int = -1):void 
 		{
 			try 
 			{
 				this.labelTLF.setTextFormat(this.defaultHighlight, beginIndex, endIndex);
+				this._highlightStart = beginIndex;
+				this._highlightEnd = endIndex;
 				this.labelTLF.textFlow.flowComposer.updateAllControllers();
 			}
 			catch(error:RangeError) {}

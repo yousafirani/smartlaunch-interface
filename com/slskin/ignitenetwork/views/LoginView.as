@@ -25,8 +25,8 @@ package com.slskin.ignitenetwork.views
 	import com.slskin.ignitenetwork.*;
 	import com.slskin.ignitenetwork.events.*;
 	import com.slskin.ignitenetwork.util.Strings;
-	import com.slskin.ignitenetwork.components.SLTextField;
-	import com.slskin.ignitenetwork.components.SLCheckBox;
+	import com.slskin.ignitenetwork.components.TextInput;
+	import flash.events.IOErrorEvent;
 	import flash.geom.Point;
 	import flash.utils.Timer;
 	import flash.events.TimerEvent;
@@ -37,8 +37,8 @@ package com.slskin.ignitenetwork.views
 		private const INACTIVE_MILLISEC:Number = 30000; //30 seconds represents inactivity
 		
 		/* Member Variables */
-		private var userTF:SLTextField; //stores a reference to the username field.
-		private var passTF:SLTextField; //stores a reference to the password field.
+		private var userTF:TextInput; //stores a reference to the username field.
+		private var passTF:TextInput; //stores a reference to the password field.
 		private var errorTween:Tween;
 		private var inactivityTimer:Timer = new Timer(INACTIVE_MILLISEC); 
 		
@@ -56,22 +56,18 @@ package com.slskin.ignitenetwork.views
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, this.onAdded);
 			
-			//setup logo
+			//load logo
 			this.logoLoader.load(new URLRequest(main.config.Images.loginLogo));
+			this.logoLoader.addEventListener(IOErrorEvent.IO_ERROR, onLogoLoadError);
 			
-			//set window title
-			this.titleTab.title.text =  Language.translate("Account_Login", "Account Login");
-			this.loginButton.label = Language.translate("Login", "Login");
+			//this.titleTab.title.text =  Language.translate("Account_Login", "Account Login");
+			this.loginButton.buttonMode = this.loginButton.useHandCursor = true;
+			this.loginButton.addEventListener(MouseEvent.CLICK, this.sendLogin);
+			this.loginButton.addEventListener(MouseEvent.ROLL_OVER, function(evt:MouseEvent):void { evt.target.play() });
+			
 			
 			//set headline text
-			this.subHeadlineTLF.text = main.model.getProperty("Headline2", main.model.TEXT_PATH);
-			
-			//center the title tab
-			this.titleTab.x = (this.width - this.titleTab.width)/2;
-			
-			//setup error field
-			this.errorField.text = "";
-			this.errorField.alpha = 0;
+			//this.subHeadlineTLF.text = main.model.getProperty("Headline2", main.model.TEXT_PATH);
 			
 			//get a reference to the username and password fields
 			this.userTF = this.usernameField;
@@ -82,16 +78,12 @@ package com.slskin.ignitenetwork.views
 			this.userTF.upperCase = true;
 			this.userTF.required = true;
 			
-			//add listener to the login button
-			this.loginButton.addEventListener("buttonClick", this.sendLogin);
+			//make room for arrow button on login screen
+			this.passTF.tlf.width -= this.loginButton.arrow.width;
 			
 			//listen for key down
 			this.userTF.addKeyDownListener(this.onKeyPress);
 			this.passTF.addKeyDownListener(this.onKeyPress);
-			
-			//disable tab enable on the login button and otber elements
-			InteractiveObject(this.subHeadlineTLF.getChildAt(1)).tabEnabled = false;
-			InteractiveObject(this.errorField.getChildAt(1)).tabEnabled = false;
 			
 			//listener for inactivity
 			this.inactivityTimer.addEventListener(TimerEvent.TIMER, onInactivityTick);
@@ -146,7 +138,7 @@ package com.slskin.ignitenetwork.views
 				case main.model.TEXT_PATH + "Headline1":
 					break;
 				case main.model.TEXT_PATH + "Headline2":
-					this.subHeadlineTLF.text = val; //set the sub-headline
+					//this.subHeadlineTLF.text = val; //set the sub-headline
 					break;
 				case main.model.TEXT_PATH + "LoadingText":
 				case main.model.DATA_PATH + "LoadingText":
@@ -170,10 +162,8 @@ package com.slskin.ignitenetwork.views
 		onLoginApproved
 		Called when the LOGIN_APPROVED event is triggered by the SL Client. 
 		*/
-		public function onLoginApproved(evt:SLEvent):void
-		{
+		public function onLoginApproved(evt:SLEvent):void {
 			LoadingView.getInstance().showLoader();
-			this.hideError();
 		}
 		
 		/*
@@ -183,24 +173,23 @@ package com.slskin.ignitenetwork.views
 		private function onLoginError(evt:SLEvent):void
 		{
 			//pull the error text passed in from the SL client.
-			this.displayError(main.model.getProperty("ErrorMessage", main.model.TEXT_PATH));
+			var errorStr:String = main.model.getProperty("ErrorMessage", main.model.TEXT_PATH);
 			
 			//The type of error is passed in with the event as an argument.
-			/*switch(evt.argument)
+			switch(evt.argument)
 			{
 				case "Username Not Found^":
-					this.displayError("Invalid username.");
+				case "Account Locked^":
+					this.userTF.showError(errorStr);
 					break;
 				case "Wrong Password^":
-					this.displayError("Invalid password.");
-					break;
-				case "Account Locked^":
-					this.displayError("Your account is locked.");
-					break;
 				case "Out Of Order^":
-					this.displayError("This computer is out of order.");
+					this.passTF.showError(errorStr);
 					break;
-			}*/
+				default:
+					this.passTF.showError("There was problem logging you in. Please ask for assistance.");
+					break;
+			}
 		}
 		
 		/*
@@ -233,7 +222,6 @@ package com.slskin.ignitenetwork.views
 			{
 				this.userTF.hideError();
 				this.passTF.hideError();
-				//this.hideError();
 				
 				this.main.debugger.write("Attempting to login...");
 				
@@ -247,22 +235,11 @@ package com.slskin.ignitenetwork.views
 		}
 		
 		/*
-		displayError
-		Fades in the error field with after setting it.
-		Takes the error text.
+		onLogoLoadError
+		Log the error.
 		*/
-		private function displayError(err:String):void
-		{
-			this.errorField.text = err;
-			this.errorTween = new Tween(this.errorField, "alpha", Strong.easeIn, this.errorField.alpha, 1, .5, true);
-		}
-		
-		/*
-		hideError
-		Fades out the error field
-		*/
-		private function hideError():void {
-			this.errorTween = new Tween(this.errorField, "alpha", Strong.easeIn, this.errorField.alpha, 0, 1, true);
+		private function onLogoLoadError(evt:IOErrorEvent):void {
+			main.log(evt.text);
 		}
 		
 		/*
@@ -287,7 +264,6 @@ package com.slskin.ignitenetwork.views
 		*/
 		private function onInactivityTick(evt:TimerEvent):void
 		{
-			this.hideError();
 			this.userTF.clearField();
 			this.passTF.clearField();
 			
