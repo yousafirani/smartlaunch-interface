@@ -50,6 +50,8 @@ package com.slskin.ignitenetwork.apps
 			//set doc class reference
 			this.main = main;
 			
+			//
+			
 			//instatiate arrays
 			this.mainCategories = new Array();
 			this.faves = new Array();
@@ -188,14 +190,15 @@ package com.slskin.ignitenetwork.apps
 			if(!silent) 
 			{
 				LoadingView.getInstance().showLoader();
+				LoadingView.getInstance().enableClose();
 				LoadingView.getInstance().loadingText = "Launching " + app.appName + "...";
 			}
 			
 			//listen for app loading progress
 			main.model.addEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 			
-			//stop wallpapers.
-			main.wallpaperManager.stopTimer();
+			//disable the close button once we have progress from the SL client.
+			main.model.addEventListener(SLEvent.VALUE_ADDED, this.disableClose);
 			
 			if(ExternalInterface.available)
 				ExternalInterface.call("LaunchApplication", app.appID);
@@ -242,7 +245,6 @@ package com.slskin.ignitenetwork.apps
 			if(this.timeToLaunch == 0)
 			{
 				this.launchTimer.stop();
-				LoadingView.getInstance().disableClose();
 				this.launchApp(this.appToLaunch);
 			}
 		}
@@ -286,6 +288,7 @@ package com.slskin.ignitenetwork.apps
 					{
 						LoadingView.getInstance().hideLoader();
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
+						main.wallpaperManager.stopTimer();
 					}
 					else if(val == "Failed")
 					{
@@ -299,6 +302,24 @@ package com.slskin.ignitenetwork.apps
 					LoadingView.getInstance().loadingText = val;
 					break;
 			}
+		}
+		
+		/*
+		disableClose
+		Disable the close button once we are sure that the SL client has
+		received our launch request. This is to offset an issue where the client
+		ignores a launch request of the same application within 4 seconds.
+		*/
+		private function disableClose(evt:SLEvent):void 
+		{
+			var split:Array = String(evt.argument).split(main.model.DIM);
+			var key:String = split[0];
+			if(key == main.model.TEXT_PATH + "LoadingText" ||
+				key == main.model.DATA_PATH + "LoadingText")
+				{
+					LoadingView.getInstance().disableClose();
+					main.model.addEventListener(SLEvent.VALUE_ADDED, this.disableClose);
+				}
 		}
 		
 
