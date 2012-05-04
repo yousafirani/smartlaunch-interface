@@ -61,7 +61,7 @@ package com.slskin.ignitenetwork.views.desktop
 				autoSize = "left";
 				x = DESC_START_X;
 				y = DESC_START_Y;
-				paddingLeft = 3;
+				paddingLeft = 5;
 				paddingRight = 10;
 			}
 			
@@ -129,6 +129,7 @@ package com.slskin.ignitenetwork.views.desktop
 			main.model.addEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
 			if(ExternalInterface.available)
 				ExternalInterface.call("GetApplicationDetails", this.currentApp.appID);
+				
 		}
 		
 		private function onRemoved(evt:Event):void {
@@ -139,7 +140,7 @@ package com.slskin.ignitenetwork.views.desktop
 		onAppDetailsReceived
 		Sets the application details received from the SL client.
 		*/
-		private function onAppDetailsReceived(evt:SLEvent):void
+		private function onAppDetailsReceived(evt:SLEvent = null):void
 		{
 			//remove the listener after we have received the details.
 			main.model.removeEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);

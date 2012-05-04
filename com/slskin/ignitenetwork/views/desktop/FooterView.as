@@ -29,7 +29,7 @@ package com.slskin.ignitenetwork.views.desktop
 	public class FooterView extends SLView 
 	{
 		/* Constants */
-		private const LEFT_PADDING:Number = -142;
+		private const LEFT_PADDING:Number = -137;
 		private const TOP_PADDING:Number = 268;
 		private const LOGO_SIZE:Number = 75;
 		private const ICON_PADDING:Number = 8; //padding between social icons
@@ -66,15 +66,12 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//start at the bottom of the stage
 			this.startPos = new Point(centerX, main.getStageHeight() + this.height);
-			
-			//update window padding to make room for
-			//other home screen content.
-			this.xPadding = this.LEFT_PADDING;
-			this.yPadding = this.TOP_PADDING;
-			
+
 			//update the start position point with
 			//the new padding values
-			this.startPos.x += this.xPadding; 
+			this.xPadding = this.LEFT_PADDING;
+			this.yPadding = this.TOP_PADDING;
+			this.startPos.x += this.xPadding;
 			this.startPos.y += this.yPadding;
 			this.moveToStart();
 			

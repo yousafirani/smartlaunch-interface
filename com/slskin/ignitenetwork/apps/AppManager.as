@@ -194,6 +194,9 @@ package com.slskin.ignitenetwork.apps
 			//listen for app loading progress
 			main.model.addEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 			
+			//stop wallpapers.
+			main.wallpaperManager.stopTimer();
+			
 			if(ExternalInterface.available)
 				ExternalInterface.call("LaunchApplication", app.appID);
 		}
@@ -287,7 +290,7 @@ package com.slskin.ignitenetwork.apps
 					else if(val == "Failed")
 					{
 						LoadingView.getInstance().hideLoader();
-						ErrorView.getInstance().showError(main.config.Strings.ErrorString);
+						//ErrorView.getInstance().showError(main.config.Strings.ErrorString);
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 					}
 					break;

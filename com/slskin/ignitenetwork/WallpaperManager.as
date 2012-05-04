@@ -93,6 +93,7 @@ package com.slskin.ignitenetwork
 				
 				//listen for tick event
 				this.timer.addEventListener(TimerEvent.TIMER, onIntervalTick);
+				this.timer.start();
 			}
 			
 			//load the first image
@@ -101,7 +102,7 @@ package com.slskin.ignitenetwork
 			
 			//load the login background
 			this.currentImage.removeEventListener(Event.COMPLETE, this.onImageLoadComplete);
-			this.currentImage.load(new URLRequest(main.config.Images.backgrounds.loginBackground));
+			this.currentImage.load(new URLRequest(this.imageIterator.next()));
 			
 			//add the current image to stage
 			this.addChild(this.currentImage);
@@ -127,7 +128,7 @@ package com.slskin.ignitenetwork
 		*/
 		public function startTimer():void 
 		{
-			if(this.timer != null)
+			if(this.timer != null && this.imagePaths.length > 1)
 				this.timer.start();
 		}
 		

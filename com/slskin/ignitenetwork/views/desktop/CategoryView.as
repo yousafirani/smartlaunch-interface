@@ -37,7 +37,7 @@ package com.slskin.ignitenetwork.views.desktop
 	public class CategoryView extends SLView 
 	{
 		/* Constants */
-		private const LEFT_PADDING:Number = -135; //Window left padding, makes room for dashboard
+		private const LEFT_PADDING:Number = -132; //Window left padding, makes room for dashboard
 		private const TOP_PADDING:Number = -53; //Window top padding, makes room for footer
 		private const ICON_PATH:String = "./assets/dock/";
 		private const TOTAL_STRING:String = "{0} of {1}";

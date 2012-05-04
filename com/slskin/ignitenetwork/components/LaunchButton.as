@@ -31,7 +31,6 @@ package com.slskin.ignitenetwork.components
 			addEventListener(MouseEvent.CLICK, onLaunchClick);
 			addEventListener(MouseEvent.MOUSE_DOWN, onLaunchDown);
 		}
-		
 				
 		/*
 		onLaunchRollOver

@@ -222,7 +222,7 @@ package com.slskin.ignitenetwork.views
 					this.passTF.showError(errorStr);
 					break;
 				default:
-					this.passTF.showError("There was problem logging you in. Please ask for assistance.");
+					this.passTF.showError(errorStr);
 					break;
 			}
 		}

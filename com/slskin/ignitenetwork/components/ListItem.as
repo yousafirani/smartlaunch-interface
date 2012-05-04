@@ -18,6 +18,7 @@ package com.slskin.ignitenetwork.components
 	import fl.containers.UILoader;
 	import flash.net.URLRequest;
 	import flash.events.IOErrorEvent;
+	import com.slskin.ignitenetwork.Main;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.components.IListItem;
 	import com.slskin.ignitenetwork.fonts.*;
@@ -119,6 +120,7 @@ package com.slskin.ignitenetwork.components
 			
 			with(this.labelTLF)
 			{
+				defaultTextFormat = this.defaultFormat;
 				embedFonts = true;
 				multiline = false;
 				antiAliasType = AntiAliasType.ADVANCED;
@@ -130,7 +132,6 @@ package com.slskin.ignitenetwork.components
 				y = (this.itemHeight - this.labelTLF.height)/2;
 			}
 			
-			//add the default format
 			this.labelTLF.setTextFormat(this.defaultFormat);
 			this.labelTLF.textFlow.flowComposer.updateAllControllers();
 		}
@@ -146,18 +147,7 @@ package com.slskin.ignitenetwork.components
 			this.rollOverSprite.graphics.beginFill(color);
 			this.rollOverSprite.graphics.drawRect(0, 0, this._itemWidth, this._itemHeight);
 			this.rollOverSprite.graphics.endFill();
-			this.rollOverSprite.alpha = 0; //hide it initially
-		}
-		
-		/*
-		appendToLabel
-		Appends text to the itemTLF with the specified format (if passed in).
-		*/
-		public function appendToLabel(txt:String, fontSize:Object = "12", fontColor:uint = 0xCCCCCC) 
-		{
-			this.labelTLF.appendText(txt);
-			var format:TextFormat = new TextFormat(this.defaultFont.fontName, fontSize, fontColor);
-			this.labelTLF.setTextFormat(format, this.labelTLF.text.length - txt.length, this.labelTLF.text.length);
+			this.rollOverSprite.alpha = 0;
 		}
 		
 		/*
@@ -207,6 +197,10 @@ package com.slskin.ignitenetwork.components
 			
 			//layout list item ui elements
 			layoutListItem();
+			
+			//add dataprovider id to label if debug mode
+			if((root as Main).debugger.debug)
+				this.labelTLF.appendText(" (" + this._dp.itemID + ")");
 			
 			//enable button mode
 			this.buttonMode = true;

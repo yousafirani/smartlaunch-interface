@@ -228,9 +228,8 @@
 		onImageLoadError
 		Log the error and load the diagonal lines background.
 		*/
-		private function onImageLoadError(evt:IOErrorEvent):void 
-		{
-			this.main.log("Failed to load BoxShot. " + evt.text);
+		private function onImageLoadError(evt:IOErrorEvent):void {
+			//this.main.log("Failed to load BoxShot. " + evt.text);
 			this.addChildAt(new DiagonalLines(), 0);
 		}
 		

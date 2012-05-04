@@ -35,7 +35,7 @@ Designed for Smartlaunch.
 			randomOrder {true | false } - Indiciates if the images should be shuffled in a random order. 
 		-->
 		<backgrounds autoScrollSeconds="120" randomOrder="false">
-			<loginBackground>assets/auro-1280x1024.jpg</loginBackground> <!-- background used at the login screen. -->
+			<bg>assets/aura-1280x1024.jpg</bg>
 			<bg>assets/wow.jpg</bg>
 			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>
 		</backgrounds>

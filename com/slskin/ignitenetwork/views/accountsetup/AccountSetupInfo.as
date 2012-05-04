@@ -171,7 +171,6 @@ package com.slskin.ignitenetwork.views.accountsetup
 					}
 					
 					//calculate nextX and nextY
-					trace(field.width);
 					nextX = (field.width * column) + (COLUMN_PADDING * column) + OFFSET_X;
 					nextY = (field.height * row) + (ROW_PADDING * row) + OFFSET_Y;
 					
