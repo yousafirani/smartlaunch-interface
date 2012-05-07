@@ -577,7 +577,7 @@ package com.slskin.ignitenetwork.views.desktop
 				//setup mouse events on the thumbnails
 				thumbnail.buttonMode = true;
 				thumbnail.addEventListener(MouseEvent.CLICK, onThumbClick);
-				thumbnail.addEventListener(MouseEvent.CLICK, onContentClick);
+				thumbnail.addEventListener(MouseEvent.CLICK, onContentClick, false, 1);
 				thumbnail.addEventListener(MouseEvent.ROLL_OVER, onThumbRollOver);
 				thumbnail.addEventListener(MouseEvent.ROLL_OUT, onThumbRollOut);
 				

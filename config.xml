@@ -6,7 +6,7 @@ ruben@ignitenetwork.com.
 Designed for Smartlaunch.
 -->
 
-<InterfaceConfig debug="false">
+<InterfaceConfig debug="true">
 
 	<!-- Place a link here to your terms of service. -->
 	<TermsOfService enabled="true"><![CDATA[I agree to the <a href='http://ignitenetwork.com/'><u>Terms Of Service</u></a>.]]></TermsOfService>
@@ -56,26 +56,21 @@ Designed for Smartlaunch.
 		<content type="image" thumbnail="">
 			<url>./assets/d3.png</url>
 			<!--<caption><![CDATA[Diablo III is here! <a href="event:launchApp(120, Diablo III)">Play it now.</a>]]></caption>-->
-			<caption>Available here on May 15th</caption>
+			<caption>Available here on May 15th.</caption>
 		</content>
 
-		<content type="youtube" thumbnail="">
-			<url>http://www.youtube.com/watch?v=o_ae76B-isA</url>
+		<content type="image" thumbnail="">
+			<url>./assets/toasted-smore.jpg</url>
 			<caption></caption>
 		</content>
 
 		<content type="image" thumbnail="">
-			<url>http://ignitenetwork.com/images/rb.png</url>
-			<caption><![CDATA[This is a caption.]]></caption>
-		</content>
-
-		<content type="image" thumbnail="">
-			<url>http://ignitenetwork.com/images/xboxs.png</url>
-			<caption><![CDATA[Personal XBOX 360 stations loaded with 27" LCD monitors, headsets, and XBOX Live.]]></caption>
+			<url>./assets/unlimited.jpg</url>
+			<caption></caption>
 		</content>
 
 		<content type="youtube" thumbnail="">
-			<url>http://www.youtube.com/watch?v=kYqiWpbhiK4</url>
+			<url>http://www.youtube.com/watch?v=o_ae76B-isA</url>
 			<caption></caption>
 		</content>
 
