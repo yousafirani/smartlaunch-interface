@@ -251,7 +251,7 @@ package com.slskin.ignitenetwork.views
 			this.userTF.checkRequired();
 			this.passTF.checkRequired();
 			
-			if(this.userTF.text == "" || this.passTF.text == "")
+			if(this.userTF.text == "")
 				return;
 			
 			if(ExternalInterface.available)

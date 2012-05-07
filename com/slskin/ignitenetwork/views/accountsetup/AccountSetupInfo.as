@@ -278,7 +278,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 				//trace(fieldName, fieldVal);
 				if(fieldName == "Birthday")
 				{
-					birthday = new Date(Date.parse("02/14/1987"));
+					birthday = new Date(Date.parse(fieldVal));
 					var date:Array = fieldVal.split("/");
 					main.model.addProperty(main.model.DATA_PATH + fieldName + "_Month", date[0]);
 					main.model.addProperty(main.model.DATA_PATH + fieldName + "_Day", date[1]);
