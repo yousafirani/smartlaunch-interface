@@ -197,6 +197,7 @@ package com.slskin.ignitenetwork.views.desktop
 			this.selector.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSubCategoryClick);
 			this.searchField.addEventListener(SLEvent.LIST_ITEM_CLICK, this.onSearchItemClick);
 			this.searchField.addEventListener(SearchField.SEARCH_RESULTS, this.onSearchResults);
+			this.searchField.addEventListener(SearchField.SEARCH_CLEAR_CLICK, this.onSearchClearClick);
 			this.scrollPane.addEventListener(ScrollEvent.SCROLL, onScrollPaneScroll);
 			
 			createBoxShots();
@@ -347,6 +348,15 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function onSearchItemClick(evt:SLEvent):void {
 			main.appManager.verifyAppLaunch(evt.argument.dataProvider as Application);
+		}
+		
+		/*
+		onSearchClearClick
+		Event handler for user clicking the search field clear button.
+		Display the allCategory.
+		*/
+		private function onSearchClearClick(evt:Event):void {
+			this.displaySubCategory(this.allCategory);
 		}
 		
 		/*

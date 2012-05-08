@@ -117,9 +117,10 @@ package com.slskin.ignitenetwork.components
 		private function setupTLF():void
 		{
 			this.labelTLF = new TLFTextField();
-			
 			with(this.labelTLF)
 			{
+				width = this._itemWidth;
+				height = this._itemHeight;
 				defaultTextFormat = this.defaultFormat;
 				embedFonts = true;
 				multiline = false;
@@ -127,9 +128,7 @@ package com.slskin.ignitenetwork.components
 				selectable = false;
 				text = this._dp.itemLabel;
 				verticalAlign = VerticalAlign.MIDDLE;
-				width = this._itemWidth;
-				height = this._itemHeight;
-				y = (this.itemHeight - this.labelTLF.height)/2;
+				paddingRight = paddingLeft = this.HPADDING;
 			}
 			
 			this.labelTLF.setTextFormat(this.defaultFormat);
@@ -198,8 +197,8 @@ package com.slskin.ignitenetwork.components
 			//layout list item ui elements
 			layoutListItem();
 			
-			//add dataprovider id to label if debug mode
-			if((root as Main).debugger.debug)
+			//add dataprovider id to label if set
+			if((root as Main).model.getProperty("showAppIDs") == "1")
 				this.labelTLF.appendText(" (" + this._dp.itemID + ")");
 			
 			//enable button mode
@@ -231,7 +230,7 @@ package com.slskin.ignitenetwork.components
 					maintainAspectRatio = true;
 					scaleContent = true;
 					x = xPos;
-					y = (this._itemHeight - this._icon.height) / 2;
+					y = (this._itemHeight - this.iconSize) / 2;
 				}
 				
 				this.addChild(this._icon);

@@ -17,6 +17,7 @@
 	{
 		/* Constants */
 		public static const SEARCH_RESULTS:String = "onSearchResults";
+		public static const SEARCH_CLEAR_CLICK:String = "onSearchClearClick";
 		private const LIST_ITEM_HEIGHT:Number = 32; //search list item height
 		private const QUICK_RESULT_PADDING:Number = 3; //padding between field and quick results.
 		private const MAX_QUICK_RESULTS:int = 7; //maximum number of results to show in quick results drop down.
@@ -199,8 +200,10 @@
 			evt.target.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyboardUp); 
 		}
 		
-		private function onClearClick(evt:MouseEvent):void {
+		private function onClearClick(evt:MouseEvent):void 
+		{
 			this.clearField();
+			this.dispatchEvent(new Event(SearchField.SEARCH_CLEAR_CLICK));
 		}
 		
 		private function onKeyboardUp(evt:KeyboardEvent):void 

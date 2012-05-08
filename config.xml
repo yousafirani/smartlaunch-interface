@@ -6,7 +6,7 @@ ruben@ignitenetwork.com.
 Designed for Smartlaunch.
 -->
 
-<InterfaceConfig debug="false">
+<InterfaceConfig debug="true">
 
 	<!-- Place a link here to your terms of service. -->
 	<TermsOfService enabled="true"><![CDATA[Your personal info is safe with us! See our <a href='http://ignitenetwork.com/tos'><u>Terms Of Service</u></a>.]]></TermsOfService>

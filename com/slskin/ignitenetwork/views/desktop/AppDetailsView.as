@@ -27,27 +27,45 @@ package com.slskin.ignitenetwork.views.desktop
 	import fl.transitions.easing.*;
 	import fl.transitions.*;
 	import flash.display.Sprite;
+	import flash.text.AntiAliasType;
+	import flashx.textLayout.formats.VerticalAlign;
+	import flashx.textLayout.formats.TextLayoutFormat;
 	
 	public class AppDetailsView extends MovieClip 
 	{
 		private const WIN_MIN_HEIGHT:Number = 120; //min height of window.
 		private const WIN_MAX_HEIGHT:Number = 300; //max height of window.
+		private const TITLE_WIDTH:Number = 215;
+		private const TILTE_HEIGHT:Number = 64;
 		private const DESC_START_X:Number = 32; //start x for content to fit into window
 		private const DESC_START_Y:Number = 70; //start y for content to fit into window
 		
 		/* Member Fields */
 		private var currentApp:Application; //reference to current application
 		private var main:Main; //reference to main doc class
-		private var defaultFormat:TextFormat; //default text format used for title
-		private var rollOverFormat:TextFormat; //rollover text format used for title
-		private var descTLF:TLFTextField; //hold the description of the application
+		private var titleFormat:TextFormat; //default text format used for title
+		private var titleRollOverFormat:TextFormat; //rollover text format used for title
+		private var titleTLF:TLFTextField; //displays the application title.
+		private var descTLF:TLFTextField; //displays the description of the application
 		private var scrollPane:ScrollPane;
 		
 		public function AppDetailsView() 
 		{
-			//create text formats for title
-			this.defaultFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, false);
-			this.rollOverFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, true);
+			this.titleTLF = new TLFTextField();
+			this.titleFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, false);
+			this.titleRollOverFormat = new TextFormat(new MyriadRegular().fontName, "22", 0xFFFFFF, false, false, true);
+			with(this.titleTLF)
+			{
+				defaultTextFormat = this.titleFormat;
+				selectable = false;
+				embedFonts = true;
+				verticalAlign = VerticalAlign.MIDDLE;
+				antiAliasType = AntiAliasType.ADVANCED;
+				mutiline = wordWrap = true;
+				width = this.TITLE_WIDTH;
+				height = this.TILTE_HEIGHT;
+				paddingLeft = paddingRight = 5;
+			}
 			
 			//create app description field
 			this.descTLF = new TLFTextField();
@@ -56,7 +74,7 @@ package com.slskin.ignitenetwork.views.desktop
 				defaultTextFormat = new TextFormat(new TahomaRegular().fontName, "11", 0xcccccc);
 				selectable = false;
 				embedFonts = true;
-				antiAliasType = "advanced";
+				antiAliasType = AntiAliasType.ADVANCED;
 				mutiline = wordWrap = true;
 				autoSize = "left";
 				x = DESC_START_X;
@@ -100,13 +118,16 @@ package com.slskin.ignitenetwork.views.desktop
 			this.descTLF.width = this.bg.width;
 			this.addChild(this.descTLF);
 			
+			//add title to content mc
+			this.content.addChild(this.titleTLF);
+			
 			this.scrollPane.source = this.descTLF;
 			
 			//setup title button
-			this.content.titleTLF.buttonMode = this.content.titleTLF.useHandCursor = true;
-			this.content.titleTLF.addEventListener(MouseEvent.CLICK, this.onTitleClick);
-			this.content.titleTLF.addEventListener(MouseEvent.ROLL_OVER, onTitleRollOver);
-			this.content.titleTLF.addEventListener(MouseEvent.ROLL_OUT, onTitleRollOut);
+			this.titleTLF.buttonMode = this.titleTLF.useHandCursor = true;
+			this.titleTLF.addEventListener(MouseEvent.CLICK, this.onTitleClick);
+			this.titleTLF.addEventListener(MouseEvent.ROLL_OVER, onTitleRollOver);
+			this.titleTLF.addEventListener(MouseEvent.ROLL_OUT, onTitleRollOut);
 			this.content.moreInfoButton.addEventListener(MouseEvent.CLICK, onMoreInfoClick);
 		}
 		
@@ -129,7 +150,6 @@ package com.slskin.ignitenetwork.views.desktop
 			main.model.addEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
 			if(ExternalInterface.available)
 				ExternalInterface.call("GetApplicationDetails", this.currentApp.appID);
-				
 		}
 		
 		private function onRemoved(evt:Event):void {
@@ -152,9 +172,10 @@ package com.slskin.ignitenetwork.views.desktop
 			var headline:String = main.model.getProperty("Application_Headline", main.model.APP_DATA_PATH);
 			var details:String = main.model.getProperty("Application_Description", main.model.APP_DATA_PATH);
 			
-			this.content.titleTLF.text = headline;
+			this.setTitle(headline);
 			this.descTLF.text = details;
-			this.descTLF.textFlow.flowComposer.updateAllControllers();
+			
+			//update the scroll bar to reflect new content
 			this.scrollPane.update();
 			
 			//write the app id to the debug console
@@ -219,6 +240,7 @@ package com.slskin.ignitenetwork.views.desktop
 				this.content.multiplayerStatus.gotoAndStop("false");
 			}
 		}
+		
 		/*
 		adjustHeight
 		Adjust the height of the window so it fits the content but does not 
@@ -233,7 +255,18 @@ package com.slskin.ignitenetwork.views.desktop
 
 			this.bg.height = Math.ceil(windowHeight);
 			this.scrollPane.height = windowHeight - this.WIN_MIN_HEIGHT + 10;
-			
+		}
+		
+		/*
+		setTitle
+		Sets the title and updates formatting properties that are lost when
+		changing TLF content.
+		*/
+		private function setTitle(str:String):void 
+		{
+			this.titleTLF.text = str;
+			this.titleTLF.multiline = this.titleTLF.wordWrap = true;
+			this.titleTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*
@@ -253,12 +286,16 @@ package com.slskin.ignitenetwork.views.desktop
 			this.main.appManager.verifyAppLaunch(this.currentApp);
 		}
 		
-		private function onTitleRollOver(evt:MouseEvent):void {
-			this.content.titleTLF.setTextFormat(this.rollOverFormat);
+		private function onTitleRollOver(evt:MouseEvent):void 
+		{
+			this.titleTLF.setTextFormat(this.titleRollOverFormat);
+			this.titleTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
-		private function onTitleRollOut(evt:MouseEvent):void {
-			this.content.titleTLF.setTextFormat(this.defaultFormat);
+		private function onTitleRollOut(evt:MouseEvent):void 
+		{
+			this.titleTLF.setTextFormat(this.titleFormat);
+			this.titleTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		/*

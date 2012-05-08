@@ -59,17 +59,16 @@ package com.slskin.ignitenetwork.views
 			main.model.dispatcher(SLEvent.UPDATE_FAVORITES, "Counter-Strike|1^World Of Warcraft|2^League of Legends|3^Warcraft III: Frozen Throne|6^Modern Warfare 3|7");
 			main.model.addProperty(main.model.DATA_PATH + "Sex", "1");
 			main.model.addProperty("InjectApps", "1");
+			main.model.addProperty("showAppIDs", "0");
 			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Status", '<FONT COLOR="#FFFFFF"><B>Players:</B></FONT><BR><FONT COLOR="#B5B5A4">7 users are currently playing this game.</FONT><BR><BR><FONT COLOR="#FFFFFF"><B>Game type:</B></FONT><BR><FONT COLOR="#B5B5A4">Singleplayer, Multiplayer</FONT>');
-			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Headline", "Starcraft II");
+			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Headline", "Unreal Tournament 2004");
 			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Type", "Game");
 			main.model.addProperty(main.model.DATA_PATH + "Application_1_ActiveSessions", "4");
 			main.model.addProperty(main.model.APP_DATA_PATH + "Application_Description", "The original StarCraft made its debut in 1998, and it quickly became one of the most popular real-time strategy games of all time.We've waited a long time for an updated sequel, and rumors of it were periodically dangled in front of us like a space carrot over the years.");
 			main.model.addProperty(main.model.DATA_PATH + "RequiredUserInformation", "11111111101111111");
 			main.model.addProperty(main.model.DATA_PATH + "PersonalInfoArray", "Firstname|Lastname|Birthday|Address|City|Zip|State|Country|Email|Telephone|Mobilephone|Sex|PersonalNumber");
-			main.model.dispatcher(SLEvent.UPDATE_NEWS_EVENTS, "1/28/2012|Join us on facebook.|You can now follow us on facebook. Connect with others who come to ignite and keep up with new games, events, and promotions at facebook.com/ignitenetwork.|http://facebook.com/ignitenetwork^7/23/2008|Cafe Now Open!|Our cafe is now open! We have freshly brewed coffee or you can try any of our delicious smoothies, blended ice coffees, or lattes. Take a look at our menu for a more elaborate list of drinks.|^6/26/2008|Consoles at ignite|After much anticipation, ignite has finally entered the console gaming domain. We’re excited to be able to offer many additional game titles that are exclusive to consoles. Check out some of the titles we have for the Sony Playstation 3, Nintendo Wii, and Xbox 360. |^6/26/2008|Repair or Upgrade Your Computer Here!|Repair or upgrade your computer here at ignite and experience no downtime! You will be given the opportunity to use ignite network's computers free of charge! For a more thorough description of our PC repair department please visit our website or ask an ignite staff member.|^6/26/2008|Refer a Friend: Get 2 Free Hours!|Bring a new friend along and we'll add 2 HOURS to your account!  Your friend is simply required to create an account and purchase time on his/her first visit to qualify.|^");
-			
+			main.model.dispatcher(SLEvent.UPDATE_NEWS_EVENTS, "1/28/2012|Join us on facebook.|You can now follow us on facebook. Connect with others who come to ignite and keep up with new games, events, and promotions at facebook.com/ignitenetwork.|http://facebook.com/ignitenetwork");
 			main.model.dispatcher(SLEvent.LOGIN_COMPLETED, "Complete");
-			//ErrorView.getInstance().showError("This is the error window. It is displayed when there is an error or exception :)");
 		} 
 		
 		/*
