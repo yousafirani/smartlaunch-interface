@@ -41,7 +41,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private const DESC_START_X:Number = 32; //start x for content to fit into window
 		private const DESC_START_Y:Number = 70; //start y for content to fit into window
 		private const DESC_PADDING_LEFT:Number = 3;
-		private const DESC_PADDING_RIGHT:Number = 12;
+		private const DESC_PADDING_RIGHT:Number = 15;
 		
 		/* Member Fields */
 		private var currentApp:Application; //reference to current application
