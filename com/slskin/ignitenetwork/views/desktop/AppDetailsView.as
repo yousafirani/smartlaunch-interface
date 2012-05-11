@@ -30,6 +30,7 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.text.AntiAliasType;
 	import flashx.textLayout.formats.VerticalAlign;
 	import flashx.textLayout.formats.TextLayoutFormat;
+	import flash.text.TextField;
 	
 	public class AppDetailsView extends MovieClip 
 	{
@@ -39,6 +40,8 @@ package com.slskin.ignitenetwork.views.desktop
 		private const TILTE_HEIGHT:Number = 64;
 		private const DESC_START_X:Number = 32; //start x for content to fit into window
 		private const DESC_START_Y:Number = 70; //start y for content to fit into window
+		private const DESC_PADDING_LEFT:Number = 3;
+		private const DESC_PADDING_RIGHT:Number = 12;
 		
 		/* Member Fields */
 		private var currentApp:Application; //reference to current application
@@ -46,7 +49,7 @@ package com.slskin.ignitenetwork.views.desktop
 		private var titleFormat:TextFormat; //default text format used for title
 		private var titleRollOverFormat:TextFormat; //rollover text format used for title
 		private var titleTLF:TLFTextField; //displays the application title.
-		private var descTLF:TLFTextField; //displays the description of the application
+		private var descTF:TextField; //displays the description of the application
 		private var scrollPane:ScrollPane;
 		
 		public function AppDetailsView() 
@@ -68,8 +71,8 @@ package com.slskin.ignitenetwork.views.desktop
 			}
 			
 			//create app description field
-			this.descTLF = new TLFTextField();
-			with(this.descTLF)
+			this.descTF = new TextField();
+			with(this.descTF)
 			{
 				defaultTextFormat = new TextFormat(new TahomaRegular().fontName, "11", 0xcccccc);
 				selectable = false;
@@ -77,10 +80,8 @@ package com.slskin.ignitenetwork.views.desktop
 				antiAliasType = AntiAliasType.ADVANCED;
 				mutiline = wordWrap = true;
 				autoSize = "left";
-				x = DESC_START_X;
+				x = DESC_START_X + this.DESC_PADDING_LEFT;
 				y = DESC_START_Y;
-				paddingLeft = 5;
-				paddingRight = 10;
 			}
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, onInitAdded);
@@ -108,20 +109,18 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			this.scrollPane = new ScrollPane();
 			this.setPaneStyle();
-			this.scrollPane.x = this.DESC_START_X;
+			this.scrollPane.x = this.DESC_START_X + this.DESC_PADDING_LEFT;
 			this.scrollPane.y = this.DESC_START_Y;
-			this.scrollPane.width = this.bg.width - 2;
+			this.scrollPane.width = this.bg.width - 6;
 			this.scrollPane.horizontalScrollPolicy = "off";
 			addChild(this.scrollPane);
 			
 			//add description tlf and scroll pane
-			this.descTLF.width = this.bg.width;
-			this.addChild(this.descTLF);
+			this.descTF.width = this.bg.width - this.DESC_PADDING_RIGHT;
+			this.scrollPane.source = this.descTF;
 			
 			//add title to content mc
 			this.content.addChild(this.titleTLF);
-			
-			this.scrollPane.source = this.descTLF;
 			
 			//setup title button
 			this.titleTLF.buttonMode = this.titleTLF.useHandCursor = true;
@@ -136,7 +135,7 @@ package com.slskin.ignitenetwork.views.desktop
 			//show loader 
 			this.loader.visible = true;
 			this.content.visible = false;
-			this.descTLF.visible = false;
+			this.descTF.visible = false;
 			this.scrollPane.visible = false;
 			this.bg.height = WIN_MIN_HEIGHT;
 			
@@ -150,6 +149,10 @@ package com.slskin.ignitenetwork.views.desktop
 			main.model.addEventListener(SLEvent.APP_DETAILS_RECEIVED, onAppDetailsReceived);
 			if(ExternalInterface.available)
 				ExternalInterface.call("GetApplicationDetails", this.currentApp.appID);
+				
+			/* DEBUG */
+			if(main.model.getProperty("InjectApps") == "1")
+				this.onAppDetailsReceived();
 		}
 		
 		private function onRemoved(evt:Event):void {
@@ -173,10 +176,10 @@ package com.slskin.ignitenetwork.views.desktop
 			var details:String = main.model.getProperty("Application_Description", main.model.APP_DATA_PATH);
 			
 			this.setTitle(headline);
-			this.descTLF.text = details;
 			
-			//update the scroll bar to reflect new content
-			this.scrollPane.update();
+			//set description tlf
+			this.descTF.text = details;
+			this.scrollPane.refreshPane();
 			
 			//write the app id to the debug console
 			this.main.debugger.write("Loaded Application ID: " + this.currentApp.appID);
@@ -187,7 +190,7 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			//show content
 			this.content.visible = true;
-			this.descTLF.visible = true;
+			this.descTF.visible = true;
 			this.scrollPane.visible = true;
 		}
 		
@@ -248,7 +251,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function adjustHeight():void 
 		{
-			var windowHeight:Number = WIN_MIN_HEIGHT + this.descTLF.height;
+			var windowHeight:Number = WIN_MIN_HEIGHT + this.descTF.height;
 			
 			if(windowHeight > WIN_MAX_HEIGHT)
 				windowHeight = WIN_MAX_HEIGHT;
