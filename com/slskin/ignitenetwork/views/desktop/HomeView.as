@@ -646,6 +646,7 @@ package com.slskin.ignitenetwork.views.desktop
 				var appid:String = Strings.trim(params[0]);;
 				var appname:String = Strings.trim((params[1] as String).substr(0, params[1].length-1));
 				this.main.appManager.verifyAppLaunch(new Application(appid, appname));
+				this.stopAutoScroll();
 			}
 		}
 		

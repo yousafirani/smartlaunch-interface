@@ -201,7 +201,6 @@ package com.slskin.ignitenetwork.components
 			
 			//check if we the field is required
 			checkRequired();
-			this.errorField.visible = false;
 		}
 		
 				

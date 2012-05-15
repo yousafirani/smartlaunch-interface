@@ -329,7 +329,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function birthdayValidator(bday:String):String
 		{
-			var dateRegEx:RegExp = new RegExp("[0-9]{1,2} / [0-9]{2} / [0-9]{4}", "x");
+			var dateRegEx:RegExp = new RegExp("[0-9]{1,2} / [0-9]{1,2} / [0-9]{4}", "x");
 			
 			if(!bday.match(dateRegEx))
 				return main.config.Strings.InvalidBirthdayRegex;
