@@ -114,7 +114,7 @@ package com.slskin.ignitenetwork.asteroids
 			bullet.y = this.y + 2*fireY;
 			
 			//set life space
-			bullet.setLifeSpan( 1000 );
+			bullet.setLifeSpan( Bullet.LIFESPAN );
 			stage.addChild(bullet);
 		}
 		

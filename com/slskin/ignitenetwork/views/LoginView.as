@@ -37,7 +37,7 @@ package com.slskin.ignitenetwork.views
 	public class LoginView extends SLView
 	{
 		/* consts */
-		private const INACTIVE_MILLISEC:Number = 30000; //30 seconds represents inactivity
+		private const INACTIVE_MILLISEC:Number = 30000; //30 seconds
 		
 		/* Member Variables */
 		private var userTF:TextInput; //stores a reference to the username field.

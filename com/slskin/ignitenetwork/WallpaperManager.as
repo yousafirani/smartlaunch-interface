@@ -22,6 +22,8 @@ package com.slskin.ignitenetwork
  	import com.slskin.ignitenetwork.util.ArrayIterator;
  	import flash.display.DisplayObject;
  	import flash.display.Loader;
+ 	import flash.events.MouseEvent;
+	import com.slskin.ignitenetwork.views.ErrorView;
 	
 	public class WallpaperManager extends MovieClip 
 	{
@@ -78,6 +80,9 @@ package com.slskin.ignitenetwork
 			//create iterator for image url array
 			this.imageIterator = new ArrayIterator(this.imagePaths);
 			
+			this.currentImage = new UILoader();
+			configureLoader(this.currentImage);
+			
 			//if there is more than 1 wallpaper 
 			//setup for scrolling through the wallpapers
 			if(numWallPapers > 1)
@@ -91,14 +96,12 @@ package com.slskin.ignitenetwork
 			
 				this.timer = new Timer(timerDelay);
 				
+				this.currentImage.addEventListener(MouseEvent.CLICK, this.onBackgroundClick);
+				
 				//listen for tick event
 				this.timer.addEventListener(TimerEvent.TIMER, onIntervalTick);
 				this.timer.start();
 			}
-			
-			//load the first image
-			this.currentImage = new UILoader();
-			configureLoader(this.currentImage);
 			
 			//load the login background
 			this.currentImage.removeEventListener(Event.COMPLETE, this.onImageLoadComplete);
@@ -176,12 +179,12 @@ package com.slskin.ignitenetwork
 		
 		/*
 		shuffle
-		Randomly shuffles the given array. The idea is to shuffle in
+		Randomly shuffles the given array. The algorithm will shuffle in
 		place by selecting a random index (within our range)
 		and swapping with our current index. The range is i to array.length.
 		Anything before that is already shuffled.
 		
-		This operation will take O(n).
+		This operation will run linear with the size of n (O(n)).
 		*/
 		private function shuffle(arr:Array):void
 		{
@@ -205,24 +208,6 @@ package com.slskin.ignitenetwork
 				arr[i] = arr[swapIndex];
 				arr[swapIndex] = tmp;
 			}
-			
-			//trace(arr);
-		}
-		
-		/*
-		onIntervalTick
-		Event listener for the interval timer tick. When the interval
-		timer ticks, the background image needs to change. This function takes
-		care of the change.
-		*/
-		private function onIntervalTick(evt:TimerEvent):void
-		{
-			//restart our iterator if we have reached the end
-			if(!this.imageIterator.hasNext()) 
-				this.imageIterator.reset();
-				
-			//load the next url
-			this.loadImage(this.imageIterator.next());
 		}
 		
 		/*
@@ -261,6 +246,45 @@ package com.slskin.ignitenetwork
 			
 			//set the new current image
 			this.currentImage = this.tmpImage;
+			
+			//listen for mouse click and scroll wallpaper.
+			this.currentImage.addEventListener(MouseEvent.CLICK, onBackgroundClick);
+		}
+		
+		/*
+		onBackgroundClick
+		Handler for background click. Increments the background if applicable.
+		*/
+		private function onBackgroundClick(evt:MouseEvent):void
+		{
+			if(this.imagePaths.length == 1) return;
+			
+			//tmp disable clicking
+			this.currentImage.removeEventListener(MouseEvent.CLICK, onBackgroundClick);
+			
+			if(!this.timer.running) 
+				this.startTimer();
+			else
+				this.resetTimer();
+			
+			//call tick handler to change background.
+			this.onIntervalTick(null);
+		}
+		
+		/*
+		onIntervalTick
+		Event listener for the interval timer tick. When the interval
+		timer ticks, the background image needs to change. This function takes
+		care of the change.
+		*/
+		private function onIntervalTick(evt:TimerEvent):void
+		{
+			//restart our iterator if we have reached the end
+			if(!this.imageIterator.hasNext()) 
+				this.imageIterator.reset();
+				
+			//load the next url
+			this.loadImage(this.imageIterator.next());
 		}
 		
 		/*
@@ -275,6 +299,7 @@ package com.slskin.ignitenetwork
 			if(this.contains(obj))
 				this.removeChild(obj);
 		}
+		
 		/* 
 		onTweenComplete
 		dispatched when the background image is done tweening initially.

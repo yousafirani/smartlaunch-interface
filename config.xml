@@ -36,8 +36,8 @@ Designed for Smartlaunch.
 		-->
 		<backgrounds autoScrollSeconds="120" randomOrder="false">
 			<bg>assets/aura-1280x1024.jpg</bg>
-			<!--<bg>assets/wow.jpg</bg>
-			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>-->
+			<bg>assets/wow.jpg</bg>
+			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>
 		</backgrounds>
 
 		<!-- logo used on the login screen - 150px x 150px -->

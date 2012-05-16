@@ -17,7 +17,7 @@ package com.slskin.ignitenetwork.asteroids
 		static const FIRE_VELOCITY:Number = 10;
 		
 		// lifespan of bullets in milliseconds
-		static const LIFESPAN:Number = 3000;
+		public static const LIFESPAN:Number = 2000;
 		
 		public function Bullet() {
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedBullet);

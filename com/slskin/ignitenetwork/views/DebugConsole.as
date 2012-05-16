@@ -44,7 +44,7 @@ package com.slskin.ignitenetwork.views
 		private function onInjectClick(evt:MouseEvent):void
 		{
 			this.write("Injecting the following Data: ");
-			main.model.addProperty(main.model.DATA_PATH + "RequiredInformationAtLogin", "3");
+			main.model.addProperty(main.model.DATA_PATH + "RequiredInformationAtLogin", "0");
 			main.model.addProperty(main.model.DATA_PATH + "Firstname", "Ruben");
 			main.model.addProperty(main.model.DATA_PATH + "Email", "ruben@ignitenetwork.com");
 			main.model.addProperty(main.model.DATA_PATH + "Username", "rubeydoo");

@@ -20,6 +20,7 @@ package com.slskin.ignitenetwork.components
 	import flash.events.KeyboardEvent;
 	import flashx.textLayout.formats.TLFTypographicCase;
 	import com.slskin.ignitenetwork.Language;
+	import flash.events.TextEvent;
 
 	public class TextInput extends MovieClip
 	{
@@ -91,8 +92,6 @@ package com.slskin.ignitenetwork.components
 		
 		
 		/* Getters */
-		//In certain cases, the _field variable is not set. The tlf variable
-		//is though and they both point to the same object.
 		public function get field():TLFTextField 
 		{ 
 			if(this._field == null)
@@ -220,7 +219,6 @@ package com.slskin.ignitenetwork.components
 		checkRequired
 		Checks to see if the field is required and updates the
 		error field if it is required and empty.
-		Translate("Required", L("Required"))
 		*/
 		public function checkRequired():void
 		{
@@ -367,10 +365,10 @@ package com.slskin.ignitenetwork.components
 		*/
 		public function clearField():void
 		{
+			stage.focus = null;
 			this.field.text = "";
 			this.field.textFlow.flowComposer.updateAllControllers();
 			this.hideError();
-			//show hint
 			this.fieldHint.alpha = 1;
 		}
 		

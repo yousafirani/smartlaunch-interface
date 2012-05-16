@@ -33,7 +33,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.2.2"; //http://semver.org/
+		public const VERSION:String = "1.3.0"; //http://semver.org/
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		
@@ -74,7 +74,7 @@ package com.slskin.ignitenetwork
 			if(!isValidFlashVersion())
 			{
 				var versionMisMatch:String = "Flash version " + Capabilities.version 
-					+ " found. This interface requires version " + this.MIN_FLASH_VER  + " or above.";
+					+ " found. Required version is " + this.MIN_FLASH_VER  + " or above.";
 				this.debugger.write(versionMisMatch);
 				this.showMessageBox(versionMisMatch);
 			}
@@ -201,6 +201,13 @@ package com.slskin.ignitenetwork
 				scaleMode = StageScaleMode.NO_SCALE;
 				align = StageAlign.TOP_LEFT;
 			}
+			
+			//listen for stage click, and show asteroids easter egg if
+			//click is in the top right corner.
+			stage.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void {
+								   if((stage.stageWidth - evt.stageX) <= 5 && evt.stageY <= 5)
+								   		ErrorView.getInstance().showError("Asteroids!");
+								   });
 		}
 		
 		/*
