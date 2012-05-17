@@ -33,7 +33,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.3.0"; //http://semver.org/
+		public const VERSION:String = "1.3.1"; //http://semver.org/
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		
@@ -203,11 +203,15 @@ package com.slskin.ignitenetwork
 			}
 			
 			//listen for stage click, and show asteroids easter egg if
-			//click is in the top right corner.
-			stage.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void {
-								   if((stage.stageWidth - evt.stageX) <= 5 && evt.stageY <= 5)
-								   		ErrorView.getInstance().showError("Asteroids!");
-								   });
+		    //click is in the top right corner.
+			this.model.addEventListener(SLEvent.LOGIN_COMPLETED, enableAsteroids);
+			function enableAsteroids(slevent:SLEvent):void {
+				model.removeEventListener(SLEvent.LOGIN_COMPLETED, enableAsteroids);
+				stage.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void {
+									   	if((stage.stageWidth - evt.stageX) <= 5 && evt.stageY <= 5)
+                    	 					ErrorView.getInstance().showError("Asteroids!");
+									   });
+			}
 		}
 		
 		/*

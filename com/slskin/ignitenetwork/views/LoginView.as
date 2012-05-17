@@ -225,6 +225,9 @@ package com.slskin.ignitenetwork.views
 					this.passTF.showError(errorStr);
 					break;
 			}
+			
+			//wake timer to hide errors
+			this.wakeInactivityTimer();
 		}
 		
 		/*
