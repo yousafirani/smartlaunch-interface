@@ -32,6 +32,7 @@
 			
 			//add listeners and activate buttonMode
 			this.buttonMode = this.useHandCursor = true;
+			this.SelectorHitBox.tabEnabled = false;
 			this.addEventListener(MouseEvent.CLICK, onSelectorClick);
 			stage.addEventListener(MouseEvent.CLICK, onMasterClick);
 		}

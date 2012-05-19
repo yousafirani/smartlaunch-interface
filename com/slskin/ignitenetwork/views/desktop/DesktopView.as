@@ -28,6 +28,7 @@ package com.slskin.ignitenetwork.views.desktop
 		
 		public function DesktopView() 
 		{
+			this.tabChildren = false;
 			dock = new DockView();
 			home = new HomeView();
 			footer = new FooterView();

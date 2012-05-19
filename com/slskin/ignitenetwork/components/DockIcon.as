@@ -150,6 +150,7 @@ package com.slskin.ignitenetwork.components
 			//listen for rollOver and rollOut events
 			this.iconButton.addEventListener(MouseEvent.ROLL_OVER, onIconRollOver);
 			this.iconButton.addEventListener(MouseEvent.ROLL_OUT, onIconRollOut);
+			this.iconButton.tabEnabled = false;
 		}
 		
 		
