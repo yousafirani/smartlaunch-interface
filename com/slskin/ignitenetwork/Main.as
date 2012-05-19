@@ -27,13 +27,14 @@ package com.slskin.ignitenetwork
 	import com.slskin.ignitenetwork.views.accountsetup.*;
 	import com.slskin.ignitenetwork.views.desktop.*
 	import com.slskin.ignitenetwork.apps.*
+	import flash.text.TextField;
 	
 	[SWF(backgroundColor="0x000000")]
 	
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.3.1"; //http://semver.org/
+		public const VERSION:String = "1.3.6"; //http://semver.org/
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		
@@ -65,7 +66,7 @@ package com.slskin.ignitenetwork
 			//set the loading view parent display object
 			LoadingView.parentObj = this;
 			ErrorView.parentObj = this;
-						
+			
 			//write to debug console versions
 			this.debugger.write("Interface Version: " + this.VERSION);
 			this.debugger.write("Flash Version: " + Capabilities.playerType + ", " + Capabilities.version);
@@ -263,9 +264,8 @@ package com.slskin.ignitenetwork
 			this.viewManager.addView(new LoginView());
 			this.viewManager.addView(new DesktopView());
 			
-			//add the debug console to the stage if debug is true
-			if(this.debugger.debug) 
-				this.addChild(this.debugger);
+			//add the debug console to the stage if debug is true 
+			 this.addChild(this.debugger);
 			
 			//initialize the wallpaper, then display the next view.
 			this.wallpaperManager.init();

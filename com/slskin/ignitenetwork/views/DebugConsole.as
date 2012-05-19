@@ -26,9 +26,8 @@ package com.slskin.ignitenetwork.views
 		public function DebugConsole(debug:Boolean = true)
 		{
 			this.debug = debug;
-			this.write("Debug Mode Enabled. You can toggle this console with the ` key.");
 			this.tabChildren = false;
-			//add listener for added to stage
+			this.write("Debug Mode Enabled. You can toggle this console with the ` key.");
 			this.addEventListener(Event.ADDED_TO_STAGE, this.onAdded);
 		}
 		
@@ -80,6 +79,12 @@ package com.slskin.ignitenetwork.views
 		{
 			//remove listener
 			this.removeEventListener(Event.ADDED_TO_STAGE, this.onAdded);
+			
+			if(!this.debug) 
+			{
+				this.toggleConsole();
+				return;
+			}
 			
 			//set reference to main
 			main = (root as Main);

@@ -14,6 +14,7 @@ package com.slskin.ignitenetwork.components
 	import flashx.textLayout.formats.TextDecoration;
 	import flash.text.TextFormat;
 	import flash.display.Sprite;
+	import flash.display.InteractiveObject;
 	import flashx.textLayout.formats.TextLayoutFormat;
 	import com.slskin.ignitenetwork.fonts.TahomaRegular;
 
@@ -73,6 +74,7 @@ package com.slskin.ignitenetwork.components
 			
 			//draw hit box
 			var hitBox:Sprite = new Sprite();
+			hitBox.tabEnabled = false;
 			hitBox.buttonMode = true;
 			hitBox.graphics.beginFill(0x000000, 0);
 			hitBox.graphics.drawRect(0, 0, this.width, this.height);
@@ -117,6 +119,8 @@ package com.slskin.ignitenetwork.components
 			this._label.textFlow.linkNormalFormat = {color:LINK_COLOR, textDecoration:"underline"};
 			this._label.textFlow.linkHoverFormat = {color:LINK_ROLLOVER_COLOR, textDecoration:"underline"};
 			this._label.textFlow.flowComposer.updateAllControllers();
+			
+			InteractiveObject(this._label.getChildAt(1)).tabEnabled = false; //disable tabbing on label
 			
 			this._label.y = (this.height - this._label.textHeight) / 2;
 			this._label.y += 2;

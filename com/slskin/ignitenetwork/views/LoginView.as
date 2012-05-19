@@ -33,6 +33,8 @@ package com.slskin.ignitenetwork.views
 	import flash.events.TimerEvent;
 	import flash.text.TextFormat;
 	import flash.filters.GlowFilter;
+	import flashx.textLayout.elements.TextFlow;
+	import flashx.textLayout.edit.EditManager;
 
 	public class LoginView extends SLView
 	{
@@ -64,6 +66,7 @@ package com.slskin.ignitenetwork.views
 			
 			//this.titleTab.title.text =  Language.translate("Account_Login", "Account Login");
 			this.loginButton.buttonMode = this.loginButton.useHandCursor = true;
+			this.loginButton.tabEnabled = false;
 			this.loginButton.addEventListener(MouseEvent.CLICK, this.sendLogin);
 			this.loginButton.addEventListener(MouseEvent.ROLL_OVER, function(evt:MouseEvent):void { evt.target.play() });
 			
@@ -92,6 +95,8 @@ package com.slskin.ignitenetwork.views
 			this.passTF.displayAsPassword = true;
 			this.userTF.upperCase = true;
 			this.userTF.required = true;
+			this.userTF.tabIndex = 1;
+			this.passTF.tabIndex = 2;
 			
 			//make room for arrow button on login screen
 			this.passTF.tlf.width -= this.loginButton.arrow.width;
@@ -103,6 +108,7 @@ package com.slskin.ignitenetwork.views
 			//listener for inactivity
 			this.inactivityTimer.addEventListener(TimerEvent.TIMER, onInactivityTick);
 			
+			//listen for login events from the SL client
 			this.setupSLListeners();
 			
 			//fade in view

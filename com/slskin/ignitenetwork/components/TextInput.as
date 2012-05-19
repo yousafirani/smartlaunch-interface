@@ -21,6 +21,7 @@ package com.slskin.ignitenetwork.components
 	import flashx.textLayout.formats.TLFTypographicCase;
 	import com.slskin.ignitenetwork.Language;
 	import flash.events.TextEvent;
+	import flash.filters.GlowFilter;
 
 	public class TextInput extends MovieClip
 	{
@@ -68,7 +69,6 @@ package com.slskin.ignitenetwork.components
 		/* Correct an issue with how the TLF tabs */
 		public override function set tabIndex(index:int):void
 		{
-			super.tabIndex = index;
 			if(field != null)
 				InteractiveObject(this.field.getChildAt(1)).tabIndex = index;
 		}
@@ -121,7 +121,7 @@ package com.slskin.ignitenetwork.components
 			else
 				disable();
 			
-			//setup the tlf field
+			//setup max chars
 			if(this.field.maxChars == 0)
 				this.field.maxChars = MAX_CHARS;
 			
@@ -131,19 +131,14 @@ package com.slskin.ignitenetwork.components
 			else
 				this.text = "";
 			
-			this.fieldHint.text = this.hint;
-			this.field.tabEnabled = false;
-			this.fieldHint.tabEnabled = false;
-			
 			//hide the error field
 			this.errorField.visible = false; 
-
-			//removing tabing on other children objects
-			this.bg.tabEnabled = false;
-			this.border.tabEnabled = false;
 			this.errorField.tabChildren = false;
-			InteractiveObject(this.fieldHint.getChildAt(1)).tabEnabled = false;
 			
+			//removing on error field children
+			this.fieldHint.text = this.hint;
+			InteractiveObject(this.fieldHint.getChildAt(1)).tabEnabled = false;
+
 			//listen for field events
 			this.field.addEventListener(FocusEvent.FOCUS_IN, onFieldFocusIn);
 			this.field.addEventListener(FocusEvent.FOCUS_OUT, onFieldFocusOut);
@@ -157,7 +152,7 @@ package com.slskin.ignitenetwork.components
 		Dim the field hint.
 		*/
 		private function onFieldFocusIn(evt:FocusEvent):void
-		{
+		{	
 			if(this.isEmpty())
 				this.hintTween = new Tween(this.fieldHint, "alpha", Regular.easeOut, this.fieldHint.alpha, .4, .2, true);
 			
@@ -200,18 +195,20 @@ package com.slskin.ignitenetwork.components
 			
 			//check if we the field is required
 			checkRequired();
+			this.errorField.visible = false;
 		}
 		
 				
 		/*
-		setBorderColor
+		highlight
 		Transforms the color of the border around the field.
 		*/
-		private function setBorderColor(color:uint):void 
+		private function highlight(color:uint, filterArr:Array = null):void 
 		{
 			var c:ColorTransform = new ColorTransform();
 			c.color = color;
 			this.border.transform.colorTransform = c;
+			this.border.filters = filterArr;
 		}
 		
 		
@@ -266,7 +263,8 @@ package com.slskin.ignitenetwork.components
 		public function showError(error:String):void
 		{
 			//change the border to red!
-			this.setBorderColor(this.BORDER_ERROR_COLOR);
+			var glowFilter:Array = new Array(new GlowFilter(this.BORDER_ERROR_COLOR,1,2,2,2,5));
+			this.highlight(this.BORDER_ERROR_COLOR, glowFilter);
 			
 			//set error
 			this.errorField.tlf.text = error;
@@ -302,7 +300,7 @@ package com.slskin.ignitenetwork.components
 		public function hideError():void
 		{
 			//change the border to the default color
-			this.setBorderColor(this.BORDER_DEFAULT_COLOR);
+			this.highlight(this.BORDER_DEFAULT_COLOR);
 			
 			//hide error field
 			this.errorField.tlf.text = "";
@@ -335,9 +333,9 @@ package com.slskin.ignitenetwork.components
 			this.enabled = false;
 			if(field != null)
 			{
-				this._field.selectable = false;
-				this._field.type = "dynamic";
-				InteractiveObject(this._field.getChildAt(1)).tabEnabled = false;
+				this.field.selectable = false;
+				this.field.type = "dynamic";
+				InteractiveObject(this.field.getChildAt(1)).tabEnabled = false;
 			}
 		}
 		

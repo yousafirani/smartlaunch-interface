@@ -41,6 +41,8 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.events.TextEvent;
 	import flashx.textLayout.formats.TextLayoutFormat;
 	import com.slskin.ignitenetwork.apps.Application;
+	import flash.display.LoaderInfo;
+	import flash.events.SecurityErrorEvent;
 	
 	public class HomeView extends SLView
 	{
@@ -314,7 +316,8 @@ package com.slskin.ignitenetwork.views.desktop
 			{
 				//trace("Loading " + index);
 				this.contentThumbnails[index].spinner.visible = true;
-				contentItem.loader.addEventListener(IOErrorEvent.IO_ERROR, this.onContentLoadError);
+				contentItem.loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, this.onContentLoadError);
+				contentItem.loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, this.onContentLoadError);
 				contentItem.loader.contentLoaderInfo.addEventListener(Event.COMPLETE, getLoadCompleteHandler(index));
 				contentItem.loader.load(new URLRequest(contentItem.contentURL));
 				

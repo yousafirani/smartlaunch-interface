@@ -27,6 +27,7 @@ package com.slskin.ignitenetwork.components
 	import flashx.textLayout.formats.VerticalAlign;
 	import fl.transitions.Tween;
 	import fl.transitions.easing.*;
+	import flashx.textLayout.formats.TextLayoutFormat;
 	
 	public class ListItem extends MovieClip 
 	{
@@ -124,7 +125,6 @@ package com.slskin.ignitenetwork.components
 				defaultTextFormat = this.defaultFormat;
 				embedFonts = true;
 				multiline = false;
-				antiAliasType = AntiAliasType.ADVANCED;
 				selectable = false;
 				text = this._dp.itemLabel;
 				verticalAlign = VerticalAlign.MIDDLE;

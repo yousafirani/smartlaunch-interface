@@ -193,6 +193,16 @@ package com.slskin.ignitenetwork.views.accountsetup
 				}
 			}//for each possible field.
 			
+			//add mailchimp checkbox
+			if(main.config.MailChimp.@enabled == "true")
+			{
+				this.mailingListField = new CheckBox(main.config.MailChimp);
+				this.mailingListField.selected = (main.config.MailChimp.@selected == "true");
+				this.mailingListField.x = this.OFFSET_X;
+				this.mailingListField.y = this.height + this.mailingListField.height;
+				this.addChild(this.mailingListField);
+			}
+			
 			//add terms of service check box
 			if(main.config.TermsOfService.@enabled == "true")
 			{
@@ -202,16 +212,6 @@ package com.slskin.ignitenetwork.views.accountsetup
 				tos.addEventListener(MouseEvent.CLICK, dispatchProgress);
 				this.fields.push(tos);
 				this.addChild(tos);
-			}
-			
-			//add mailchimp checkbox
-			if(main.config.MailChimp.@enabled == "true")
-			{
-				this.mailingListField = new CheckBox(main.config.MailChimp);
-				this.mailingListField.selected = (main.config.MailChimp.@selected == "true");
-				this.mailingListField.x = this.OFFSET_X;
-				this.mailingListField.y = this.height + this.mailingListField.height;
-				this.addChild(this.mailingListField);
 			}
 			
 			//dispatch progress update
