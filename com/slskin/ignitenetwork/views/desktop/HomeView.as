@@ -170,38 +170,35 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onAdded(evt:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-						
-			//add padding and show view
-			this.xPadding = this.LEFT_PADDING;
-			this.yPadding = this.TOP_PADDING;
-			this.setupView();
 			
 			//parse the xml content in the config.xml
 			this.parseContent();
 			
-			if(this.contentArray.length == 0) {
-				this.showView();
-				return;
+			if(this.contentArray.length > 0)
+			{
+				//layout the content loaders horizontally
+				this.layoutContent();
+			
+				//create thumbnails for each content item and setup the thumbnails
+				//to allow content navigation.
+				this.createContentControls();
+				
+				//display and load the first element
+				this.loadAndDisplayAt(0);
+				
+				//start auto-scroll timer
+				this.startAutoScroll();
+				
+				//start tweening the first thumbnail autoscroll timer progress bar
+				var timerSprite:Sprite = this.contentThumbnails[0].timerSprite;
+				if(timerSprite != null)
+					this.timerTween = new Tween(timerSprite, "scaleX", Regular.easeInOut, 0, 1, this.autoScrollSeconds, true);
 			}
 			
-			//layout the content loaders horizontally
-			this.layoutContent();
-			
-			//create thumbnails for each content item and setup the thumbnails
-			//to allow content navigation.
-			this.createContentControls();
-			
-			//display and load the first element
-			this.loadAndDisplayAt(0);
-			
-			//start auto-scroll timer
-			this.startAutoScroll();
-			
-			//start tweening the first thumbnail autoscroll timer progress bar
-			var timerSprite:Sprite = this.contentThumbnails[0].timerSprite;
-			if(timerSprite != null)
-				this.timerTween = new Tween(timerSprite, "scaleX", Regular.easeInOut, 0, 1, this.autoScrollSeconds, true);
-				
+			//add padding and show view
+			this.xPadding = this.LEFT_PADDING;
+			this.yPadding = this.TOP_PADDING;
+			this.setupView();
 			this.showView();
 		}
 		

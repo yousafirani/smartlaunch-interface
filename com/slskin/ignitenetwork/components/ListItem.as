@@ -126,6 +126,7 @@ package com.slskin.ignitenetwork.components
 				embedFonts = true;
 				multiline = false;
 				selectable = false;
+				antiAliasType = AntiAliasType.ADVANCED;
 				text = this._dp.itemLabel;
 				verticalAlign = VerticalAlign.MIDDLE;
 				paddingRight = paddingLeft = this.HPADDING;

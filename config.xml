@@ -6,7 +6,7 @@ ruben@ignitenetwork.com.
 Designed for Smartlaunch.
 -->
 
-<InterfaceConfig debug="false">
+<InterfaceConfig debug="true">
 
 	<!-- Place a link here to your terms of service. -->
 	<TermsOfService enabled="true"><![CDATA[Your personal info is safe with us! See our <a href='http://ignitenetwork.com/tos'><u>Terms Of Service</u></a>.]]></TermsOfService>
@@ -25,7 +25,7 @@ Designed for Smartlaunch.
 
 	If your not using MailChimp you should be :) http://mailchimp.com/
 	-->
-	<MailChimp enabled="true" apiKey="18748f83db67bc5e89ea4dcaeef3418c-us4" listID="b783bf7ae1" doubleOptin="false" selected="true"><![CDATA[Subscribe to our mailing list for news, events, and promotions.]]></MailChimp>
+	<MailChimp enabled="true" apiKey="APIKEY" listID="LISTID" doubleOptin="false" selected="true"><![CDATA[Subscribe to our mailing list for news, events, and promotions.]]></MailChimp>
 
 	<Images>
 
@@ -53,9 +53,8 @@ Designed for Smartlaunch.
 	-->
 	<HomeViewContent autoScrollSeconds="15">
 		
-		<content type="image" thumbnail="">
+		<!--<content type="image" thumbnail="">
 			<url>./assets/d3.png</url>
-			<!--<caption><![CDATA[Diablo III is here! <a href="event:launchApp(120, Diablo III)">Play it now.</a>]]></caption>-->
 			<caption>Available here on May 15th.</caption>
 		</content>
 
@@ -82,7 +81,7 @@ Designed for Smartlaunch.
 		<content type="youtube" thumbnail="">
 			<url>http://www.youtube.com/watch?v=_yuVJ19W4AM</url>
 			<caption></caption>
-		</content>
+		</content>-->
 
 	</HomeViewContent>
 
