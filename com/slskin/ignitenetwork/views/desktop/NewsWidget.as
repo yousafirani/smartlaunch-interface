@@ -128,11 +128,10 @@ package com.slskin.ignitenetwork.views.desktop
 			try
 			{
 				var timeline:XML = XML(evt.target.data);
-				//this.twitterTimeline = XML(evt.target.data);
 				
 				//convert twitter xml timeline into NewsItems
 				var tweets:Array = this.parseTweets(timeline);
-				var slNews:Array = this.parseSLNews(main.model.getProperty("UpdateNewsAndEvents"));
+				var slNews = this.parseSLNews(main.model.getProperty("UpdateNewsAndEvents"));
 				
 				//merge tweets and slNews and set it as the news pane source
 				var merged:Array = this.mergeNewsSources(tweets, slNews);
@@ -145,7 +144,7 @@ package com.slskin.ignitenetwork.views.desktop
 				
 			}
 			catch (e:TypeError) {
-				main.log("Error parsing twitter timeline " + e);
+				main.log("Error parsing SL news and twitter timeline " + e);
 			}
 		}
 		
@@ -200,6 +199,9 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function parseSLNews(newsStr:String):Array
 		{
+			if(newsStr == null)
+				return new Array()
+			
 			var SLNewsData:Array = newsStr.split(main.model.DIM);
 			var itemData:Array; //stores data for each news item from SLNewsData
 			var results:Array = new Array();
@@ -265,8 +267,8 @@ package com.slskin.ignitenetwork.views.desktop
 				results.push(b[bIndex++]);
 			
 			return results;
-			
 		}
+		
 		/*
 		addNewsItems
 		Adds news item to ScrollPane.

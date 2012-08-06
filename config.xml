@@ -1,12 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- 
 SLSkin Config File.
-Author: Ruben Oanta
-ruben@ignitenetwork.com.
-Designed for Smartlaunch.
 -->
-
-<InterfaceConfig debug="true">
+<InterfaceConfig>
 
 	<!-- Place a link here to your terms of service. -->
 	<TermsOfService enabled="true"><![CDATA[Your personal info is safe with us! See our <a href='http://ignitenetwork.com/tos'><u>Terms Of Service</u></a>.]]></TermsOfService>
@@ -36,8 +32,7 @@ Designed for Smartlaunch.
 		-->
 		<backgrounds autoScrollSeconds="120" randomOrder="false">
 			<bg>assets/aura-1280x1024.jpg</bg>
-			<bg>assets/wow.jpg</bg>
-			<bg>http://us.media.blizzard.com/d3/media/wallpapers/wallpaper018/wallpaper018-1280x1024.jpg</bg>
+			<bg>assets/graybg.jpg</bg>
 		</backgrounds>
 
 		<!-- logo used on the login screen - 150px x 150px -->
@@ -53,23 +48,14 @@ Designed for Smartlaunch.
 	-->
 	<HomeViewContent autoScrollSeconds="15">
 		
-		<!--<content type="image" thumbnail="">
+		<content type="image" thumbnail="">
 			<url>./assets/d3.png</url>
-			<caption>Available here on May 15th.</caption>
-		</content>
-
-		<content type="image" thumbnail="./assets/toasted-smore-thumb.jpg">
-			<url>./assets/toasted-smore.jpg</url>
+			<!--<caption><![CDATA[Diablo III is here! <a href="event:launchApp(363, Diablo III)">Play it now</a>.]]></caption>-->
 			<caption></caption>
 		</content>
-
-		<content type="image" thumbnail="./assets/sc2weekly-thumb.jpg">
-			<url>./assets/sc2weekly.jpg</url>
-			<caption><![CDATA[Get more information about this and other Starcraft 2 events <a href='http://www.facebook.com/groups/188378661177322/' target='_blank'>here.</a>]]></caption>
-		</content>
-
-		<content type="image" thumbnail="./assets/unlimited-thumb.jpg">
-			<url>./assets/unlimited.jpg</url>
+		
+		<content type="image" thumbnail="./assets/toasted-smore-thumb.jpg">
+			<url>./assets/toasted-smore.jpg</url>
 			<caption></caption>
 		</content>
 
@@ -81,7 +67,17 @@ Designed for Smartlaunch.
 		<content type="youtube" thumbnail="">
 			<url>http://www.youtube.com/watch?v=_yuVJ19W4AM</url>
 			<caption></caption>
-		</content>-->
+		</content>
+
+		<content type="image" thumbnail="">
+			<url>http://ignitenetwork.com/images/xboxs.png</url>
+			<caption>Test Caption</caption>
+		</content>
+
+		<content type="image" thumbnail="">
+			<url>http://ignitenetwork.com/images/rb.png</url>
+			<caption>Test Caption #2</caption>
+		</content>
 
 	</HomeViewContent>
 
