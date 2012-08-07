@@ -34,7 +34,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip
 	{
 		/* Constants */
-		public const VERSION:String = "1.3.9"; //http://semver.org/
+		public const VERSION:String = "1.4.0"; //http://semver.org/
 		public const MIN_FLASH_VER:String = "10,1";
 		public const CONFIG_FILE:String = "config.xml";
 		

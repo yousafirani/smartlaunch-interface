@@ -199,7 +199,7 @@ package com.slskin.ignitenetwork.views.desktop
 		*/
 		private function parseSLNews(newsStr:String):Array
 		{
-			if(newsStr == null)
+			if(newsStr == null || newsStr.length == 0)
 				return new Array()
 			
 			var SLNewsData:Array = newsStr.split(main.model.DIM);

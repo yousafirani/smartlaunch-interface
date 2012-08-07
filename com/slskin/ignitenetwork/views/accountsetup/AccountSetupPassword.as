@@ -17,7 +17,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 	{
 		private const NUM_FIELDS:int = 2;
 		private const MAX_WIDTH:Number = 500;
-		private const MIN_PASSSWORD_LENGTH:int = 4;
+		private const MIN_PASSWORD_LENGTH:int = 4;
 		
 		/* Member Fields */
 		private var passwordField:TextInput;
@@ -113,14 +113,15 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function passwordValidator(pwd:String):String
 		{
+			var config = main.config.FormValidators.Password
 			//validate strength
-			if(pwd.length < this.MIN_PASSSWORD_LENGTH)
-				return Language.translate("Minimum_4_characters", "Minimum of " + this.MIN_PASSSWORD_LENGTH + " characters required.");
+			if(pwd.length < this.MIN_PASSWORD_LENGTH)
+				return Language.translate("Minimum_4_characters", "Minimum of " + this.MIN_PASSWORD_LENGTH + " characters required.");
 						
 			//search regex for special character or digit
-			var re:RegExp = /[!@#\\$%\\^&\\*_\\+=<>.\\?\\~`]+|\d+/;
+			var re:RegExp = new RegExp(config.re, config.re.@flags);
 			if(pwd.search(re) == -1)
-				return main.config.Strings.InvalidPasswordRegex;
+				return config.error;
 			
 			//To completely validate this field, we need to make sure
 			//the passwords match if the repeat feild is set.

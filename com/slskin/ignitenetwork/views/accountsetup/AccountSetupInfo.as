@@ -128,9 +128,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 						switch(fieldName)
 						{
 							case "Birthday":
-							
 								field.field.restrict = "0-9/";
-								field.hint += " (MM/DD/YYYY)";
+								field.hint += " MM/DD/YYYY";
 								field.field.maxChars = 10;
 								field.fieldValidator = this.birthdayValidator;
 								//Birthday is stored seperately by SL client
@@ -147,8 +146,8 @@ package com.slskin.ignitenetwork.views.accountsetup
 								break;
 								
 							case "Zip":
-								field.field.restrict = "0-9";
-								field.field.maxChars = "5";
+								field.field.maxChars = "10";
+								field.fieldValidator = this.zipValidator
 								break;
 								
 							case "Email":
@@ -329,10 +328,10 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function birthdayValidator(bday:String):String
 		{
+			var config = main.config.FormValidators.Birthday
 			var dateRegEx:RegExp = new RegExp("[0-9]{1,2} / [0-9]{1,2} / [0-9]{4}", "x");
-			
 			if(!bday.match(dateRegEx))
-				return main.config.Strings.InvalidBirthdayRegex;
+				return config.error;
 			
 			//if we have passed the regex validator, we can parse the date.
 			var date:Array = bday.split("/");
@@ -341,20 +340,20 @@ package com.slskin.ignitenetwork.views.accountsetup
 			var year:Number = Number(date[2]);
 			
 			if(month > 12)
-				return main.config.Strings.InvalidBirthdayMonth;
+				return config.monthError;
 			
 			if(day > 31)
-				return main.config.Strings.InvalidBirthdayDay;
+				return config.dayError;
 				
 			var currentYear:Number = new Date().fullYear;
 			var age:Number = currentYear - year;
 			
 			if(age > 100)
-				return Strings.substitute(main.config.Strings.InvalidBirthdayTooOld, age);
+				return Strings.substitute(config.tooOldError, age);
 			else if (age < 0)
-				return main.config.Strings.InvalidBirthdayFuture;
+				return config.yearError;
 			else if(age < 1)
-				return main.config.Strings.InvalidBirthdayTooYoung;
+				return config.tooYoungError;
 			
 			return null;
 		}
@@ -365,9 +364,10 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function phoneValidator(number:String):String
 		{
-			var usRegEx:RegExp = new RegExp("\\d{10} | \\d{11}}", "x");
-			if(!number.match(usRegEx))
-				return main.config.Strings.InvalidPhoneRegex;
+			var config = main.config.FormValidators.Phone
+			var phoneRegex:RegExp = new RegExp(config.re, config.re.@flags);
+			if(!number.match(phoneRegex))
+				return config.error;
 			
 			return null;
 		}
@@ -378,13 +378,28 @@ package com.slskin.ignitenetwork.views.accountsetup
 		*/
 		private function emailValidator(email:String):String
 		{
-			var emailRegEx:RegExp = /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+			var config = main.config.FormValidators.Email
+			var emailRegEx:RegExp = new RegExp(config.re, config.re.@flags);
 			
 			if(email.search("@") == -1)
-				return main.config.Strings.InvalidEmailMissingAt;
+				return config.missingAtError;
 			else if(!email.match(emailRegEx))
-				return main.config.Strings.InvalidEmailRegex;
+				return config.error;
 				
+			return null;
+		}
+		
+		/*
+		zipValidator
+		Validates a zip code
+		*/
+		private function zipValidator(zip:String):String 
+		{
+			var config = main.config.FormValidators.Zip
+			var zipRegex:RegExp = new RegExp(config.re, config.re.@flags);
+			if(!zip.match(zipRegex))
+				return config.error;
+			
 			return null;
 		}
 		

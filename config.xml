@@ -2,7 +2,7 @@
 <!-- 
 SLSkin Config File.
 -->
-<InterfaceConfig>
+<InterfaceConfig debug="true">
 
 	<!-- Place a link here to your terms of service. -->
 	<TermsOfService enabled="true"><![CDATA[Your personal info is safe with us! See our <a href='http://ignitenetwork.com/tos'><u>Terms Of Service</u></a>.]]></TermsOfService>
@@ -47,7 +47,6 @@ SLSkin Config File.
 		a youtube video.
 	-->
 	<HomeViewContent autoScrollSeconds="15">
-		
 		<content type="image" thumbnail="">
 			<url>./assets/d3.png</url>
 			<!--<caption><![CDATA[Diablo III is here! <a href="event:launchApp(363, Diablo III)">Play it now</a>.]]></caption>-->
@@ -94,32 +93,54 @@ SLSkin Config File.
 	
 	<Sounds>
 	</Sounds>
-
 	
+	<!-- 
+	Regex validators used during account setup. For more information about AS3 regex, refer to:
+	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/RegExp.html
+	 -->
+	<FormValidators>
+		<Password>
+			<re flags=""><![CDATA[[!@#\\$%\\^&\\*_\\+=<>.\\?\\~`]+|\d+]]></re>
+			<error><![CDATA[Password must contain a special character or digit.]]></error>
+		</Password>
+
+		<Birthday>
+			<!-- Regex fixed to MM/DD/YYYY to simplify internal parsing. --->
+			<error><![CDATA[Required format is MM/DD/YYYY.]]></error>
+			<!-- other error messages for birthday -->
+			<monthError><![CDATA[12 possible months.]]></monthError>
+			<dayError><![CDATA[31 possible days in a month.]]></dayError>
+			<yearError><![CDATA[Did you come back from the future?]]></yearError>
+			<tooOldError><![CDATA[Are you really {0} years old?]]></tooOldError>
+			<tooYoungError><![CDATA[You are really advanced for your age!]]></tooYoungError>
+		</Birthday>
+
+		<Phone>
+			<re flags="x"><![CDATA[^(\d{10} | \d{11})$]]></re>
+			<error><![CDATA[Invalid phone number (ex. 7734047033)]]></error>
+		</Phone>
+
+		<Email>
+			<re flags="i"><![CDATA[^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$]]></re>
+			<error><![CDATA[Email is invalid!]]></error>
+			<missingAtError><![CDATA[Email is missing @ symbol.]]></missingAtError>
+		</Email>
+
+		<Zip>
+			<re flags="x"><![CDATA[^\d{5}$]]></re>
+			<error><![CDATA[Invalid zip code (ex. 60618)]]></error>
+		</Zip>
+	</FormValidators>
+
 	<Strings>
-
-		<!-- Form Validation Strings -->
-		<InvalidPasswordRegex><![CDATA[Password must contain a special character or digit.]]></InvalidPasswordRegex>
-		<InvalidBirthdayRegex><![CDATA[Required format is MM/DD/YYYY.]]></InvalidBirthdayRegex>
-		<InvalidBirthdayMonth><![CDATA[12 possible months.]]></InvalidBirthdayMonth>
-		<InvalidBirthdayDay><![CDATA[31 possible days in a month.]]></InvalidBirthdayDay>
-		<InvalidBirthdayTooOld><![CDATA[Are you really {0} years old?]]></InvalidBirthdayTooOld>
-		<InvalidBirthdayTooYoung><![CDATA[You are really advanced for your age!]]></InvalidBirthdayTooYoung>
-		<InvalidBirthdayFuture><![CDATA[Did you come back from the future?]]></InvalidBirthdayFuture>
-		<InvalidPhoneRegex><![CDATA[Required format is 7734047033.]]></InvalidPhoneRegex>
-		<InvalidEmailRegex><![CDATA[Email is invalid!]]></InvalidEmailRegex>
-		<InvalidEmailMissingAt><![CDATA[Email is missing @ symbol.]]></InvalidEmailMissingAt>
-
 		<!-- 
-			String used when verifying an application launch.
-			Two variables can be passed into this string.
-			{0} - The application name
-			{1} - The time until launch
+		String used when verifying an application launch.
+		Two variables can be passed into this string.
+		{0} - The application name
+		{1} - The time until launch
 		-->
 		<VerifyAppLaunch><![CDATA[Launching {0} in {1}...]]></VerifyAppLaunch>
 		<ErrorString><![CDATA[Bummer! There was a technical problem. If the problem persists, please ask a staff member for assistance.]]></ErrorString>
-		
+		<LoggingOut><![CDATA[Logging Out...]]></LoggingOut>
 	</Strings>
-	
-	
 </InterfaceConfig>

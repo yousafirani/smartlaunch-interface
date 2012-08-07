@@ -91,7 +91,16 @@ package com.slskin.ignitenetwork.views.desktop
 			this.subHeadlineTLF.text = main.model.getProperty("Headline2", main.model.TEXT_PATH);
 			
 			//set logout button text
-			this.logoutTLF.text = Language.translate("Logout", "Logout"); 
+			//note, all registration points are right aligned.
+			with(this.logoutButton) 
+			{
+				tlf.autoSize = "right"
+				tlf.text = Language.translate("Logout", "Logout Long Text");
+				bg.width = tlf.width + icon.width + 10;
+				hitbox.width = bg.width
+				icon.x = (bg.width*-1) + icon.width + 6;
+			}
+			
 			
 			//set current user
 			this.username = main.model.getProperty("Username", main.model.DATA_PATH);
@@ -100,10 +109,10 @@ package com.slskin.ignitenetwork.views.desktop
 			
 			
 			//listen for logout button events
-			this.logoutButton.tabEnabled = false;
-			this.logoutButton.addEventListener(MouseEvent.CLICK, onLogoutClick);
-			this.logoutButton.addEventListener(MouseEvent.ROLL_OVER, onLogoutRollOver);
-			this.logoutButton.addEventListener(MouseEvent.ROLL_OUT, onLogoutRollOut);
+			this.logoutButton.hitbox.tabEnabled = false;
+			this.logoutButton.hitbox.addEventListener(MouseEvent.CLICK, onLogoutClick);
+			this.logoutButton.hitbox.addEventListener(MouseEvent.ROLL_OVER, onLogoutRollOver);
+			this.logoutButton.hitbox.addEventListener(MouseEvent.ROLL_OUT, onLogoutRollOut);
 			
 			//add social links
 			this.addSocialIcons();
@@ -186,8 +195,6 @@ package com.slskin.ignitenetwork.views.desktop
 			optionsArr[0] = optionsArr[0].split(main.model.DlMSep);
 			
 			//set formats to make username in status tlf to look like a link
-			//this.username += " (" + optionsArr[0][0] + ")";
-			//this.statusTLF.text = Language.translate("Current_User", "Current user") + " " + this.username;
 			this.setUsernamFormat(this.linkUsernameFormat);
 			
 			//listen for click handlers
@@ -208,6 +215,7 @@ package com.slskin.ignitenetwork.views.desktop
 			{
 				ExternalInterface.call("UserLogout", "");
 				this.main.model.addEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
+				this.logoutButton.bg.gotoAndStop("Down");
 			}
 		}
 		
@@ -222,7 +230,7 @@ package com.slskin.ignitenetwork.views.desktop
 				main.removeChild(this.setup);
 				
 			LoadingView.getInstance().showLoader();
-			LoadingView.getInstance().loadingText = Language.translate("Logging_Out", "Logging Out");
+			LoadingView.getInstance().loadingText = Language.translate("Logging_Out", main.config.Strings.LoggingOut);
 			this.main.model.removeEventListener(SLEvent.LOGGING_OUT, this.onUserLoggingOut);
 		}
 		
@@ -276,8 +284,8 @@ package com.slskin.ignitenetwork.views.desktop
 		Change the button background.
 		*/
 		private function onLogoutRollOver(evt:MouseEvent):void {
-			this.logoutTLF.textColor = this.LOGOUT_ROLLOVER_COLOR;
-			this.logoutBackground.gotoAndStop("Over");
+			this.logoutButton.tlf.textColor = this.LOGOUT_ROLLOVER_COLOR;
+			this.logoutButton.bg.gotoAndStop("Over");
 		}
 		
 		/*
@@ -285,8 +293,8 @@ package com.slskin.ignitenetwork.views.desktop
 		Change the background back to up.
 		*/
 		private function onLogoutRollOut(evt:MouseEvent):void {
-			this.logoutTLF.textColor = this.LOGOUT_TEXT_COLOR;
-			this.logoutBackground.gotoAndStop("Up");
+			this.logoutButton.tlf.textColor = this.LOGOUT_TEXT_COLOR;
+			this.logoutButton.bg.gotoAndStop("Up");
 		}
 		
 		/*

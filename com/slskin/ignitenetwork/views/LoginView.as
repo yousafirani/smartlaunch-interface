@@ -44,6 +44,7 @@ package com.slskin.ignitenetwork.views
 		/* Member Variables */
 		private var userTF:TextInput; //stores a reference to the username field.
 		private var passTF:TextInput; //stores a reference to the password field.
+		private var headline1:TLFTextField; //text field that displays the headline1 field set in the SL server
 		private var headline2:TLFTextField; //text field that displays the headline2 field set in the SL server
 		private var errorTween:Tween;
 		private var inactivityTimer:Timer = new Timer(INACTIVE_MILLISEC); 
@@ -64,27 +65,17 @@ package com.slskin.ignitenetwork.views
 			this.logoLoader.load(new URLRequest(main.config.Images.loginLogo));
 			this.logoLoader.addEventListener(IOErrorEvent.IO_ERROR, onLogoLoadError);
 			
-			//this.titleTab.title.text =  Language.translate("Account_Login", "Account Login");
 			this.loginButton.buttonMode = this.loginButton.useHandCursor = true;
 			this.loginButton.tabEnabled = false;
 			this.loginButton.addEventListener(MouseEvent.CLICK, this.sendLogin);
 			this.loginButton.addEventListener(MouseEvent.ROLL_OVER, function(evt:MouseEvent):void { evt.target.play() });
-			
-			
-			//create TLF for headline 2
-			this.headline2 = new TLFTextField();
-			this.headline2.defaultTextFormat = new TextFormat(new MyriadSemiBold().fontName, "14", 0xFFFFFF);
-			with(this.headline2)
-			{
-				selectable = multiline = false;
-				embedFonts = true;
-				autoSize = "left";
-			}
-			
-			this.headline2.filters = new Array(new GlowFilter(0x000000, 1, 5, 5, 2,3));
-			this.headline2.text = main.model.getProperty("Headline2", main.model.TEXT_PATH);
-			InteractiveObject(this.headline2.getChildAt(1)).tabEnabled = false; //disable tabbing on headline2
+
+			this.headline1 = createHeadline(new TextFormat(new MyriadSemiBold().fontName, "16", 0xFFFFFF))
+			this.headline2 = createHeadline(new TextFormat(new MyriadSemiBold().fontName, "14", 0xFFFFFF))
+			this.headline1.text = main.model.getProperty("Headline1", main.model.TEXT_PATH); 
+			this.headline2.text = smain.model.getProperty("Headline2", main.model.TEXT_PATH);
 			//add to main to maintain the correct width and height of this view.
+			main.addChild(this.headline1);
 			main.addChild(this.headline2);
 			
 			//get a reference to the username and password fields
@@ -118,6 +109,21 @@ package com.slskin.ignitenetwork.views
 			this.showView();
 		}
 		
+		function createHeadline(fmt: TextFormat): TLFTextField 
+		{
+			var tlf = new TLFTextField();
+			tlf.defaultTextFormat = fmt
+			with(tlf)
+			{
+				selectable = multiline = false;
+				embedFonts = true;
+				autoSize = "left";
+			}
+			InteractiveObject(tlf.getChildAt(1)).tabEnabled = false;
+			tlf.filters = new Array(new GlowFilter(0x000000, 1, 5, 5, 2,3));
+			return tlf
+		}
+		
 		/*
 		setupSLListeners
 		Configure the appropriate listeners for SL Events 
@@ -139,10 +145,21 @@ package com.slskin.ignitenetwork.views
 		{
 			super.showView();
 			this.alphaTween = new Tween(this, "alpha", Strong.easeInOut, this.alpha, 1, 1, true);
+			this.positionHeadlines();
+		}
+		
+		private function positionHeadlines():void 
+		{
+			if(this.headline1 == null || this.headline2 == null)
+				return;
 			
-			//move headline2 into the correct position
+			//move headline1 into top right corner
+			this.headline1.x = main.getStageWidth() - this.headline1.width - 10;
+			this.headline1.y = 10;
+			
+			//move headline2 under headline1
 			this.headline2.x = main.getStageWidth() - this.headline2.width - 10;
-			this.headline2.y = 10;
+			this.headline2.y = this.headline1.y + this.headline1.textHeight + 10;
 		}
 		
 		/*
@@ -154,6 +171,9 @@ package com.slskin.ignitenetwork.views
 			this.alphaTween = new Tween(this, "alpha", Strong.easeInOut, this.alpha, 0, 1, true);
 			this.alphaTween.addEventListener(TweenEvent.MOTION_FINISH, this.onHideTweenFinish);
 			
+			if(main.contains(this.headline1))
+				main.removeChild(this.headline1);
+				
 			if(main.contains(this.headline2))
 				main.removeChild(this.headline2);
 			
@@ -167,7 +187,7 @@ package com.slskin.ignitenetwork.views
 		/*
 		onValueAdded
 		Event handler for SLEvent.VALUE_ADDED. Listen for any variable
-		changes/additions that are relavent.
+		changes/additions that are relavent to this view.
 		*/
 		private function onValueAdded(evt:SLEvent):void
 		{
@@ -177,9 +197,12 @@ package com.slskin.ignitenetwork.views
 			switch (key)
 			{
 				case main.model.TEXT_PATH + "Headline1":
+					this.headline1.text = val;
+					this.positionHeadlines();
 					break;
 				case main.model.TEXT_PATH + "Headline2":
 					this.headline2.text = val;
+					this.positionHeadlines();
 					break;
 				case main.model.TEXT_PATH + "LoadingText":
 				case main.model.DATA_PATH + "LoadingText":
