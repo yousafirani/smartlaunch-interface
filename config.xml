@@ -30,9 +30,8 @@ SLSkin Config File.
 			autoScrollSeconds - Defines the interval in seconds to wait before switching background images.
 			randomOrder {true | false } - Indiciates if the images should be shuffled in a random order. 
 		-->
-		<backgrounds autoScrollSeconds="120" randomOrder="false">
+		<backgrounds autoScrollSeconds="120" randomOrder="true">
 			<bg>assets/aura-1280x1024.jpg</bg>
-			<bg>assets/graybg.jpg</bg>
 		</backgrounds>
 
 		<!-- logo used on the login screen - 150px x 150px -->
@@ -92,6 +91,19 @@ SLSkin Config File.
 	</Social>
 	
 	<Sounds>
+		<OrderAccepted><![CDATA[assets/sounds/order-accepted.mp3]]></OrderAccepted>
+		<OrderDenied><![CDATA[assets/sounds/order-denied.mp3]]></OrderDenied>
+		<InvalidUsername><![CDATA[assets/sounds/invalid-username.mp3]]></InvalidUsername>
+		<InvalidPassword><![CDATA[assets/sounds/invalid-password.mp3]]></InvalidPassword>
+		<AccountLocked><![CDATA[assets/sounds/account-locked.mp3]]></AccountLocked>
+		<15_MinutesWarning><![CDATA[assets/sounds/15-min-left.mp3]]></15_MinutesWarning>
+		<10_MinutesWarning><![CDATA[assets/sounds/10-min-left.mp3]]></10_MinutesWarning>
+		<5_MinutesWarning><![CDATA[assets/sounds/5-min-left.mp3]]></5_MinutesWarning>
+		<1_MinutesWarning><![CDATA[assets/sounds/1-min-left.mp3]]></1_MinutesWarning>
+		<WelcomeBack><![CDATA[assets/sounds/welcome-back.mp3]]></WelcomeBack>
+		<GameStarting><![CDATA[assets/sounds/game-loading-1.mp3]]></GameStarting>
+		<EnterInformation><![CDATA[assets/sounds/enter-personal-info.mp3]]></EnterInformation>
+		<InvalidFields><![CDATA[assets/sounds/required-fields.mp3]]></InvalidFields>
 	</Sounds>
 	
 	<!-- 

@@ -1,8 +1,8 @@
-﻿/* 
-Class responsible for password form verification. Sits
-inside the AccountSetupView object and is linked
-to the SetupPasswordView mc.
-*/
+﻿/**
+ * Class responsible for password form verification. Sits
+ * inside the AccountSetupView object and is linked
+ * to the SetupPasswordView mc.
+ */
 package com.slskin.ignitenetwork.views.accountsetup
 {
 	import flash.display.MovieClip;
@@ -15,44 +15,43 @@ package com.slskin.ignitenetwork.views.accountsetup
 	
 	public class AccountSetupPassword extends MovieClip
 	{
-		private const NUM_FIELDS:int = 2;
-		private const MAX_WIDTH:Number = 500;
-		private const MIN_PASSWORD_LENGTH:int = 4;
+		private const NUM_FIELDS: int = 2;
+		private const MAX_WIDTH: Number = 500;
+		private const MIN_PASSWORD_LENGTH: int = 4;
 		
 		/* Member Fields */
-		private var passwordField:TextInput;
-		private var repeatField:TextInput;
-		private var main:Main;
+		private var passwordField: TextInput;
+		private var repeatField: TextInput;
+		private var main: Main;
 		
-		public function AccountSetupPassword(main:Main) 
+		public function AccountSetupPassword(main: Main) 
 		{
 			this.main = main;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		
-		/*
-		onAdded
-		Handler for added to stage event, configures listeners for
-		fields.
-		*/
-		private function onAdded(evt:Event):void
+		/**
+		 * Handler for added to stage event, configures listeners for
+		 * fields.
+		 */
+		private function onAdded(evt: Event): void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 			
 			this.passwordField = this.Password;
 			this.repeatField = this.Repeat;
 			
-			//set title
+			// set title
 			this.header.title.autoSize = TextFieldAutoSize.LEFT;
 			this.header.title.text = Language.translate("Account_Password", "Account Password");
 			this.header.title.y = (this.header.height - this.header.title.height) / 2;
 			
-			//draw line to end
+			// draw line to end
 			this.header.graphics.lineStyle(1, 0x666666);
 			this.header.graphics.moveTo(this.header.width + 5, this.header.height / 2);
 			this.header.graphics.lineTo(this.MAX_WIDTH, this.header.height / 2);
 			
-			//setup both fields
+			// setup both fields
 			this.passwordField.displayAsPassword = true;
 			this.repeatField.displayAsPassword = true;
 			this.passwordField.hint = Language.translate("Desired_Password", "Desired Password");
@@ -63,88 +62,84 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.passwordField.required = true;
 			this.repeatField.required = true;
 			
-			//fix tabbing
+			// fix tabbing
 			InteractiveObject(this.header.title.getChildAt(1)).tabEnabled = false;
 			InteractiveObject(this.passwordField.field.getChildAt(1)).tabIndex = 1;
 			InteractiveObject(this.repeatField.field.getChildAt(1)).tabIndex = 2;
 			
 			
-			//listen for field error events
+			// listen for field error events
 			this.passwordField.addEventListener(TextInput.VALIDATION_CHANGE, dispatchProgress);
 			this.repeatField.addEventListener(TextInput.VALIDATION_CHANGE, dispatchProgress);
 		}
 		
-		/*
-		dispatchProgress
-		dispatch progress when validation has changed on a field.
-		*/
-		private function dispatchProgress(evt:Event):void
+		/**
+		 * dispatch progress when validation has changed on a field.
+		 */
+		private function dispatchProgress(evt: Event): void
 		{
-			var currentProgress:int = 0;
+			var currentProgress: int = 0;
 			
-			//check each field and update the progress
-			if(!this.passwordField.isEmpty() && !this.passwordField.hasError)
+			// check each field and update the progress
+			if (!this.passwordField.isEmpty() && !this.passwordField.hasError)
 				currentProgress++;
 			
-			if(!this.repeatField.isEmpty() && !this.repeatField.hasError)
+			if (!this.repeatField.isEmpty() && !this.repeatField.hasError)
 				currentProgress++;
 			
-			var pe:ProgressEvent = new ProgressEvent(ProgressEvent.PROGRESS);
+			var pe: ProgressEvent = new ProgressEvent(ProgressEvent.PROGRESS);
 			pe.bytesTotal = this.NUM_FIELDS;
 			pe.bytesLoaded = currentProgress;
 			this.dispatchEvent(pe);
 		}
 		
 				
-		/*
-		saveData
-		Saves the form data to the data pool
-		shared between the SL client and the interface.
-		*/
-		public function saveData():void {
-			//trace("NewPassword", this.passwordField.text);
+		/**
+		 * Saves the form data to the data pool
+		 * shared between the SL client and the interface.
+		 */
+		public function saveData(): void {
+			// trace("NewPassword", this.passwordField.text);
 			main.model.addProperty(main.model.DATA_PATH + "NewPassword", this.passwordField.text);
 		}
 		
-		/* 
-		Password Validator 
-		Used to validate the password strength. Field Validators
-		return null when there is no error.
-		*/
-		private function passwordValidator(pwd:String):String
+		/**
+		 * Validates the password strength. Field Validators
+		 * return null when there is no error.
+		 */
+		private function passwordValidator(pwd: String): String
 		{
 			var config = main.config.FormValidators.Password
-			//validate strength
-			if(pwd.length < this.MIN_PASSWORD_LENGTH)
+			// validate strength
+			if (pwd.length < this.MIN_PASSWORD_LENGTH)
 				return Language.translate("Minimum_4_characters", "Minimum of " + this.MIN_PASSWORD_LENGTH + " characters required.");
 						
-			//search regex for special character or digit
-			var re:RegExp = new RegExp(config.re, config.re.@flags);
-			if(pwd.search(re) == -1)
+			// search regex for special character or digit
+			var re: RegExp = new RegExp(config.re, config.re.@flags);
+			if (pwd.search(re) == -1)
 				return config.error;
 			
-			//To completely validate this field, we need to make sure
-			//the passwords match if the repeat feild is set.
-			if(!this.repeatField.isEmpty())
+			// To completely validate this field, we need to make sure
+			// the passwords match if the repeat feild is set.
+			if (!this.repeatField.isEmpty())
 				this.repeatField.validate();
 			
 			return null;
 		}
 		
-		/*
-		Repeat Validator
-		Makes sure both passwords match.
-		*/
-		private function repeatValidator(pwd:String):String
+		/**
+		 * Repeat Validator
+		 * Makes sure both passwords match.
+		 */
+		private function repeatValidator(pwd: String): String
 		{
-			var pwd:String = this.passwordField.text.toLowerCase();
-			var pwdRepeat:String = this.repeatField.text.toLowerCase();
+			var pwd: String = this.passwordField.text.toLowerCase();
+			var pwdRepeat: String = this.repeatField.text.toLowerCase();
 				
-			if(pwd != pwdRepeat)
+			if (pwd != pwdRepeat)
 				return Language.translate("Passwords_does_not_match", "Passwords do not match");
 			else
 				return null;
 		}
-		
-	}//class
-} //package
+	}// class
+} // package

@@ -6,13 +6,13 @@ package com.slskin.ignitenetwork.util
 		public function Strings(){}
 		
 		/**
-		 Removes all whitespace characters from the beginning and end
-		 of the specified string.
-		 
-		 @param str The String whose whitespace should be trimmed. 
-		 
-		 @return Updated String where whitespace was removed from the 
-		 beginning and end. 
+		 * Removes all whitespace characters from the beginning and end
+		 * of the specified string.
+		 *
+		 * @param str The String whose whitespace should be trimmed. 
+		 *
+		 * @return Updated String where whitespace was removed from the 
+		 * beginning and end. 
 		 */
 		public static function trim(str:String):String
 		{
@@ -31,15 +31,15 @@ package com.slskin.ignitenetwork.util
 		}
     
 		/**
-		 Removes all whitespace characters from the beginning and end
-		 of each element in an Array, where the Array is stored as a String. 
-		 
-		 @param value The String whose whitespace should be trimmed. 
-		 
-		 @param separator The String that delimits each Array element in the string.
-		 
-		 @return Updated String where whitespace was removed from the 
-		 beginning and end of each element. 
+		 * Removes all whitespace characters from the beginning and end
+		 * of each element in an Array, where the Array is stored as a String. 
+		 *
+		 * @param value The String whose whitespace should be trimmed. 
+		 *
+		 * @param separator The String that delimits each Array element in the string.
+		 *
+		 * @return Updated String where whitespace was removed from the 
+		 * beginning and end of each element. 
 		 */
 		public static function trimArrayElements(value:String, delimiter:String):String
 		{
@@ -63,13 +63,13 @@ package com.slskin.ignitenetwork.util
 		}
 
 		/**
-		 Returns <code>true</code> if the specified string is
-		 a single space, tab, carriage return, newline, or formfeed character.
-		 
-		 @param str The String that is is being queried. 
-		 
-		 @return <code>true</code> if the specified string is
-		 a single space, tab, carriage return, newline, or formfeed character.
+		 * Returns <code>true</code> if the specified string is
+		 * a single space, tab, carriage return, newline, or formfeed character.
+		 *
+		 * @param str The String that is is being queried. 
+		 *
+		 * @return <code>true</code> if the specified string is
+		 * a single space, tab, carriage return, newline, or formfeed character.
 		 */
 		public static function isWhitespace(character:String):Boolean
 		{
@@ -87,19 +87,18 @@ package com.slskin.ignitenetwork.util
 			}
 		}
 			
-		/*
-		substitue
-		Substitutes "{n}" tokens within the specified string 
-		with the respective arguments passed in.
-		
-		@param String - The string to make substitutions in. This string can contain special tokens of the form {n}, 
-		where n is a zero based index, that will be replaced with the additional parameters found at that index if specified.
-		
-		 @param ... rest — Additional parameters that can be substituted in the str parameter at each {n} location, 
-		where n is an integer (zero based) index value into the array of values specified. 
-		If the first parameter is an array this array will be used as a parameter list. 
-		This allows reuse of this routine in other methods that want to use the ... rest signature. For example
-		*/
+		/**
+		 * Substitutes "{n}" tokens within the specified string 
+		 * with the respective arguments passed in.
+		 *
+		 * @param String - The string to make substitutions in. This string can contain special tokens of the form {n}, 
+		 * where n is a zero based index, that will be replaced with the additional parameters found at that index if specified.
+		 *
+		 * @param ... rest — Additional parameters that can be substituted in the str parameter at each {n} location, 
+		 * where n is an integer (zero based) index value into the array of values specified. 
+		 * If the first parameter is an array this array will be used as a parameter list. 
+		 * This allows reuse of this routine in other methods that want to use the ... rest signature. For example
+		 */
 		public static function substitute(str:String, ... rest):String
 		{
 			// Replace all of the parameters in the msg string.
@@ -123,16 +122,14 @@ package com.slskin.ignitenetwork.util
 			return str;
 		}
 		
-		/*
-		correctCase
-		Returns the input string with all but the first character
-		in lowercase.
-		*/
+		/**
+		 * Returns the input string with all but the first character
+		 * in lowercase.
+		 */
 		public static function correctCase(str:String):String
 		{
 			if(str == null) return "";
 			return str.charAt(0).toUpperCase() + str.substr(1, str.length-1).toLowerCase();
 		}
-
 	}//class
 }//package

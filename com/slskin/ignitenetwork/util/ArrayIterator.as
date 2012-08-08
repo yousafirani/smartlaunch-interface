@@ -2,17 +2,16 @@
 {
 	public class ArrayIterator
 	{
-		private var items:Array;
-		private var index:int;
+		private var items: Array;
+		private var index: int;
 
 		/**
-		 * Constructor.
 		 * array The array of elements to construct and Iterator for
 		 */
-		public function ArrayIterator( array:Array )
+		public function ArrayIterator( array: Array )
 		{
 			items = array;
-			// If the array is null, create a new empty array
+			//  If the array is null, create a new empty array
 			if (items == null){
 				items = new Array();
 			}
@@ -23,34 +22,34 @@
 		/** 
 		 * @return true if the iteration has more elements, false otherwise.
 		 */
-		public function hasNext():Boolean {
+		public function hasNext(): Boolean {
 			return index < items.length;
 		}
 
 		/** 
 		 * @return The next element in the iteration. 
 		 */
-		public function next():* {
+		public function next(): * {
 			return items[index++];
 		}
 		
-		public function getItemAt(index:int):* {
+		public function getItemAt(index: int): * {
 			return items[index];
 		}
 		
 		/**
 		 * Returns current index of iterator
 		 */
-		 public function getIndex():int {
+		 public function getIndex(): int {
 			 return this.index; 
 		}
 
 		/**
 		 * Resets the iterator's state to start from the very first element.
 		 */
-		public function reset():void {
+		public function reset(): void {
 			index = 0;
 		}
 
-	}//class
-}//package
+	}// class
+}// package

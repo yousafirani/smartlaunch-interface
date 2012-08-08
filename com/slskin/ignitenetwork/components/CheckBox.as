@@ -1,8 +1,6 @@
-﻿/*
-SLCheckBox.as
-Defines the behavior for the checkbox component in the library.
-*/
-
+﻿/**
+ * Defines the behavior for the checkbox component in the library.
+ */
 package com.slskin.ignitenetwork.components 
 {
 	import flash.display.MovieClip;
@@ -21,20 +19,20 @@ package com.slskin.ignitenetwork.components
 	public class CheckBox extends MovieClip 
 	{
 		/* Constants */
-		private const LINK_COLOR:uint = 0x0080FF;
-		private const LINK_ROLLOVER_COLOR:uint = 0xFFFFFF;
+		private const LINK_COLOR: uint = 0x0080FF;
+		private const LINK_ROLLOVER_COLOR: uint = 0xFFFFFF;
 		
 		/* Member Fields */
-		private var _label:TLFTextField;
-		private var checkMark:MovieClip;
-		private var _labelText:String;
-		private var _labelColor:uint;
-		private var _rollOverColor:uint;
-		private var _selected:Boolean;
-		private var _fontSize:String;
-		private var labelFormat:TextLayoutFormat;
+		private var _label: TLFTextField;
+		private var checkMark: MovieClip;
+		private var _labelText: String;
+		private var _labelColor: uint;
+		private var _rollOverColor: uint;
+		private var _selected: Boolean;
+		private var _fontSize: String;
+		private var labelFormat: TextLayoutFormat;
 		
-		public function CheckBox(label:String = "Check Box", labelColor:uint = 0xCCCCCC, rollOverColor:uint = 0xFFFFFF, fontSize:String = "11") 
+		public function CheckBox(label: String = "Check Box", labelColor: uint = 0xCCCCCC, rollOverColor: uint = 0xFFFFFF, fontSize: String = "11") 
 		{
 			this._labelText = label;
 			this._labelColor = labelColor;
@@ -46,34 +44,34 @@ package com.slskin.ignitenetwork.components
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		
-		public function get selected():Boolean {
+		public function get selected(): Boolean {
 			return this._selected;
 		}
 		
 		/* Setters */
-		public function set selected(b:Boolean) 
+		public function set selected(b: Boolean) 
 		{
 			this._selected = b;
-			if(this.checkMark != null)
+			if (this.checkMark != null)
 				this.checkMark.visible = b;
 		}
 		
-		public function set labelText(str:String):void 
+		public function set labelText(str: String): void 
 		{
 			this._labelText = str;
 			this._label.htmlText = str;
 			this._label.textFlow.flowComposer.updateAllControllers();
 		}
 		
-		private function onAdded(evt:Event):void
+		private function onAdded(evt: Event): void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 						
 			this.checkMark = this.check;
 			this.checkMark.visible = this._selected;
 			
-			//draw hit box
-			var hitBox:Sprite = new Sprite();
+			// draw hit box
+			var hitBox: Sprite = new Sprite();
 			hitBox.tabEnabled = false;
 			hitBox.buttonMode = true;
 			hitBox.graphics.beginFill(0x000000, 0);
@@ -89,7 +87,7 @@ package com.slskin.ignitenetwork.components
 
 		}
 		
-		private function configureLabel():void 
+		private function configureLabel(): void 
 		{
 			with(this._label)
 			{
@@ -99,14 +97,14 @@ package com.slskin.ignitenetwork.components
 				selectable = false;
 			}
 			
-			//hack to autosize htmlText
+			// hack to autosize htmlText
 			this._label.defaultTextFormat = new TextFormat(new TahomaRegular().fontName, this._fontSize, this._labelColor);
 			this._label.text = this._labelText;
-			var textWidth:Number = this._label.textWidth;
+			var textWidth: Number = this._label.textWidth;
 			this._label.htmlText = this._labelText;
 			this._label.width = textWidth;
 			
-			//create tlf format
+			// create tlf format
 			this.labelFormat = new TextLayoutFormat();
 			with(this.labelFormat)
 			{
@@ -116,22 +114,21 @@ package com.slskin.ignitenetwork.components
 			}
 			
 			this._label.textFlow.hostFormat = this.labelFormat;
-			this._label.textFlow.linkNormalFormat = {color:LINK_COLOR, textDecoration:"underline"};
-			this._label.textFlow.linkHoverFormat = {color:LINK_ROLLOVER_COLOR, textDecoration:"underline"};
+			this._label.textFlow.linkNormalFormat = {color: LINK_COLOR, textDecoration: "underline"};
+			this._label.textFlow.linkHoverFormat = {color: LINK_ROLLOVER_COLOR, textDecoration: "underline"};
 			this._label.textFlow.flowComposer.updateAllControllers();
 			
-			InteractiveObject(this._label.getChildAt(1)).tabEnabled = false; //disable tabbing on label
+			InteractiveObject(this._label.getChildAt(1)).tabEnabled = false; // disable tabbing on label
 			
 			this._label.y = (this.height - this._label.textHeight) / 2;
 			this._label.y += 2;
 			this.addChild(this._label);
 		}
 		
-		/*
-		onCheckClick
-		Toggle selected flag and set check mark to selected.
-		*/
-		private function onCheckClick(evt:MouseEvent):void
+		/**
+		 * Toggle selected flag and set check mark to selected.
+		 */
+		private function onCheckClick(evt: MouseEvent): void
 		{
 			this._selected = !this._selected;
 			this.checkMark.visible = this._selected;
@@ -140,19 +137,18 @@ package com.slskin.ignitenetwork.components
 		/*
 		onMouseRollOver
 		*/
-		private function onMouseRollOver(evt:MouseEvent):void 
+		private function onMouseRollOver(evt: MouseEvent): void 
 		{
 			this.labelFormat.color = this._rollOverColor;
 			this._label.textFlow.hostFormat = this.labelFormat;
 			this._label.textFlow.flowComposer.updateAllControllers();
 		}
 		
-		private function onMouseRollOut(evt:MouseEvent):void 
+		private function onMouseRollOut(evt: MouseEvent): void 
 		{
 			this.labelFormat.color = this._labelColor;
 			this._label.textFlow.hostFormat = this.labelFormat;
 			this._label.textFlow.flowComposer.updateAllControllers();
 		}
-		
-	} //class
-} //package
+	} // class
+} // package

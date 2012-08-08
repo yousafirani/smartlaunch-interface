@@ -1,8 +1,8 @@
-﻿/*
-FooterView.as
-Manages and adds behavior to the headline, sub headline, social links, logout button
-and the cafes logo.
-*/
+﻿/**
+ * FooterView.as
+ * Manages and adds behavior to the headline, sub headline, social links, logout button
+ * and the cafes logo.
+ */
 package com.slskin.ignitenetwork.views.desktop 
 {
 	import flash.events.Event;
@@ -29,53 +29,52 @@ package com.slskin.ignitenetwork.views.desktop
 	public class FooterView extends SLView 
 	{
 		/* Constants */
-		private const LEFT_PADDING:Number = -137;
-		private const TOP_PADDING:Number = 268;
-		private const LOGO_SIZE:Number = 75;
-		private const ICON_PADDING:Number = 8; //padding between social icons
-		private const RIBBON_PADDING:Number = 5; //padding at the end of the ribbon
-		private const LOGOUT_TEXT_COLOR:uint = 0x333333;
-		private const STATUS_USERNAME_COLOR:uint = 0x0080FF;
-		private const STATUS_DEFAULT_COLOR:uint = 0xCCCCCC;
-		private const LOGOUT_ROLLOVER_COLOR:uint = 0x990000;
+		private const LEFT_PADDING: Number = -137;
+		private const TOP_PADDING: Number = 268;
+		private const LOGO_SIZE: Number = 75;
+		private const ICON_PADDING: Number = 8; // padding between social icons
+		private const RIBBON_PADDING: Number = 5; // padding at the end of the ribbon
+		private const LOGOUT_TEXT_COLOR: uint = 0x333333;
+		private const STATUS_USERNAME_COLOR: uint = 0x0080FF;
+		private const STATUS_DEFAULT_COLOR: uint = 0xCCCCCC;
+		private const LOGOUT_ROLLOVER_COLOR: uint = 0x990000;
 		
 		/* Member fields */
-		private var socialIcons:MovieClip; //stores IconLinks for each social network link
-		private var username:String; //current username
-		private var setup:AccountSetupView; //used to edit profile if enabled.
+		private var socialIcons: MovieClip; // stores IconLinks for each social network link
+		private var username: String; // current username
+		private var setup: AccountSetupView; // used to edit profile if enabled.
 		
 		/* Text Formats used for profile status tlf */
-		private var defaultFormat:TextFormat = new TextFormat("Tahoma", 12, STATUS_DEFAULT_COLOR, false, false, false);
-		private var usernameFormat:TextFormat = new TextFormat("Tahoma", 13, STATUS_USERNAME_COLOR, false, false, false);
-		private var linkUsernameFormat:TextFormat = new TextFormat("Tahoma", 13, STATUS_USERNAME_COLOR, false, false, true);
-		private var rollOverUsername:TextFormat = new TextFormat("Tahoma", 13, STATUS_DEFAULT_COLOR, false, false, true);
+		private var defaultFormat: TextFormat = new TextFormat("Tahoma", 12, STATUS_DEFAULT_COLOR, false, false, false);
+		private var usernameFormat: TextFormat = new TextFormat("Tahoma", 13, STATUS_USERNAME_COLOR, false, false, false);
+		private var linkUsernameFormat: TextFormat = new TextFormat("Tahoma", 13, STATUS_USERNAME_COLOR, false, false, true);
+		private var rollOverUsername: TextFormat = new TextFormat("Tahoma", 13, STATUS_DEFAULT_COLOR, false, false, true);
 		
 		public function FooterView() {
 			this.socialIcons = new MovieClip();
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		
-		/*
-		onAdded 
-		Listens for added to stage event.
-		*/
-		private function onAdded(evt:Event):void
+		/** 
+		 * Listens for added to stage event.
+		 */
+		private function onAdded(evt: Event): void
 		{
-			//remove event listener
+			// remove event listener
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 			
-			//start at the bottom of the stage
+			// start at the bottom of the stage
 			this.startPos = new Point(centerX, main.getStageHeight() + this.height);
 
-			//update the start position point with
-			//the new padding values
+			// update the start position point with
+			// the new padding values
 			this.xPadding = this.LEFT_PADDING;
 			this.yPadding = this.TOP_PADDING;
 			this.startPos.x += this.xPadding;
 			this.startPos.y += this.yPadding;
 			this.moveToStart();
 			
-			//load the logo
+			// load the logo
 			with(this.logoLoader)
 			{
 				width = this.LOGO_SIZE;
@@ -84,149 +83,142 @@ package com.slskin.ignitenetwork.views.desktop
 				load(new URLRequest(main.config.Images.footerLogo));
 			}
 			
-			//set Headline
+			// set Headline
 			this.setHeadline(main.model.getProperty("Headline1", main.model.TEXT_PATH));
 			
-			//set sub headline
+			// set sub headline
 			this.subHeadlineTLF.text = main.model.getProperty("Headline2", main.model.TEXT_PATH);
 			
-			//set logout button text
-			//note, all registration points are right aligned.
+			// set logout button text
+			// note, all registration points are right aligned.
 			with(this.logoutButton) 
 			{
 				tlf.autoSize = "right"
-				tlf.text = Language.translate("Logout", "Logout Long Text");
+				tlf.text = Language.translate("Logout", "Logout");
 				bg.width = tlf.width + icon.width + 10;
-				hitbox.width = bg.width
-				icon.x = (bg.width*-1) + icon.width + 6;
+				hitbox.width = bg.width;
+				// set x to a whole number.
+				icon.x = Math.floor((bg.width*-1) + icon.width + 6);
 			}
 			
-			
-			//set current user
+			// set current user
 			this.username = main.model.getProperty("Username", main.model.DATA_PATH);
 			this.statusTLF.text =  Language.translate("Current_User", "Current user") + " " + this.username;
 			this.setUsernamFormat(this.usernameFormat);
 			
 			
-			//listen for logout button events
+			// listen for logout button events
 			this.logoutButton.hitbox.tabEnabled = false;
 			this.logoutButton.hitbox.addEventListener(MouseEvent.CLICK, onLogoutClick);
 			this.logoutButton.hitbox.addEventListener(MouseEvent.ROLL_OVER, onLogoutRollOver);
 			this.logoutButton.hitbox.addEventListener(MouseEvent.ROLL_OUT, onLogoutRollOut);
 			
-			//add social links
+			// add social links
 			this.addSocialIcons();
 			
-			//add 'Your Profile' link
+			// add 'Your Profile' link
 			this.addEditProfileLink();
 			
-			//show view
+			// show view
 			this.showView();
 			
-			//listen for logging out event.
+			// listen for logging out event.
 			this.main.model.addEventListener(SLEvent.LOGGING_OUT, this.onUserLoggingOut);
 		}
 		
-		/*
-		setUsernameFormat
-		Sets the format of the username string in the status TLF.
-		*/
-		private function setUsernamFormat(fmt:TextFormat):void 
+		/**
+		 * Sets the format of the username string in the status TLF.
+		 */
+		private function setUsernamFormat(fmt: TextFormat): void 
 		{
 			this.statusTLF.setTextFormat(this.defaultFormat, 0, (this.statusTLF.text.length - username.length));
 			this.statusTLF.setTextFormat(fmt, (this.statusTLF.text.length - username.length), this.statusTLF.length);
 		}
 		
-		/*
-		setHeadine
-		Sets the headline property in the headTLF and resizes / moves the UI
-		depending the headline textWidth.
-		*/
-		private function setHeadline(str:String):void
+		/**
+		 * Sets the headline property in the headTLF and resizes / moves the UI
+		 * depending the headline textWidth.
+		 */
+		private function setHeadline(str: String): void
 		{
 			this.headLineTLF.text = str;
-			var textWidth:Number = this.headLineTLF.textWidth + ICON_PADDING;
+			var textWidth: Number = this.headLineTLF.textWidth + ICON_PADDING;
 			this.headLineTLF.width = textWidth;
 			this.ribbon.bar.width = textWidth + RIBBON_PADDING;
 			this.ribbon.lines.width = this.ribbon.bar.width;
 		}
 		
-		/*
-		addSocialIcons
-		Displays social links that are set in the config.xml file.
-		*/
-		private function addSocialIcons():void
+		/**
+		 * Displays social links that are set in the config.xml file.
+		 */
+		private function addSocialIcons(): void
 		{
-			//set the x and y
+			// set the x and y
 			this.socialIcons = new MovieClip();
 			socialIcons.x = this.ribbon.bar.width + (ICON_PADDING * 2) + LOGO_SIZE;
 			socialIcons.y = this.ribbon.y;
 			
-			var link:IconLink;
-			var numLinks:uint = main.config.Social.link.length();
-			for(var i:uint = 0; i < numLinks ; i++)
+			var link: IconLink;
+			var numLinks: uint = main.config.Social.link.length();
+			for (var i: uint = 0; i < numLinks ; i++)
 			{
-				//create link object from xml values
+				// create link object from xml values
 				link = new IconLink(main.config.Social.link[i].@alias, main.config.Social.link[i], 
 									main.config.Social.link[i].@iconPath);
 				
-				//set x and y
+				// set x and y
 				link.x = (i * link.width) + (i * this.ICON_PADDING);
 				
-				//add to mc holder
+				// add to mc holder
 				this.socialIcons.addChild(link);
 			}
 			
-			//add the social icons mc to stage
+			// add the social icons mc to stage
 			this.addChild(this.socialIcons);
 		}
 		
-		/*
-		addEditProfileLink
-		Adds the edit profile link if set in options list.
-		*/
-		private function addEditProfileLink():void 
+		/**
+		 * Adds the edit profile link if set in options list.
+		 */
+		private function addEditProfileLink(): void 
 		{
-			var optionsList:String = main.model.getProperty("OptionsList", main.model.ROOT_PATH);
-			if(optionsList == null || optionsList.search("-2") == -1) return;
+			var optionsList: String = main.model.getProperty("OptionsList", main.model.ROOT_PATH);
+			if (optionsList == null || optionsList.search("-2") == -1) return;
 			
-			//parse out the 'Your Profile' application name from the OptionsList string.
-			var optionsArr:Array = optionsList.split(main.model.DIM);
+			// parse out the 'Your Profile' application name from the OptionsList string.
+			var optionsArr: Array = optionsList.split(main.model.DIM);
 			optionsArr[0] = optionsArr[0].split(main.model.DlMSep);
 			
-			//set formats to make username in status tlf to look like a link
+			// set formats to make username in status tlf to look like a link
 			this.setUsernamFormat(this.linkUsernameFormat);
 			
-			//listen for click handlers
+			// listen for click handlers
 			this.statusTLF.buttonMode = this.statusTLF.useHandCursor = true;
 			this.statusTLF.addEventListener(MouseEvent.ROLL_OVER, onStatusRollOver);
 			this.statusTLF.addEventListener(MouseEvent.ROLL_OUT, onStatusRollOut);
 			this.statusTLF.addEventListener(MouseEvent.CLICK, onStatusClick);
 		}
 		
-		/*
-		onLogoutClick
-		Call the logout routine in the sl client, listen for progress,
-		and show a LoadingView.
-		*/
-		private function onLogoutClick(evt:Event):void 
+		/**
+		 * Call the logout routine in the sl client, listen for progress,
+		 * and show a LoadingView.
+		 */
+		private function onLogoutClick(evt: Event): void 
 		{
-			if(ExternalInterface.available) 
+			if (ExternalInterface.available) 
 			{
 				ExternalInterface.call("UserLogout", "");
 				this.main.model.addEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
-				this.logoutButton.bg.gotoAndStop("Down");
 			}
 		}
 		
-		/*
-		onUserLoggingOut
-		Show the loader
-		*/
-		private function onUserLoggingOut(evt:SLEvent):void 
+		/**
+		 * Show the loader
+		 */
+		private function onUserLoggingOut(evt: SLEvent): void 
 		{
-			//remove account setup if its added
-			if(this.setup != null && main.contains(this.setup))
+			// remove account setup if its added
+			if (this.setup != null && main.contains(this.setup))
 				main.removeChild(this.setup);
 				
 			LoadingView.getInstance().showLoader();
@@ -235,88 +227,83 @@ package com.slskin.ignitenetwork.views.desktop
 		}
 		
 		
-		private function onAccountEditComplete(evt:SLEvent):void 
+		private function onAccountEditComplete(evt: SLEvent): void 
 		{
-			if(this.setup == null) return;
+			if (this.setup == null) return;
 			
 			main.model.removeEventListener(SLEvent.REQUIRED_INFO_ENTERED, this.onAccountEditComplete);
 			this.setup.hideView();
-			this.setup.addEventListener(SLView.HIDE_COMPLETE, function(evt:Event):void {
+			this.setup.addEventListener(SLView.HIDE_COMPLETE, function(evt: Event): void {
 										main.removeChild(evt.target as DisplayObject);
 										setup = null;
 										});
 		}
 		
-		/*
-		onValueAdded
-		Listens for value added events from the model and responds to the
-		key value pairs that pertain to the logout process.
-		*/
-		private function onValueAdded(evt:SLEvent):void
+		/**
+		 * Listens for value added events from the model and responds to the
+		 * key value pairs that pertain to the logout process.
+		 */
+		private function onValueAdded(evt: SLEvent): void
 		{
-			var split:Array = String(evt.argument).split(main.model.DIM);
-			var key:String = split[0];
-			var val:String = split[1];
+			var split: Array = String(evt.argument).split(main.model.DIM);
+			var key: String = split[0];
+			var val: String = split[1];
 			switch (key)
 			{
-				case main.model.DATA_PATH + "LoadingStatus":
-					if(val == "Done")
+				case main.model.DATA_PATH + "LoadingStatus": 
+					if (val == "Done")
 					{
 						LoadingView.getInstance().hideLoader();
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 					}
-					else if(val == "Failed")
+					else if (val == "Failed")
 					{
 						LoadingView.getInstance().hideLoader();
 						ErrorView.getInstance().showError(main.config.Strings.ErrorString);
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 					}
 					break;
-				case main.model.TEXT_PATH + "LoadingText":
-				case main.model.DATA_PATH + "LoadingText":
+				case main.model.TEXT_PATH + "LoadingText": 
+				case main.model.DATA_PATH + "LoadingText": 
 					LoadingView.getInstance().loadingText = val;
 					break;
 			}
 		}
 		
-		/*
-		onLogoutRollOver
-		Change the button background.
-		*/
-		private function onLogoutRollOver(evt:MouseEvent):void {
+		/**
+		 * Change the button background.
+		 */
+		private function onLogoutRollOver(evt: MouseEvent): void {
 			this.logoutButton.tlf.textColor = this.LOGOUT_ROLLOVER_COLOR;
-			this.logoutButton.bg.gotoAndStop("Over");
+			this.logoutButton.bg.gotoAndStop("Down");
 		}
 		
-		/*
-		onLogoutRollOut
-		Change the background back to up.
-		*/
-		private function onLogoutRollOut(evt:MouseEvent):void {
+		/**
+		 * Change the background back to up.
+		 */
+		private function onLogoutRollOut(evt: MouseEvent): void {
 			this.logoutButton.tlf.textColor = this.LOGOUT_TEXT_COLOR;
 			this.logoutButton.bg.gotoAndStop("Up");
 		}
 		
-		/*
-		onStatusClick
-		Display an account setup view.
-		*/
-		private function onStatusClick(evt:MouseEvent):void 
+		/**
+		 * Display an account setup view.
+		 */
+		private function onStatusClick(evt: MouseEvent): void 
 		{
-			if(this.setup != null) return;
+			if (this.setup != null) return;
 			
 			this.setup = new AccountSetupView(2);
 			main.model.addEventListener(SLEvent.REQUIRED_INFO_ENTERED, this.onAccountEditComplete);
 			main.addChild(setup);
 		}
 		
-		private function onStatusRollOver(evt:MouseEvent):void {
+		private function onStatusRollOver(evt: MouseEvent): void {
 			this.setUsernamFormat(this.rollOverUsername);
 		}
 		
-		private function onStatusRollOut(evt:MouseEvent):void {
+		private function onStatusRollOut(evt: MouseEvent): void {
 			this.setUsernamFormat(this.linkUsernameFormat);
 		}
-		
-	} //class
-} //package
+	} // class
+} // package

@@ -1,11 +1,8 @@
-﻿/*
-Ruben Oanta
-SL Interface
-
-Defines the AccountSetupView. This as file is associated to the 
-AccountSetupView movieclip in the fla library. The account setup
-is split into steps - Password Step, and Personal Info Step.
-*/
+﻿/**
+ * Defines the AccountSetupView. This as file is associated to the 
+ * AccountSetupView movieclip in the fla library. The account setup
+ * is split into steps - Password Step, and Personal Info Step.
+ */
 package com.slskin.ignitenetwork.views.accountsetup
 {
 	import flash.display.MovieClip;
@@ -49,9 +46,9 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.addEventListener(Event.ADDED_TO_STAGE, this.onAdded);
 		}
 		
-		/*
-		On added to stage event handler
-		*/
+		/**
+		 * On added to stage event handler
+	 	 */
 		private function onAdded(evt:Event):void
 		{
 			//depending on our requiredInfo, create objects accordingly
@@ -75,10 +72,9 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.addChildren();
 		}
 		
-		/*
-		addChildren
-		adds the account setup children elements to stage.
-		*/
+		/**
+		 * adds the account setup children elements to stage.
+		 */
 		private function addChildren():void
 		{
 			var nextItemY:Number = this.START_Y;
@@ -118,11 +114,10 @@ package com.slskin.ignitenetwork.views.accountsetup
 			this.showView();
 		}
 		
-		/*
-		onSetupComplete
-		Event listener that is triggered when the user has completed the 
-		forms correctly.
-		*/
+		/**
+		 * Event listener that is triggered when the user has completed the 
+		 * forms correctly.
+		 */
 		private function onSetupComplete(evt:Event)
 		{
 			main.debugger.write("Saving Account Information...");
@@ -142,16 +137,14 @@ package com.slskin.ignitenetwork.views.accountsetup
 			main.addEventListener(SLEvent.REQUIRED_INFO_ENTERED, onDataSaved);
 		}
 		
-		/*
-		onDataSaved
-		Event handler for event that is triggered when SL has received and saved the
-		data correctly.
-		*/
+		/**
+		 * Event handler for event that is triggered when SL has received and saved the
+		 * data correctly.
+		 */
 		private function onDataSaved(evt:SLEvent):void
 		{
 			main.debugger.write("User data has been saved by SL client!");
 			this.hideView();
 		}
-		
 	}//class
 }//package

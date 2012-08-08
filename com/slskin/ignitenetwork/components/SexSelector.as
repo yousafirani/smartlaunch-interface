@@ -1,7 +1,7 @@
-﻿/*
-Defines the behavior for the gender selector
-component.
-*/
+﻿/**
+ * Defines the behavior for the gender selector
+ * component.
+ */
 package com.slskin.ignitenetwork.components 
 {
 	
@@ -62,6 +62,5 @@ package com.slskin.ignitenetwork.components
 		private function onFemaleSelected(evt:MouseEvent) {
 			this.maleCB.selected = false;
 		}
-		
 	} //class
 }//package
