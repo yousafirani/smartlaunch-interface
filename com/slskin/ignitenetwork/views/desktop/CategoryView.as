@@ -327,7 +327,7 @@ package com.slskin.ignitenetwork.views.desktop
 		 */
 		private function onBoxShotClick(evt: SLEvent): void {
 			main.appManager.launchApp(evt.argument.dataProvider as Application);
-			if (this.category.name.toLowerCase() == "game")
+			if (this.category.name.toLowerCase() == "games")
 				main.playSound(main.config.Sounds.GameStarting);
 		}
 		

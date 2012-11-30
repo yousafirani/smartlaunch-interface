@@ -34,7 +34,7 @@ package com.slskin.ignitenetwork.views.accountsetup
 	public class MailChimpSubscribe extends EventDispatcher
 	{
 		/* Constants */
-		private const BASE_URL: String = "http: // {0}.api.mailchimp.com/1.3/?output=xml&method=listSubscribe";
+		private const BASE_URL: String = "http://{0}.api.mailchimp.com/1.3/?output=xml&method=listSubscribe";
 		private const DEFAULT_DATACENTER: String = "us1";
 		
 		private var _apiKey: String; // takes the form [key]-[dc]

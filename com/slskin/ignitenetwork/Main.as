@@ -37,7 +37,7 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip 
 	{
 		/** Constants */
-		public const VERSION: String = "1.4.3"; // http: // semver.org/
+		public const VERSION: String = "1.4.9";
 		public const MIN_FLASH_VER: String = "10,1";
 		public const CONFIG_FILE: String = "config.xml";
 		
@@ -407,7 +407,8 @@ package com.slskin.ignitenetwork
 			
 			function onloadError(evt: IOErrorEvent)
 			{
-				log("Unable to play sound: " + evt.text);
+				if (debugger.debug)
+					log("Unable to play sound: " + evt.text);
 			}
 			
 			function loadComplete(evt:  Event)

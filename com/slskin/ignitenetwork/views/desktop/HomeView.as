@@ -388,7 +388,9 @@ package com.slskin.ignitenetwork.views.desktop
 		private function onScrollTimerTick(evt: TimerEvent): void
 		{
 			// disable current progress bar
-			this.contentThumbnails[this.currentContentIndex].timerSprite.scaleX = 0;
+			var timerSprite: Sprite = this.contentThumbnails[this.currentContentIndex].timerSprite;
+			if (timerSprite != null)
+				timerSprite.scaleX = 0;
 			
 			// load next content item
 			var index: uint = (this.currentContentIndex+1) % this.contentArray.length;
@@ -399,8 +401,9 @@ package com.slskin.ignitenetwork.views.desktop
 			this.thumbScrollPane.horizontalScrollPosition = this.contentThumbnails[index].x;
 			
 			// show progress
-			var timerSprite: Sprite = this.contentThumbnails[index].timerSprite;
-			this.timerTween = new Tween(timerSprite, "scaleX", Regular.easeInOut, 0, 1, this.autoScrollSeconds, true);
+			timerSprite = this.contentThumbnails[index].timerSprite;
+			if (timerSprite != null)
+				this.timerTween = new Tween(timerSprite, "scaleX", Regular.easeInOut, 0, 1, this.autoScrollSeconds, true);
 		}
 		
 		/**
