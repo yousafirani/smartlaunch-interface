@@ -50,7 +50,8 @@ package com.slskin.ignitenetwork.views.desktop
 		private var linkUsernameFormat: TextFormat = new TextFormat("Tahoma", 13, STATUS_USERNAME_COLOR, false, false, true);
 		private var rollOverUsername: TextFormat = new TextFormat("Tahoma", 13, STATUS_DEFAULT_COLOR, false, false, true);
 		
-		public function FooterView() {
+		public function FooterView() 
+		{
 			this.socialIcons = new MovieClip();
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}

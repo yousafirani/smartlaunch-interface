@@ -19,6 +19,7 @@
 		private var home: HomeView;
 		private var dashboard: DashBoardView;
 		private var footer: FooterView;
+		private var ads: AdsView;
 		private var currentCategoryView: SLView; // reference to current category view
 		private var categoryViews: Dictionary; // stores a CategoryView for each main category with the key as category.name.
 		private var fadeTween: Tween;
@@ -26,10 +27,11 @@
 		public function DesktopView() 
 		{
 			this.tabChildren = false;
-			dock = new DockView();
-			home = new HomeView();
-			footer = new FooterView();
-			dashboard = new DashBoardView();
+			this.dock = new DockView();
+			this.home = new HomeView();
+			this.footer = new FooterView();
+			this.ads = new AdsView();
+			this.dashboard = new DashBoardView();
 			this.categoryViews = new Dictionary();
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
@@ -47,6 +49,7 @@
 			this.addChild(dashboard);
 			this.addChild(dock);
 			this.addChild(footer);
+			this.addChild(ads);
 			
 			// listen for dock click events.
 			this.dock.addEventListener(SLEvent.DOCK_ICON_CLICK, onDockIconClick);
@@ -142,11 +145,12 @@
 			this.addChild(overlay);
 			
 			// set all object references to null for garbage collection
-			this.home.destroyPlayers();
+			this.home.destroyVideoPlayers();
 			this.home = null;
 			this.dashboard = null;
 			this.dock = null;
 			this.footer = null;
+			this.ads = null;
 			
 			this.fadeTween = new Tween(overlay, "alpha", Strong.easeOut, 0, 1, 1, true);
 			this.fadeTween.addEventListener(TweenEvent.MOTION_FINISH, onFadeOutComplete);

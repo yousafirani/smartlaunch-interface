@@ -279,12 +279,11 @@ package com.slskin.ignitenetwork.apps
 					{
 						LoadingView.getInstance().hideLoader();
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
-						main.wallpaperManager.stopTimer();
+						this.dispatchEvent(new Event(SLEvent.APP_LAUNCHED));
 					}
 					else if (val == "Failed")
 					{
 						LoadingView.getInstance().hideLoader();
-						// ErrorView.getInstance().showError(main.config.Strings.ErrorString);
 						main.model.removeEventListener(SLEvent.VALUE_ADDED, this.onValueAdded);
 					}
 					break;

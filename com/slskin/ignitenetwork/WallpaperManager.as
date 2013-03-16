@@ -24,6 +24,7 @@ package com.slskin.ignitenetwork
 	import flash.display.Loader;
 	import flash.events.MouseEvent;
 	import com.slskin.ignitenetwork.views.ErrorView;
+	import com.slskin.ignitenetwork.events.SLEvent;
 
 	public class WallpaperManager extends MovieClip
 	{
@@ -57,6 +58,9 @@ package com.slskin.ignitenetwork
 
 			// set document class reference
 			this.main = (root as Main);
+			
+			// listen for app launch event
+			this.main.appManager.addEventListener(SLEvent.APP_LAUNCHED, this.onAppLaunched);
 		}
 
 		/**
@@ -85,7 +89,7 @@ package com.slskin.ignitenetwork
 			if (numWallPapers > 1)
 			{
 				var randomOrder: Boolean = (main.config.Images.backgrounds.@randomOrder == "true");
-				var timerDelay: Number = Number(main.config.Images.backgrounds. @ autoScrollSeconds) * 1000;
+				var timerDelay: Number = Number(main.config.Images.backgrounds.@autoScrollSeconds) * 1000;
 
 				// if randomOrder is set, shuffle the imagePaths array
 				if (randomOrder)
@@ -193,8 +197,6 @@ package com.slskin.ignitenetwork
 				// generate a random index within our range
 				swapIndex = Math.round(Math.random() * range) + i;
 
-				// trace(i, (i+range), "swap index: " + swapIndex);
-
 				// swap arr[i] and arr[swapIndex]
 				tmp = arr[i];
 				arr[i] = arr[swapIndex];
@@ -276,7 +278,7 @@ package com.slskin.ignitenetwork
 		private function onIntervalTick(evt: TimerEvent): void
 		{
 			// restart our iterator if we have reached the end
-			if (! this.imageIterator.hasNext())
+			if (!this.imageIterator.hasNext())
 			{
 				this.imageIterator.reset();
 			}
@@ -323,6 +325,15 @@ package com.slskin.ignitenetwork
 			// resize the current image to fit screen
 			this.currentImage.width = main.getStageWidth();
 			this.currentImage.height = main.getStageHeight();
+		}
+		
+		/**
+		 * Event handler for AppManager APP_LAUNCHED event.
+		 * stops the timer from ticking so the wallpaper does 
+		 * not scroll and use system resources.
+		 */
+		private function onAppLaunched(evt: Event): void {
+			this.stopTimer();
 		}
 
 		/**

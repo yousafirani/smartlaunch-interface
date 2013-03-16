@@ -24,6 +24,7 @@ package com.slskin.ignitenetwork.events
 		public static const PLAY_SOUND: String = "PlaySound";
 		public static const VALUE_ADDED: String = "ValueAdded";
 		public static const CONFIG_LOADED: String = "ConfigLoadComplete";
+		public static const APP_LAUNCHED: String = "AppLaunched";
 		
 		/* Some custom UI Events */
 		// public static const HIDE_UI_COMPLETE: String = "HideComplete";

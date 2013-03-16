@@ -48,6 +48,7 @@ package com.slskin.ignitenetwork.components
 			this.contentTLF.text = str;
 			// autosize contentTLF
 			this.contentTLF.autoSize = TextFieldAutoSize.LEFT;
+			this.contentTLF.textFlow.flowComposer.updateAllControllers();
 		}
 		
 		public function set datePosted(d: Date): void {

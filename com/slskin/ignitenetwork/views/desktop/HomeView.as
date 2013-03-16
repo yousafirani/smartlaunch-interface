@@ -214,7 +214,7 @@ package com.slskin.ignitenetwork.views.desktop
 		/**
 		 * Calls the stopVideo method on all the youtube players.
 		 */
-		public function destroyPlayers(): void 
+		public function destroyVideoPlayers(): void 
 		{
 			for (var i: uint = 0; i < this.contentArray.length; i++)
 			{
