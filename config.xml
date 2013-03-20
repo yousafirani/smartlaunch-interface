@@ -81,7 +81,7 @@ SLSkin Config File.
 
 	<!-- Link Icons should be 24 x 24 -->
 	<!-- Twitter feed can be displayed in the news feed if the ScreenName is set. -->
-	<Social twitterScreenName="ignitenetwork" showTweetsInNews="true" showRepliesInNews="false">
+	<Social twitterScreenName="ignitenetwork" showTweetsInNews="true" showRepliesInNews="false" twitterAuthHeader="BEARER_KEY">
 		<link alias="facebook.com/ignitenetwork" iconPath="assets/fb.png">http://facebook.com/ignitenetwork</link>
 		<link alias="@ignitenetwork" iconPath="assets/twitter.png">http://twitter.com/ignitenetwork</link>
 		<link alias="+ignitenetwork" iconPath="assets/gplus.png">https://plus.google.com/112506272369079452232/</link>

@@ -83,10 +83,10 @@ package com.slskin.ignitenetwork.views.desktop
 		public function HomeView() 
 		{
 			// allow content to be loaded from youtube.com
-			Security.allowDomain("http: // www.youtube.com");
-			Security.allowDomain("http: // img.youtube.com");
-			Security.allowDomain("http: // s.ytimg.com");
-			Security.allowDomain("http: // i.ytimg.com");
+			Security.allowDomain("http://www.youtube.com");
+			Security.allowDomain("http://img.youtube.com");
+			Security.allowDomain("http://s.ytimg.com");
+			Security.allowDomain("http://i.ytimg.com");
 			
 			// create the content container
 			this.bg = new Sprite();

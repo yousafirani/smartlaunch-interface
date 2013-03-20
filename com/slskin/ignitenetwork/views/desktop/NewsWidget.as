@@ -12,33 +12,37 @@ package com.slskin.ignitenetwork.views.desktop
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
-	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import org.httpclient.*;
+	import org.httpclient.http.Get;
+	import org.httpclient.events.*;
+	import com.adobe.serialization.json.JSON;
+	import com.adobe.net.URI;
 	import fl.transitions.Tween;
 	import fl.transitions.easing.*;
 	import fl.transitions.TweenEvent;
 	import fl.containers.ScrollPane;
+	import flash.system.Security;
 	import com.slskin.ignitenetwork.*;
 	import com.slskin.ignitenetwork.events.SLEvent;
 	import com.slskin.ignitenetwork.util.Strings;
 	import com.slskin.ignitenetwork.views.desktop.DashBoardView;
 	import com.slskin.ignitenetwork.components.NewsItem;
+	import flash.utils.ByteArray;
 	
 	public class NewsWidget extends MovieClip 
 	{
 		/* Constants */
-		private const TWITTER_API: String = "http://api.twitter.com/1/statuses/user_timeline.xml?screen_name={0}&count={1}";
-		private const TWEET_URL: String = "https://twitter.com/#!/{0}/status/{1}";
+		private const TWITTER_API: String = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name={0}&count={1}&trim_user=true&exclude_replies={2}";
+		private const TWEET_URL: String = "https://twitter.com/{0}/status/{1}";
 		private const TWEET_COUNT: int = 15; // number of tweets to load
 		private const PADDING: Number = 12; // padding in between news items
 		private const LEFT_PADDING: Number = 5; // left padding for each news item
 		
 		/* Member Fields */
-		private var tweetLoader: URLLoader; // loader used to load the twitter api
 		private var main: Main; // stores a reference to the main doc class
 		
 		public function NewsWidget() {
-			// listen for added to stage event
 			this.addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		
@@ -97,87 +101,72 @@ package com.slskin.ignitenetwork.views.desktop
 			if (main.config.Social.@showTweetsInNews == "true") 
 			{
 				var screenName: String = main.config.Social.@twitterScreenName;
-				var url: String = Strings.substitute(TWITTER_API, screenName, TWEET_COUNT);
-				this.tweetLoader = new URLLoader();
-				this.tweetLoader.addEventListener(Event.COMPLETE, onTwitterLoadComplete);
-				this.tweetLoader.addEventListener(IOErrorEvent.IO_ERROR, onTwitterLoadError);
-				this.tweetLoader.load(new URLRequest(url));
+				var excludeReplies: Boolean = !(main.config.Social.@showRepliesInNews == "true");
+				var url: String = Strings.substitute(TWITTER_API, screenName, TWEET_COUNT, String(excludeReplies));
+				
+				var client: HttpClient = new HttpClient();
+				var listener: HttpDataListener = new HttpDataListener();
+				var uri: URI = new URI(url);      
+				var request: HttpRequest = new Get();
+				request.addHeader("Authorization", main.config.Social.@twitterAuthHeader);
+				request.header.remove("Connection"); // let the tfe negotiate connection settings
+				listener.onDataComplete = function(event: HttpResponseEvent, data: ByteArray): void {
+					data.position = 0; // reset buffer read/write position
+					onTweetLoadComplete(data.readUTFBytes(data.length));
+				};
+				client.request(uri, request, -1, listener);
 			}
 			else
 			{
-				// else just load news from SL client...
 				var slNews: Array = this.parseSLNews(main.model.getProperty("UpdateNewsAndEvents"));
-				
-				// add news items to scroll pane
 				this.addNewsItems(slNews);
-				
-				// hide loader
 				this.loader.visible = false;
 			}
 		}
 		
 		/**
-		 * Store the loaded tweets from twitter into a local XML object.
+		 * Parse JSON and merge tweets with SL news.
 		 */
-		private function onTwitterLoadComplete(evt: Event): void
+		private function onTweetLoadComplete(rawJson: String): void
 		{
-			try
-			{
-				var timeline: XML = XML(evt.target.data);
-				
-				// convert twitter xml timeline into NewsItems
-				var tweets: Array = this.parseTweets(timeline);
-				var slNews = this.parseSLNews(main.model.getProperty("UpdateNewsAndEvents"));
-				
-				// merge tweets and slNews and set it as the news pane source
-				var merged: Array = this.mergeNewsSources(tweets, slNews);
-				
-				// add news items to scroll pane
-				this.addNewsItems(merged);
-				
-				// hide loader
-				this.loader.visible = false;
-				
+			// based on the api, the expected json root type should be
+			// an array.
+			var parsedJson: Array = new Array();
+			try {
+				parsedJson = JSON.decode(rawJson);
+			} catch (e: Error) {
+				main.log("Error parsing twitter json: " + e.message);
 			}
-			catch (e: TypeError) {
-				main.log("Error parsing SL news and twitter timeline " + e);
-			}
+			
+			var tweets: Array = this.parseTweets(parsedJson);
+			var slNews = this.parseSLNews(main.model.getProperty("UpdateNewsAndEvents"));
+
+			var merged: Array = this.mergeNewsSources(tweets, slNews);
+			this.addNewsItems(merged);
+			
+			this.loader.visible = false;
 		}
 		
 		/**
-		 * Parses the timeline XML tree loaded from the twitter API and
+		 * Parses the user_timeline json  loaded from the twitter API and
 		 * creates NewsItem objects based on each tweet.
-		 * @param timeline - The xml object loaded from the twitter API.
+		 * @param timeline - The json object loaded from the twitter API v1.1.
 		 * @return - An array of NewsItem objects.
 		 */
-		private function parseTweets(timeline: XML): Array
+		private function parseTweets(timeline: Array): Array
 		{
-			var numTweets: int = timeline.status.length();
+			var numTweets: int = timeline.length;
 			var screenName: String = main.config.Social.@twitterScreenName;
-			var showReplies: Boolean = (main.config.Social.@showRepliesInNews == "true");
 			var tweet: NewsItem;
 			var result: Array = new Array();
 			
 			for (var i: uint = 0; i < numTweets; i++)
 			{
-				// Hide replies if set in config
-				if (!showReplies)
-				{
-					if (timeline.status[i].in_reply_to_screen_name != "" ||
-					   timeline.status[i].in_reply_to_status_id != "" ||
-					   timeline.status[i].in_reply_to_user_id != "") 
-						continue;
-				}
-				
-				// create tweet item and add it to holder
 				tweet = new NewsItem();
-				
-				// set content text and date
-				tweet.contentText = timeline.status[i].text;
-				tweet.datePosted = new Date(Date.parse(timeline.status[i].created_at));
-				tweet.url = Strings.substitute(TWEET_URL, screenName, timeline.status[i].id);
+				tweet.contentText = timeline[i].text;
+				tweet.datePosted = new Date(Date.parse(timeline[i].created_at));
+				tweet.url = Strings.substitute(TWEET_URL, screenName, timeline[i].id_str);
 				tweet.isTweet = true;
-				
 				result.push(tweet);
 			}
 			
@@ -346,7 +335,7 @@ package com.slskin.ignitenetwork.views.desktop
 		}
 		
 		public function onTwitterLoadError(evt: IOErrorEvent): void {
-			this.main.log(evt.toString());
+			this.main.log(evt.text);
 		}
 		
 	} // class
