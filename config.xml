@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- 
 SLSkin Config File.
 -->
@@ -80,14 +80,18 @@ SLSkin Config File.
 	</HomeViewContent>
 
 	<!-- Link Icons should be 24 x 24 -->
-	<!-- Twitter feed can be displayed in the news feed if the ScreenName is set. -->
-	<Social twitterScreenName="ignitenetwork" showTweetsInNews="true" showRepliesInNews="false" twitterAuthHeader="BEARER_KEY">
+	<!-- 
+		Twitter feed can be displayed in the news feed if the ScreenName is set. 
+		Version 1.1 of the twitter api requires authentication (a bearer token).
+		Visit developer.twitter.com for more info.
+	 -->
+	<Social twitterScreenName="ignitenetwork" showTweetsInNews="true" showRepliesInNews="true" 
+		twitterAuthHeader="Bearer INSERT_TOKEN_HERE">
 		<link alias="facebook.com/ignitenetwork" iconPath="assets/fb.png">http://facebook.com/ignitenetwork</link>
 		<link alias="@ignitenetwork" iconPath="assets/twitter.png">http://twitter.com/ignitenetwork</link>
 		<link alias="+ignitenetwork" iconPath="assets/gplus.png">https://plus.google.com/112506272369079452232/</link>
 		<link alias="ignite Youtube Channel" iconPath="assets/youtube.png">http://www.youtube.com/ignitenetwork</link>
 		<link alias="Find us on Yelp!" iconPath="assets/yelp.png">http://www.yelp.com/biz/ignite-network-gaming-lounge-chicago</link>
-		<!--<link alias="Sign up for our mailing list!" iconPath="assets/mailinglist.png">http://eepurl.com/hdSog</link>-->
 	</Social>
 	
 	<Sounds>
@@ -155,4 +159,5 @@ SLSkin Config File.
 		<ErrorString><![CDATA[Bummer! There was a technical problem. If the problem persists, please ask a staff member for assistance.]]></ErrorString>
 		<LoggingOut><![CDATA[Logging Out...]]></LoggingOut>
 	</Strings>
+
 </InterfaceConfig>

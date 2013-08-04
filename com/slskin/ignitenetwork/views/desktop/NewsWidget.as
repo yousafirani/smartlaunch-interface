@@ -106,15 +106,15 @@ package com.slskin.ignitenetwork.views.desktop
 				
 				var client: HttpClient = new HttpClient();
 				var listener: HttpDataListener = new HttpDataListener();
-				var uri: URI = new URI(url);      
-				var request: HttpRequest = new Get();
-				request.addHeader("Authorization", main.config.Social.@twitterAuthHeader);
-				request.header.remove("Connection"); // let the tfe negotiate connection settings
+				var uri: URI = new URI(url);
+				var req: HttpRequest = new Get();
+				req.addHeader("Authorization", main.config.Social.@twitterAuthHeader);
+				req.header.remove("Connection"); // let the tfe negotiate connection settings
 				listener.onDataComplete = function(event: HttpResponseEvent, data: ByteArray): void {
 					data.position = 0; // reset buffer read/write position
 					onTweetLoadComplete(data.readUTFBytes(data.length));
 				};
-				client.request(uri, request, -1, listener);
+				client.request(uri, req, -1, listener);
 			}
 			else
 			{
