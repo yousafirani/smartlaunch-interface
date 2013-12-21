@@ -1,4 +1,4 @@
-/**
+﻿/**
  * X509Certificate
  * 
  * A representation for a X509 Certificate, with
