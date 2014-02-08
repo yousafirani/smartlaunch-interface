@@ -37,8 +37,8 @@ package com.slskin.ignitenetwork
 	public class Main extends MovieClip 
 	{
 		/** Constants */
-		public const VERSION: String = "1.6.4";
-		public const MIN_FLASH_VER: String = "10,1";
+		public const VERSION: String = "1.6.5";
+		public const MIN_FLASH_VER: Number = 10;
 		public const CONFIG_FILE: String = "config.xml";
 		
 		/** Member Fields */
@@ -117,23 +117,15 @@ package com.slskin.ignitenetwork
 		
 		/**
 		 * Makes sure that the clients flash version
-		 * meets the min requirement. If it does, return true
-		 * else false.
+		 * meets the min requirement. Note, this only
+		 * checks major versions.
 		 * @return Boolean indicating if the flash version meets the min requirement.
 		 */
 		private function isValidFlashVersion(): Boolean
 		{
 			var version: Array = Capabilities.version.split(",");
-			var reqVersion: Array = this.MIN_FLASH_VER.split(",");
-			
-			// parse out platform
-			version[0] = version[0].split(" ")[1];
-			
-			for(var i: int = 0; i < reqVersion.length; i++)
-				if (Number(reqVersion[i]) > Number(version[i]))
-					return false;
-					
-			return true;
+			var majorVer = Number(version[0].split(" ")[1]);
+			return majorVer >= this.MIN_FLASH_VER;
 		}
 		
 		/**
